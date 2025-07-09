@@ -1,0 +1,11 @@
+﻿Column name,Type,Description
+users,"id, email (text), auth_provider (text), timestamps",Stores core user info and login method
+user_profiles,"id, user_id (fk), role (enum), tags (json), goals (text), habits (text)","Extended profile info tagged to user, from survey"
+calendar_integrations,"id, user_id (fk), provider (enum), access_token (text), refresh_token (text), sync_status (text), timestamps",Stores calendar integration credentials + sync state
+tasks,"id, user_id (fk), title (text), description (text), priority (enum), due_date (timestamp), status (enum), created_at",User-created task entries with metadata
+suggestions,"id, user_id (fk), content (text), suggested_time (timestamp), confidence_score (float), accepted (boolean)",AI-generated suggestions with timing and feedback hooks
+mood_logs,"id, user_id (fk), date (date), mood (enum/int), energy (int), focus (int), notes (text)",Daily logs of mood-related metrics
+reflections,"id, user_id (fk), week_start (date), reflection_text (text), goal_alignment (int)",Weekly journaling for behavior analysis
+task_events,"id, user_id (fk), task_id (fk), event_type (enum), timestamp","Records all user interactions with tasks (e.g. complete, edit)"
+suggestion_feedback,"id, user_id (fk), suggestion_id (fk), feedback_text (text), rating (int), timestamp",Captures explicit user feedback on suggestions to improve AI
+onboarding_audit,"id, user_id (fk), answers (json), skipped_questions (json), created_at (timestamp)",Initial onboarding survey audit log with skipped/answered questions
