@@ -1,0 +1,23 @@
+﻿CRUD,HTTP Verb,Description,User stories
+Create,POST,Create new user account,signup
+Read,GET,Fetch user info,dashboard-load
+Update,PUT,Update user info,settings
+Delete,DELETE,Delete user account,account-delete
+Create,POST,Submit onboarding survey,onboarding
+Read,GET,Fetch onboarding audit data,profile-review
+Update,PUT,Update profile role/goals/tags,profile-update
+Create,POST,Add calendar integration,calendar-connect
+Read,GET,Get calendar integration info,calendar-settings
+Update,PUT,Update OAuth token or sync state,calendar-refresh
+Create,POST,Create task manually,task-create
+Read,GET,Fetch user tasks list,task-view
+Create,POST,AI suggest task,ai-suggest
+Read,GET,Get task suggestions,ai-suggest-view
+Update,PUT,Accept or reject suggestion,ai-accept-decline
+Create,POST,Submit mood log,mood-log
+Update,PUT,Edit mood log entry,mood-edit
+Create,POST,Add reflection,reflect-submit
+Read,GET,List reflections,reflect-view
+Update,PUT,Edit a past reflection,reflect-edit
+Create,POST,Submit feedback on suggestion,ai-feedback
+Read,GET,Get all feedback for a suggestion,ai-feedback-view
