@@ -1,5 +1,15 @@
 {
   "dependencies": {
-    "openai": "^5.9.0"
+    "@clerk/nextjs": "^6.24.0",
+    "@prisma/client": "^6.11.1",
+    "next": "^15.3.5",
+    "next-auth": "^4.24.11",
+    "openai": "^5.9.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-hot-toast": "^2.5.2"
+  },
+  "devDependencies": {
+    "prisma": "^6.11.1"
   }
 }

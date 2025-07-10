@@ -28,14 +28,12 @@ You are an intelligent scheduling assistant. Based on the user's current calenda
 Task: ${taskTitle}
 Duration: ${durationMinutes} minutes
 Priority: ${priority}
-Mood: ${mood || 'unknown'}
 
 User’s calendar:
 ${events.map((e, i) => `Event ${i + 1}: ${e.start} to ${e.end}`).join('\n')}
 
 Suggest the earliest time slot where this task can fit, considering:
 - Avoid overlapping with existing events
-- If user is tired or unmotivated, avoid late evenings
 - Prioritize morning or early afternoon for high-priority tasks
 - Respond in JSON with: recommendedStart, recommendedEnd, and reason
 
