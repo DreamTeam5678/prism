@@ -1,15 +1,51 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String   @id @default(uuid())
+  email       String   @unique
+  name        String?
+  provider    String   // google or microsoft
+  tasks       Task[]
+  suggestions Suggestion[]
+  moodLogs    MoodLog[]
+  userProfile UserProfile?
+}
+
+model Task {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  title     String
+  scheduled Boolean  @default(false)
+  timestamp DateTime?
+}
+
+model Suggestion {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  suggestionText String
+  timestamp DateTime
+}
+
+model MoodLog {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  mood      String
+  createdAt DateTime @default(now())
+}
+
+model UserProfile {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @unique
+  tags      String[] // from survey output
 }
