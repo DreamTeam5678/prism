@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import type { NextAuthOptions } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import { google } from 'googleapis';
@@ -36,13 +35,3 @@ const authOptions: NextAuthOptions = {
 export default NextAuth(authOptions);
 
 
-=======
-export const authOptions = {
-  callbacks: {
-    async session({ session, user }: { session: any; user: any }) {
-      session.user.id = user.id;
-      return session;
-    },
-  },
-};
->>>>>>> f9c6f3dc8cf439c0b082913c0e955c3c59003480
