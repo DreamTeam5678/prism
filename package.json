@@ -1,4 +1,18 @@
 {
+  "name": "prism",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Prism, created by DreamTeam5678",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
     "openai": "^5.9.0"
   }
