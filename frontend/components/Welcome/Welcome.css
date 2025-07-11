@@ -1,0 +1,43 @@
+.welcome-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+
+
+.welcome-title {
+    font-size: 5rem;
+    margin-bottom: 2rem;
+    
+
+}
+
+.welcome-title img {
+    width: 400px;
+    height: auto;
+    margin-right: 1rem;
+    margin-left: -5.5rem;
+    margin-bottom: -5.9rem;
+}
+
+.log-in-button {
+    background-color: sienna;
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 0.5rem;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.log-in-button:hover {
+    background-color: rgb(127, 142, 127);
+}
+
+.logo {
+    width: 100px;
+    height: 100px;
+}
