@@ -1,3 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Sacramento&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sofia&display=swap');
+
+
+body {
+    background-color: rgb(236, 236, 236);
+    box-shadow: inset 0 0 25px rgb(255, 255, 255);
+    height: 98vh;
+    border-radius: 20px;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 20% 30%, rgba(255, 207, 192, 0.4), transparent 40%),
+                radial-gradient(circle at 80% 20%, rgba(173, 216, 230, 0.4), transparent 40%),
+                radial-gradient(circle at 50% 80%, rgba(162, 194, 152, 0.4), transparent 40%),
+                radial-gradient(circle at 70% 60%, rgba(194, 147, 194, 0.4), transparent 40%);
+    z-index: -1;
+    pointer-events: none;
+    backdrop-filter: blur(1px);
+}
 .welcome-container {
     display: flex;
     flex-direction: column;
@@ -6,35 +32,122 @@
     height: 100vh;
 }
 
+.check-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.checkbox-wrapper {
+    width: 52px;
+    height: 52px;
+}
+
+.checkbox {
+    width: 100%;
+    height: 100%;
+    stroke: #899397;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+    margin-left: -6.3rem;
+    margin-top : -5rem; 
+    transform: translateY(-50%);
+}
+
+.checkbox-circle {
+    stroke-dasharray: 157;
+    stroke-dashoffset: 157;
+    animation: draw-circle 1s ease-out forwards;
+}
+
+.checkbox-check {
+    stroke-dasharray: 48;
+    stroke-dashoffset: 48;
+    animation: draw-check 0.8s 1s ease-out forwards;
+}
+
+@keyframes draw-circle {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes draw-check {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+
 
 
 .welcome-title {
-    font-size: 5rem;
-    margin-bottom: 2rem;
-    
-
+    font-size:7rem;
+    margin-bottom: -1rem;
+    font-family: 'Sacramento', cursive;
+    font-style: oblique;
+    font-weight: 400;
+    background: -webkit-linear-gradient(#494949, #8b9d84, #073a43);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-align: center;
+    text-shadow: 2px 2px 7px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 1s ease-in;
+    opacity: 0.8;
 }
 
-.welcome-title img {
-    width: 400px;
+.welcome-container img {
+    width: 500px;
     height: auto;
-    margin-right: 1rem;
-    margin-left: -5.5rem;
-    margin-bottom: -5.9rem;
+    margin-top: -8.5rem;
+    animation: slideIn 1s ease-in-out;
+    margin-right: -1.5rem;
+}
+@keyframes slideIn {
+    from {
+        transform: translateY(-25%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0.3;
+  }
+  to {
+    opacity: 0.8;
+  }
 }
 
 .log-in-button {
-    background-color: sienna;
-    color: white;
-    padding: 1rem 2rem;
-    border-radius: 0.5rem;
+    background-color: rgb(171, 171, 171);
+    color: rgb(224, 223, 223);
+    padding: 0.5rem 1.5rem;
+    border-radius: 100rem;
     font-size: 1.2rem;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    margin-top: -4rem;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-variant: small-caps;
+    background-color: rgb(137, 152, 137);
+    border: double 2px rgb(202, 201, 201);
 }
 
 .log-in-button:hover {
-    background-color: rgb(127, 142, 127);
+    border: double 2px rgb(134, 134, 134);
+    background-color: rgb(215, 214, 214);
+    color: rgb(140, 138, 138);
+    transform: scale(1.05);
+    transform: translateY(-0.2rem) ;
+    transition: 0.4s ease;
 }
 
 .logo {
