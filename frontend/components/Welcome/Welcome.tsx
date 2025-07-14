@@ -14,8 +14,13 @@ export default function Welcome() {
                         <circle className="checkbox-circle" cx="26" cy="26" r="25" fill="none" />
                         <path className="checkbox-check" fill="none" d="M14 27l7 7 16-16" />
                     </svg>
+            
                 </div>
+
+                
                 </div>
+                
+                <div><h3 className="slogan">feel first, plan better.</h3></div>
                 <button className="log-in-button" onClick={() => window.location.href = "/home"}>
                     Log In
                 </button>
