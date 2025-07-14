@@ -20,7 +20,7 @@ export default async function handler(
             timeMin: new Date().toISOString(),
             maxResults: 10,
             singleEvents: true,
-            orderBy: "startTime",
+            orderBy: "stargit putTime",
         });
         
         res.status(200).json(response.data.items);
