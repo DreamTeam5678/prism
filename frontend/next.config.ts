@@ -1,7 +1,10 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-  /* config options here */
+const nextConfig = {
+  experimental: {
+    css: {
+      // use the built-in Rust-powered transformer
+      transform: 'lightningcss',
+    },
+  },
 };
 
-export default nextConfig;
+module.exports = nextConfig;
