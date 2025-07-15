@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Calendar, momentLocalizer, View } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import "./CalendarPage.css";
+
 import Upcoming from "../Upcoming/Upcoming";
 
 

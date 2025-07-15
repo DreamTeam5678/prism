@@ -1,4 +1,3 @@
-import './Upcoming.css';
 
 interface Event {
     id: string;
