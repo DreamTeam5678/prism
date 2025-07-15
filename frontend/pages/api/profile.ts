@@ -21,6 +21,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (!user || !user.userProfile) {
       return res.status(404).json({ message: "User profile not found" });
     }
+    
+    
 
     res.status(200).json(user.userProfile);
   } catch (err) {

@@ -18,39 +18,18 @@ globalThis.__BUILD_MANIFEST = {
       "static/chunks/pages__app_5771e187._.js",
       "static/chunks/pages__app_68bb55a0._.js"
     ],
-    "/_error": [
-      "static/chunks/[root-of-the-server]__8df7605f._.js",
+    "/calendar": [
+      "static/chunks/node_modules_next_dist_6793988e._.js",
       "static/chunks/node_modules_react-dom_82bb97c6._.js",
-      "static/chunks/node_modules_a51498a5._.js",
-      "static/chunks/[root-of-the-server]__923cb372._.js",
-      "static/chunks/pages__error_5771e187._.js",
-      "static/chunks/pages__error_ec6747c0._.js"
-    ],
-    "/dashboard": [
-      "static/chunks/node_modules_next_63387682._.js",
-      "static/chunks/node_modules_react-dom_82bb97c6._.js",
-      "static/chunks/node_modules_8a6ff2e0._.js",
-      "static/chunks/[root-of-the-server]__4df0d5d1._.js",
-      "static/chunks/components_Dashboard_Dashboard_ea2b9dbe.css",
-      "static/chunks/pages_dashboard_5771e187._.js",
-      "static/chunks/pages_dashboard_e8658e08._.js"
-    ],
-    "/home": [
-      "static/chunks/node_modules_next_dist_4f3d469a._.js",
-      "static/chunks/node_modules_react-dom_82bb97c6._.js",
-      "static/chunks/node_modules_8a6ff2e0._.js",
-      "static/chunks/[root-of-the-server]__1982e453._.js",
-      "static/chunks/pages_home_5771e187._.js",
-      "static/chunks/pages_home_a8c3ad63._.js"
-    ],
-    "/survey": [
-      "static/chunks/node_modules_next_472ef80d._.js",
-      "static/chunks/node_modules_react-dom_82bb97c6._.js",
-      "static/chunks/node_modules_b3c9395e._.js",
-      "static/chunks/[root-of-the-server]__c9d8937e._.js",
-      "static/chunks/components_Survey_Survey_47d775f0.css",
-      "static/chunks/pages_survey_5771e187._.js",
-      "static/chunks/pages_survey_d5074d65._.js"
+      "static/chunks/node_modules_lodash_16f19037._.js",
+      "static/chunks/node_modules_@popperjs_core_lib_4ca1a9c2._.js",
+      "static/chunks/node_modules_react-big-calendar_dist_react-big-calendar_esm_51c7838e.js",
+      "static/chunks/node_modules_moment_5a2e1172._.js",
+      "static/chunks/node_modules_ebc2e1f0._.js",
+      "static/chunks/[root-of-the-server]__c4d92f0f._.js",
+      "static/chunks/_e29dff75._.css",
+      "static/chunks/pages_calendar_5771e187._.js",
+      "static/chunks/pages_calendar_1406e9cc._.js"
     ]
   },
   "devFiles": [],

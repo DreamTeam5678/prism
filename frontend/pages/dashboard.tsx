@@ -30,6 +30,7 @@ export default function DashboardPage() {
       if (status !== 'authenticated') return;
 
       try {
+        
         setIsLoadingProfile(true);
         setError(null);
         const res = await fetch('/api/profile');
@@ -37,7 +38,6 @@ export default function DashboardPage() {
         if (!res.ok) {
           throw new Error('Failed to fetch profile');
         }
-        
         const data: Profile = await res.json();
         setProfile(data);
       } catch (err) {
