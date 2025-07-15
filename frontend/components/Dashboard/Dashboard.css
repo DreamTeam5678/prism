@@ -1,0 +1,95 @@
+/* Dashboard.css */
+
+body {
+  background: linear-gradient(to bottom right, #fef6ff, #e9e0ff);
+  font-family: 'Sofia', sans-serif;
+  color: #444;
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  font-size: 2.5rem;
+  color: #7c5e99;
+  margin-bottom: 1rem;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.text-lg {
+  font-size: 1.125rem;
+  color: #666;
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto 2rem;
+  line-height: 1.6;
+}
+
+.dashboard-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 2rem;
+  padding: 2.5rem;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f0eaff;
+}
+
+.dashboard-section {
+  margin-bottom: 2rem;
+}
+
+.dashboard-section h2 {
+  font-weight: 600;
+  font-size: 1.25rem;
+  color: #6c4d8c;
+  margin-bottom: 0.5rem;
+}
+
+.dashboard-section p,
+.dashboard-section ul {
+  font-size: 1rem;
+  color: #555;
+  margin: 0;
+}
+
+.dashboard-section ul {
+  list-style: disc;
+  padding-left: 1.5rem;
+}
+
+.dashboard-avatar {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.dashboard-avatar img {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #cbb5ec;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-button {
+  background: linear-gradient(to right, #a78bfa, #fb7185);
+  padding: 0.75rem 2rem;
+  color: white;
+  font-weight: bold;
+  border-radius: 1rem;
+  font-size: 1.125rem;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.dashboard-button:hover {
+  background: linear-gradient(to right, #8b5cf6, #f43f5e);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}

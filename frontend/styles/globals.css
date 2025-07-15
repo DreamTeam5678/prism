@@ -1,0 +1,9 @@
+/* Reset all weird inherited styles */
+body {
+  all: unset;
+  display: block;
+  height: auto;
+  width: 100%;
+  background: white;
+  font-family: system-ui, sans-serif;
+}
