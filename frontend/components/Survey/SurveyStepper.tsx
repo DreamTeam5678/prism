@@ -145,7 +145,7 @@ export default function SurveyStepper() {
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { User, ClipboardList, MapPin, Cloud, Sun, Target, AlertCircle, ThumbsDown, Home, Thermometer } from 'lucide-react';
-import './Survey.css';
+import './Survey.module.css';
 
 const steps = [
   'currentMode', 'planningStyle', 'idealSelf', 'blockers', 'environment', 'climate', 'dislikes'
@@ -199,7 +199,7 @@ export default function SurveyStepper() {
       const surveyData = { ...form, createdAt: new Date().toISOString() };
       console.log('Survey data:', surveyData);
       alert('Survey submitted successfully!');
-      router.push('/dashboard');
+      router.push('/calendar');
     } catch {
       alert('Failed to submit');
     }

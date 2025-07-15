@@ -1,9 +1,9 @@
-/* Reset all weird inherited styles */
-body {
-  all: unset;
-  display: block;
-  height: auto;
-  width: 100%;
-  background: white;
-  font-family: system-ui, sans-serif;
+@import url('https://fonts.googleapis.com/css2?family=Sacramento&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sofia&display=swap');
+
+h1, p {
+  font-family: 'Sofia', cursive;
+  font-weight: 600;
+  color: #444;
+  text-align: center;
 }

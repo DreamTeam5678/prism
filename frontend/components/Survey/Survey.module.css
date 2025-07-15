@@ -157,12 +157,7 @@ body::before {
   margin-right: 1rem;
 }
 
-h1, p {
-  font-family: 'Sofia', cursive;
-  font-weight: 600;
-  color: #444;
-  text-align: center;
-}
+
 
 
 .progress-bar {
