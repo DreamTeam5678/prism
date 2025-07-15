@@ -8,6 +8,7 @@ import "../components/CalendarPage/Upcoming/Upcoming.css";
 import "../styles/globals.css";
 import "../components/CalendarPage/Calendar/CalendarPage.css";
 import "../components/CalendarPage/Upcoming/Upcoming.css";
+import "../components/NavBar/NavBar.css";
 import '../styles/globals.css';
 
 export default function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {

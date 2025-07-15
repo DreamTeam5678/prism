@@ -2,10 +2,10 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
+  "/survey": "pages/survey.js",
+  "/api/profile": "pages/api/profile.js",
+  "/api/calendar/list": "pages/api/calendar/list.js",
   "/calendar": "pages/calendar.js",
   "/api/auth/[...nextauth]": "pages/api/auth/[...nextauth].js",
-  "/api/calendar/list": "pages/api/calendar/list.js",
-  "/": "pages/index.js",
-  "/api/profile": "pages/api/profile.js",
-  "/survey": "pages/survey.js"
+  "/": "pages/index.js"
 }
