@@ -1,4 +1,5 @@
 globalThis.__BUILD_MANIFEST = {
+<<<<<<< HEAD
   "pages": {
     "/": [
       "static/chunks/node_modules_next_dist_4f3d469a._.js",
@@ -33,10 +34,40 @@ globalThis.__BUILD_MANIFEST = {
     ]
   },
   "devFiles": [],
+=======
+  "polyfillFiles": [
+    "static/chunks/polyfills.js"
+  ],
+  "devFiles": [
+    "static/chunks/react-refresh.js"
+  ],
+>>>>>>> 3385bb47616bb424d167a9171f7e26bb69594e91
   "ampDevFiles": [],
-  "polyfillFiles": [],
   "lowPriorityFiles": [],
   "rootMainFiles": [],
+  "rootMainFilesTree": {},
+  "pages": {
+    "/": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/index.js"
+    ],
+    "/_app": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/_app.js"
+    ],
+    "/_error": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/_error.js"
+    ],
+    "/home": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/home.js"
+    ]
+  },
   "ampFirstPages": []
 };
 globalThis.__BUILD_MANIFEST.lowPriorityFiles = [

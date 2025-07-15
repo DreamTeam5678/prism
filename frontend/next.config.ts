@@ -1,10 +1,13 @@
+import path from 'path';
+console.log("🧠 Loading next.config.ts");
 const nextConfig = {
   experimental: {
-    css: {
-      // use the built-in Rust-powered transformer
-      transform: 'lightningcss',
-    },
+    turbo: false,
+  },
+  webpack(config: any) {         
+    config.resolve.alias['@backend'] = path.resolve(__dirname, '../backend');
+    return config;
   },
 };
 
-module.exports = nextConfig;
+export default nextConfig;

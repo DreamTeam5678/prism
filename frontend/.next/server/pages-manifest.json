@@ -1,8 +1,16 @@
 {
-  "/": "pages/index.js",
   "/_app": "pages/_app.js",
+<<<<<<< HEAD
   "/_document": "pages/_document.js",
   "/api/auth/[...nextauth]": "pages/api/auth/[...nextauth].js",
   "/api/calendar/list": "pages/api/calendar/list.js",
   "/calendar": "pages/calendar.js"
+=======
+  "/_error": "pages/_error.js",
+  "/_document": "pages/_document.js",
+  "/home": "pages/home.js",
+  "/api/auth/[...nextauth]": "pages/api/auth/[...nextauth].js",
+  "/": "pages/index.js",
+  "/api/profile": "pages/api/profile.js"
+>>>>>>> 3385bb47616bb424d167a9171f7e26bb69594e91
 }
