@@ -8,7 +8,7 @@ export default async function handler(
     res: NextApiResponse
 ) {
     try{
-        const token = await getToken({ req });
+        const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
         if (!token || !token.accessToken) {
             return res.status(401).json({ error: "Unauthorized" });
@@ -20,10 +20,12 @@ export default async function handler(
                 summary: "Task 1",
                 description: "Do this now",
                 start: {
-                    dateTime: "2025-07-10T14:00:00-07:00" },
-                    end: {
-                        dateTime: "2025-07-10T15:00:00-07:00" },
+                    dateTime: "2025-07-10T14:00:00-07:00",
+               },
+                end: {
+                    dateTime: "2025-07-10T15:00:00-07:00",
                 },
+            },
         });
     res.status(200).json(response.data);
 

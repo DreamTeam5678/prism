@@ -6,6 +6,7 @@ import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
 import Upcoming from "../Upcoming/Upcoming";
+import { start } from "repl";
 
 
 const localizer = momentLocalizer(moment);
@@ -48,15 +49,22 @@ export default function CalendarPage() {
           return res.json();
         })
         .then((data) => {
-          setEvents(data);
-        })
-        .catch((err) => {
-          console.error("Error fetching calendar events:", err);
-          setError("Unable to load calendar events. Please try again later.");
-        })
-        .finally(() => {
-          setLoading(false);
-        });
+          const formatted = data.map((event: any) => ({
+            id: event.id,
+            title: event.summary || "No Title",
+            start: new Date(event.start?.dateTime || event.start?.date),
+            end: new Date(event.end?.dateTime || event.end?.date),
+            description: event.description || "",
+        }));
+        setEvents(formatted);  
+      }) 
+      .catch((err) => {
+        console.error("Error fetching calendar events:", err);
+        setError("Unable to load calendar events. Please try again later.");
+      })
+      .finally(() => {
+        setLoading(false);
+      });
     }
   }, [status]);
 

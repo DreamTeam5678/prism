@@ -13,7 +13,7 @@ export default async function handler(
     res: NextApiResponse
 ) {
     try {
-        const token = await getToken({ req }) as Token;
+        const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
         
 
         if (!token || !token.accessToken) {
