@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Calendar, momentLocalizer, View } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-
+import NavBar from "../../NavBar/NavBar";
 import Upcoming from "../Upcoming/Upcoming";
 import { start } from "repl";
 
@@ -117,7 +117,7 @@ export default function CalendarPage() {
         </div>
 
         <div className="signout-button-wrapper">
-          <button onClick={() => signOut()} className="signout-button">
+           <button onClick={() => signOut({ callbackUrl: "/" })} className="signout-button">
             Sign out
           </button>
         </div>
