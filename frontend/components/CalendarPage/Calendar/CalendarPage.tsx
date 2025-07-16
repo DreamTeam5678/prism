@@ -7,26 +7,11 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import NavBar from "../../NavBar/NavBar";
 import Upcoming from "../Upcoming/Upcoming";
 import { start } from "repl";
+import Optimize from "../Optimize/Optimize";
 
 
 const localizer = momentLocalizer(moment);
 
-const mockEvents = [
-  {
-    id: "1",
-    title: "Task 1",
-    start: new Date("2025-07-10T14:00:00-07:00"),
-    end: new Date("2025-07-10T15:00:00-07:00"),
-    description: "Do this now",
-  },
-  {
-    id: "2",
-    title: "Task 2",
-    start: new Date("2025-07-11T14:00:00-07:00"),
-    end: new Date("2025-07-11T15:00:00-07:00"),
-    description: "Do this later",
-  },
-];
 
 
 
@@ -86,7 +71,10 @@ export default function CalendarPage() {
   }
 
   return (
+    <div>
+        <NavBar />
     <div className="page-wrapper">
+       <Optimize />
       <div className="calendar-container">
         <h1 className="calendar-title">Your Calendar</h1>
 
@@ -110,7 +98,7 @@ export default function CalendarPage() {
             endAccessor="end"
             view={view}
             onView={(newView) => setView(newView)}
-            views={["day", "week", "month", "agenda"]}
+            views={["day", "week", "month"]}
             style={{ height: "100%" }}
             min={new Date(new Date().setHours(6, 0, 0))}
           />
@@ -124,6 +112,7 @@ export default function CalendarPage() {
       </div>
 
       <Upcoming events={events} />
+    </div>
     </div>
   );
 }
