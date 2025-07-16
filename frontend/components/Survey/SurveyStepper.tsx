@@ -145,7 +145,7 @@ export default function SurveyStepper() {
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { User, ClipboardList, MapPin, Cloud, Sun, Target, AlertCircle, ThumbsDown, Home, Thermometer } from 'lucide-react';
-import './Survey.module.css';
+import styles from './Survey.module.css';
 
 const steps = [
   'currentMode', 'planningStyle', 'idealSelf', 'blockers', 'environment', 'climate', 'dislikes'
@@ -164,13 +164,13 @@ const iconsMap: Record<StepKey, JSX.Element> = {
 };
 
 const Progress = ({ value }: { value: number }) => (
-  <div className="progress-bar">
-    <div className="progress-bar-filled" style={{ width: `${value}%` }} />
+  <div className={styles["progress-bar"]}>
+    <div className={styles["progress-bar-filled"]} style={{ width: `${value}%` }} />
   </div>
 );
 
 const OptionCard = ({ option, isSelected, onClick, emoji, description }: { option: string; isSelected: boolean; onClick: () => void; emoji?: string; description?: string }) => (
-  <div className={`option-card ${isSelected ? 'selected' : ''}`} onClick={onClick}>
+  <div className={`${styles["option-card"]} ${isSelected ? styles["selected"] : ""}`} onClick={onClick}>
     <span>{emoji}</span>
     <div>
       <div>{option}</div>
@@ -306,21 +306,21 @@ export default function SurveyStepper() {
   const currentStepData = stepData[currentStepKey];
 
   return (
-    <div className="survey-body">
-      <div className="survey-container">
+    <div className={styles["survey-body"]}>
+      <div className={styles["survey-container"]}>
         <Progress value={((step + 1) / steps.length) * 100} />
-        <div className="text-4xl mb-4 icon-wrapper">
+        <div className={`${styles["icon-wrapper"]} text-4xl mb-4`}>
           {iconsMap[currentStepKey]}
         </div>
         <h1>{currentStepData.title}</h1>
         <p>{currentStepData.subtitle}</p>
         {currentStepData.maxSelections && (
-          <p className="text-sm text-purple-600 mt-2">
+          <p className={`${styles.selectionCount} text-sm text-purple-600 mt-2`}>
             Selected: {form[currentStepKey].length} / {currentStepData.maxSelections}
           </p>
         )}
 
-        <div className="options-list">
+        <div className={styles["options-list"]} id="options-list">
           {currentStepData.options.map((option) => (
             <OptionCard
               key={option.value}
@@ -336,11 +336,11 @@ export default function SurveyStepper() {
           ))}
         </div>
 
-        <div className="navigation-buttons">
-          {step > 0 && <button className="nav-button back" onClick={() => setStep(step - 1)}>Back</button>}
+        <div className={styles["navigation-buttons"]}>
+          {step > 0 && <button className={`${styles["nav-button"]} ${styles["back"]}`} onClick={() => setStep(step - 1)}>Back</button>}
           {step < steps.length - 1
-            ? <button className="nav-button next" onClick={() => setStep(step + 1)} disabled={form[currentStepKey].length === 0}>Next</button>
-            : <button className="nav-button submit" onClick={handleSubmit} disabled={form[currentStepKey].length === 0}>Let's Get Started! 🚀</button>
+            ? <button className={`${styles["nav-button"]} ${styles["next"]}`} onClick={() => setStep(step + 1)} disabled={form[currentStepKey].length === 0}>Next</button>
+            : <button className={`${styles["nav-button"]} ${styles["submit"]}`} onClick={handleSubmit} disabled={form[currentStepKey].length === 0}>Let's Get Started! 🚀</button>
           }
         </div>
       </div>
