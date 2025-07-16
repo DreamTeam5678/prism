@@ -48,9 +48,7 @@ export default function Upcoming({ events }: Props) {
             <div className="upcoming-item-time">
               {formatDateTime(event.start)} - {formatDateTime(event.end)}
             </div>
-            {event.description && (
-              <div className="upcoming-item-desc">{event.description}</div>
-            )}
+            
           </li>
         ))}
       </ul>
