@@ -9,7 +9,7 @@ export default async function handler(
 ) {
     try{
         const { eventId } = req.query;
-        const token = await getToken({ req });
+        const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
         if (!token || !token.accessToken) {
             return res.status(401).json({ error: "Unauthorized" });

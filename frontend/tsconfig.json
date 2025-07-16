@@ -2,11 +2,7 @@
   "compilerOptions": {
     "typeRoots": ["./types", "./node_modules/@types"],
     "target": "ES2017",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -18,32 +14,14 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "types": [
-      "node",
-      "next",
-      "next-auth"
-    ],
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
+    "types": ["node", "next", "next-auth"],
+    "plugins": [{ "name": "next" }],
+    "baseUrl": ".",                            // 🔥 Required for alias to work
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./*"],
+      "@backend/*": ["../backend/*"]
     }
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "../.next/types/**/*.ts",
-    "../next-env.d.ts",
-    "src/pages/api/auth/[...nextauth].ts",
-    "types/next-auth.d.ts",
-    ".next/types/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"]
 }
