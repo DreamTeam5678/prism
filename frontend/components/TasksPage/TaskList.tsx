@@ -15,37 +15,73 @@ export default function TaskList() {
     const [newTaskText, setNewTaskText] = useState<string>("");
     const [editTaskId, setEditTaskId] = useState<number | null>(null);
     const [editTaskText, setEditTaskText] = useState<string>("");
-    const [isMounted, setIsMounted] = useState<boolean>(false);
+   
+
+
 
     useEffect(() => {
-        setIsMounted(true);
-        const savedTasks = localStorage.getItem("tasks");
-        if (savedTasks) {
-            setTasks(JSON.parse(savedTasks));
-        }
+        fetch("http://localhost:3000/api/tasks", { credentials: "include" })
+            .then((response) => response.json())
+            .then((data) => {
+                setTasks(data);
+            })
+            .catch((error) => {
+                console.error("Error fetching tasks:", error);
+            });
     }, []);
 
-    useEffect(() => {
-        if (isMounted) {
-            localStorage.setItem("tasks", JSON.stringify(tasks));
-        }
-    }, [tasks, isMounted]);
-
     const addTask = (): void => {
-        if (newTaskText.trim() !== "") {
-            setTasks([...tasks, { id: Date.now(), text: newTaskText, completed: false }]);
-            setNewTaskText("");
-        }
+        if (!newTaskText.trim()) return;
+        const res = fetch("http://localhost:3000/api/tasks", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ text: newTaskText, completed: false }),
+        });
+
+        res.then(response => response.json())
+            .then(data => {
+                setTasks([...tasks, data]);
+                setNewTaskText("");
+            })
+            .catch(error => {
+                console.error("Error adding task:", error);
+            });
     };
 
-    const toggleTaskCompletion = (id: number): void => {
+    const toggleTaskCompletion = async(id: number) => {
+        const task = tasks.find(task => task.id === id);
+        if (!task) return;
+        
+        const res = await fetch(`http://localhost:3000/api/tasks/${id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ text: task.text, completed: !task.completed }),
+        });
+
+        const updatedTask = await res.json();
         setTasks(tasks.map(task => 
-            task.id === id ? { ...task, completed: !task.completed } : task
+            task.id === id ? { ...task, completed: updatedTask.completed } : task
         ));
+
+        console.log("Task completion toggled:", id);
+        console.log("Updated task:", updatedTask);
+        setNewTaskText("");
+        setEditTaskId(null);
+        setEditTaskText("");
     };
 
-    const deleteTask = (id: number): void => {
+    const deleteTask = async (id: number) => {
+        await fetch(`http://localhost:3000/api/tasks/${id}`, {
+            method: "DELETE",
+        });
+
         setTasks(tasks.filter(task => task.id !== id));
+        
+        console.log("Task deleted:", id);
     };
 
     const startEditTask = (task: Task): void => {
@@ -54,12 +90,29 @@ export default function TaskList() {
     };
 
     const saveEditedTask = (): void => {
-        if (editTaskText.trim() === "") return;
-        setTasks(tasks.map(task => 
-            task.id === editTaskId ? { ...task, text: editTaskText } : task
-        ));
-        setEditTaskId(null);
-        setEditTaskText("");
+        const res = fetch(`http://localhost:3000/api/tasks/${editTaskId}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ text: editTaskText, completed: false }),
+        });
+
+        res.then(response => response.json())
+            .then(data => {
+                setTasks(tasks.map(task => 
+                    task.id === editTaskId ? { ...task, text: data.text } : task
+                ));
+                setEditTaskId(null);
+                setEditTaskText("");
+            })
+            .catch(error => {
+                console.error("Error updating task:", error);
+            });
+       
+        console.log("Task updated:", editTaskId);
+        
+        
     };
 
     const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>): void => {
