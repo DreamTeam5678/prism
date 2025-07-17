@@ -11,6 +11,8 @@ import "../components/CalendarPage/Upcoming/Upcoming.css";
 import '../styles/globals.css';
 import "../components/NavBar/NavBar.css";
 import "../components/CalendarPage/Optimize/Optimize.css";
+import "../components/TasksPage/TaskList.css";
+
 
 export default function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   return (
