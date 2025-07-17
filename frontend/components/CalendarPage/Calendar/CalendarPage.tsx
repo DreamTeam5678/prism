@@ -6,7 +6,6 @@ import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import NavBar from "../../NavBar/NavBar";
 import Upcoming from "../Upcoming/Upcoming";
-import { start } from "repl";
 import Optimize from "../Optimize/Optimize";
 
 
@@ -26,7 +25,7 @@ export default function CalendarPage() {
   useEffect(() => {
     if (status === "authenticated") {
       setLoading(true);
-      fetch("/api/calendar/list", { credentials: "include" })
+      fetch("http://localhost:3000/api/calendar/list", { credentials: "include" })
         .then((res) => {
           if (!res.ok) {
             throw new Error("Failed to fetch calendar events");
