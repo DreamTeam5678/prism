@@ -146,7 +146,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { User, ClipboardList, MapPin, Cloud, Sun, Target, AlertCircle, ThumbsDown, Home, Thermometer } from 'lucide-react';
 import styles from './Survey.module.css';
-
+import { submitSurvey } from '@/lib/saveSurvey';
 const steps = [
   'currentMode', 'planningStyle', 'idealSelf', 'blockers', 'environment', 'climate', 'dislikes'
 ] as const;
@@ -182,6 +182,7 @@ const OptionCard = ({ option, isSelected, onClick, emoji, description }: { optio
 export default function SurveyStepper() {
   const router = useRouter();
   const [step, setStep] = useState(0);
+  const [loading, setLoading] = useState(false);
   const [form, setForm] = useState<Record<StepKey, string[]>>({
     currentMode: [], planningStyle: [], idealSelf: [], blockers: [], environment: [], climate: [], dislikes: []
   });
@@ -196,12 +197,12 @@ export default function SurveyStepper() {
 
   const handleSubmit = async () => {
     try {
-      const surveyData = { ...form, createdAt: new Date().toISOString() };
-      console.log('Survey data:', surveyData);
-      alert('Survey submitted successfully!');
+      await submitSurvey(form);
       router.push('/calendar');
-    } catch {
-      alert('Failed to submit');
+    } catch(error: any) {
+      alert(error.message || 'Failed to submit');
+    } finally {
+      setLoading(false);
     }
   };
 

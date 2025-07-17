@@ -27,10 +27,10 @@ export function mapTags(profile: UserProfileInput): string[] {
   // === Aspirations ===
   if (profile.idealSelf.includes("disciplined_structured")) tags.push("structured_planner");
   if (profile.idealSelf.includes("calm_balanced")) tags.push("calm_builder");
-  if (profile.idealSelf.includes("productive_without_burnout")) tags.push("balance_seeker");
+  if (profile.idealSelf.includes("productive_no_burnout")) tags.push("balance_seeker");
   if (profile.idealSelf.includes("creative_fulfilled")) tags.push("creative_achiever");
-  if (profile.idealSelf.includes("mentally_clear_intentional")) tags.push("intentional_living");
-  if (profile.idealSelf.includes("flexible_but_consistent")) tags.push("flexible_living");
+  if (profile.idealSelf.includes("mentally_clear")) tags.push("intentional_living");
+  if (profile.idealSelf.includes("flexible_consistent")) tags.push("flexible_living");
   if (profile.idealSelf.includes("energetic_inspired")) tags.push("inspired_achiever");
   if (profile.idealSelf.includes("focused_driven")) tags.push("health_conscious");
 
@@ -70,9 +70,3 @@ export function mapTags(profile: UserProfileInput): string[] {
   */
   return tags;
 }
-const tags = mapTags(form); 
-const surveyData = {
-  ...form,
-  behaviorTags: tags,
-  createdAt: new Date().toISOString()
-};

@@ -56,18 +56,14 @@ model UserProfile {
   id              String   @id @default(uuid())
   user            User     @relation(fields: [userId], references: [id])
   userId          String   @unique
-
-  role            String   
-  planningStyle   String   
+  currentMode     String[]   
+  planningStyle   String[]   
   idealSelf       String[] 
   blockers        String[] 
   dislikes        String[] 
-
-  locationType    String?  
-  climate         String?  
-  energyAccess    String?  
-
-  supportStyle    String?  
+  environment     String[]
+  climate         String[]
+  behaviorTags    String[]
 
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
