@@ -26,7 +26,7 @@ export default function CalendarPage() {
   useEffect(() => {
     if (status === "authenticated") {
       setLoading(true);
-      fetch("/api/calendar/list", { credentials: "include" })
+      fetch("http://localhost:3001/api/calendar/list", { credentials: "include" })
         .then((res) => {
           if (!res.ok) {
             throw new Error("Failed to fetch calendar events");

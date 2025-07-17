@@ -13,6 +13,7 @@ import "../components/NavBar/NavBar.css";
 import "../components/CalendarPage/Optimize/Optimize.css";
 import "../components/TasksPage/TaskList.css";
 
+import "../components/MoodModal/MoodModal.css";
 
 export default function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   return (
