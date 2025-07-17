@@ -15,7 +15,7 @@ export default function Optimize() {
     console.log("Selected mood:", mood);
     setShowModal(false);
 
-    // Later: POST to backend using mood + session.user.id
+
   };
 
   return (

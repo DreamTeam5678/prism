@@ -1,173 +1,141 @@
+
+
 .task-list-container {
-    max-width: 600px;
-    width: 90%;
-    background-color: rgba(255, 255, 255, 0.428);
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    margin: 40px auto;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  max-width: 600px;
+  width: 90%;
+  background: linear-gradient(to bottom right, #fdf6e399, #c893475e);
+  border: 2px ridge #d4af7f;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+  margin: auto;
+  transform: translateY(50px);
+  
+
 }
 
 .task-list-title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-    color: #5b6d96;
-    text-align: center;
-    border-bottom: 2px solid #5b6d96;
-    padding-bottom: 8px;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #6b4c3b;
+  text-align: center;
+  border-bottom: 1.5px solid #a9865a;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
 }
 
 .task-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 .task-item {
-    border-bottom: 1px solid #e5e7eb;
-    padding: 10px 0;
-}
-
-.task-item:last-child {
-    border-bottom: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 5px;
+  padding-bottom: 3px;
+  margin-bottom: 7px;
+  background-color: #fffaf077;
+  border: 1px solid #e0c9a6;
+  border-radius: 8px;
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.05);
 }
 
 .task-item-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+ 
 }
 
 .task-item-title {
-    font-weight: 600;
-    font-size: 1.1rem;
-    color: #111827;
-    flex-grow: 1;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-size: 1.2rem;
+  color: #54412dda;
+  font-weight: 300;
+  word-break: break-word;
 }
 
-.task-item-time {
-    font-size: 0.9rem;
-    color: #6b7280;
+.task-item-title.completed {
+  text-decoration: line-through;
+  color: #a0a0a0;
 }
 
-.task-item-bottom {
-    margin-top: 6px;
-    display: flex;
-    gap: 10px;
+
+.task-item-controls button {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
 }
 
-.task-item-edit,
-.task-item-delete {
-    font-size: 0.85rem;
-    padding: 4px 10px;
-    border: none;
-    border-radius: 6px;
-    color: white;
-    background-color: #4b5563;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-.task-item-edit:hover {
-    background-color: #5b6d96;
-}
-
-.task-item-delete:hover {
-    background-color: #c53030;
+.priority-select {
+  font-family: 'Patrick Hand', cursive;
+  background-color: #fffef2;
+  border: 1px solid #d4af7f;
+  border-radius: 8px;
+  padding: 6px;
+  font-size: 1rem;
+  margin-top: 8px;
 }
 
 .task-input-container {
-    display: flex;
-    justify-content: center;
-    margin-top: 1rem;
-    gap: 10px;
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+  gap: 10px;
+  
 }
 
 .task-input {
-    flex: 1;
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 1rem;
-    font-size: 1.1rem;
-    font-family: 'Gill Sans', sans-serif;
-    background-color: rgba(255, 255, 255, 0.8);
-    margin-top: 1rem;
+  flex: 1;
+  padding: 3px;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  background-color: #fffef237;
+  padding-left: 10px;
 }
 
 .add-task-button {
-    padding: 0.5rem 1rem;
-    border-radius: 100rem;
-    font-size: 1.1rem;
-    cursor: pointer;
-    background-color: #9b87a6;
-    color: white;
-    border: none;
-    transition: background-color 0.2s ease;
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    margin-top: 1rem;
+  padding: 3px 15px;
+  border-radius: 1000px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  background-color: #d4af7f53;
+  color: rgb(134, 107, 67);
+  border: double 1.5px #6a5335;
+  transition: transform 0.2s ease;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif
 }
 
 .add-task-button:hover {
-    background-color: #7f3423;
-    transform: scale(1.03);
+  background-color: #bc865c6e;
+  transform: scale(1.05);
 }
 
 .task-edit-container {
-    display: flex;
-    justify-content: center;
-    margin-top: 1rem;
-    gap: 10px;
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+  gap: 10px;
 }
 
-.task-edit-container input {
-    flex: 1;
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 1rem;
-    font-size: 1.1rem;
-    font-family: 'Gill Sans', sans-serif;
-    background-color: rgba(255, 255, 255, 0.8);
-    margin-top: 1rem;
+.task-item-controls {
+  display: flex;
+  
 }
 
-.task-edit-container button {
-    padding: 0.5rem 1rem;
-    border-radius: 100rem;
-    font-size: 1.1rem;
-    cursor: pointer;
-    background-color: #9b87a6;
-    color: white;
-    border: none;
-    transition: background-color 0.2s ease;
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    margin-top: 1rem;
-}
+.priority-select {
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  background-color: #fffef2;
+  border: 1px solid #d4af7f;
+  border-radius: 8px;
+  font-size: 1rem;
+  margin-top: -1px;
 
-.task-edit-container button:hover {
-    background-color: #7f3423;
-    transform: scale(1.03);
-}
-
-.task-edit-container button:disabled {
-    background-color: #9b87a6;
-    color: white;
-    cursor: not-allowed;
-}
-
-.task-edit-container input:disabled {
-    background-color: rgba(255, 255, 255, 0.8);
-    color: #4b5563;
-    border: 1px solid #ccc;
-    border-radius: 1rem;
-    font-size: 1.1rem;
-    font-family: 'Gill Sans', sans-serif;
-    margin-top: 1rem;
-}
-
-.task-edit-container input:focus {
-    outline: none;
-    border-color: #9b87a6;
 }
