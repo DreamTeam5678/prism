@@ -30,7 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 export const config = {
     api: {
         bodyParser: {
-            sizeLimit: "1mb", // Adjust as needed
+            sizeLimit: "1mb", 
         },
     },
 };
