@@ -36,6 +36,7 @@ model Task {
   updatedAt DateTime @updatedAt
 }
 
+
 model Suggestion {
   id        String   @id @default(uuid())
   user      User     @relation(fields: [userId], references: [id])

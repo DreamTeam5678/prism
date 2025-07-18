@@ -16,6 +16,8 @@ router.get("/list", async (req, res) => {
       },
     ];
 
+     
+
     res.json(dummyEvents);
   } catch (error) {
     console.error("❌ Calendar error:", error); // Log the actual error

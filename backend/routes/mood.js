@@ -34,6 +34,8 @@ router.get('/:userId', async (req, res) => {
       orderBy: { createdAt: 'desc' },
     });
 
+     
+
     res.status(200).json(moodLogs);
   } catch (error) {
     console.error('❌ Error fetching mood logs:', error);

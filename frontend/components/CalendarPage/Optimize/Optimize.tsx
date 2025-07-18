@@ -18,6 +18,8 @@ export default function Optimize() {
 
   };
 
+
+     
   return (
     <div className="optimize-container">
       <button className="optimize-button" onClick={() => setShowModal(true)}>
