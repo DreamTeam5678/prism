@@ -4,9 +4,14 @@ const cors = (await import("cors")).default;
 import moodRoutes from "./routes/mood.js";
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:3001",
+  Credentials: true,
+
+}
+));
 app.use(express.json());
 
 app.use("/api/mood", moodRoutes); // Mount mood tracking route

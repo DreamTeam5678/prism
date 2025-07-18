@@ -4,13 +4,15 @@ export default function NavBar() {
   const { data: session } = useSession();
 
   return (
-    <div className="nav-bar">
-      <div className="nav-bar-container">
-        <a href="/">
+    <div>
+      <a href="/">
         <div className="nav-bar-logo">
           <img src="/logo.png" alt="Prism Logo" />
         </div>
         </a>
+    
+    <div className="nav-bar">
+      <div className="nav-bar-container">
         {session && (
           <div className="nav-bar-profile">
             <img src={session.user.image} alt="Profile Picture" />
@@ -19,7 +21,7 @@ export default function NavBar() {
         )}
         <div className="nav-bar-links">
           <a href="/" className="nav-bar-link">
-            𖠿
+            ⌂
             <div className ="nav-bar-link-text">
                 Home
             </div>
@@ -45,6 +47,7 @@ export default function NavBar() {
         </div>
 
       </div>
+    </div>
     </div>
   );
 }   

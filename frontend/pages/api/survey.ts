@@ -35,18 +35,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const {
       currentMode,
-      planningStyle,
       idealSelf,
       blockers,
       dislikes,
-      environment,
-      climate,
     } = req.body;
 
     // Validation: Ensure all fields are present
     if (
-      !currentMode || !planningStyle || !idealSelf ||
-      !blockers || !dislikes || !environment || !climate
+      !currentMode || !idealSelf || !blockers || !dislikes
     ) {
       return res.status(400).json({ message: 'Missing survey data' });
     }
@@ -56,12 +52,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const normalized = {
       currentMode: normalizeField(currentMode),
-      planningStyle: normalizeField(planningStyle),
       idealSelf: normalizeField(idealSelf),
       blockers: normalizeField(blockers),
       dislikes: normalizeField(dislikes),
-      environment: normalizeField(environment),
-      climate: normalizeField(climate),
     };
 
     const behaviorTags = mapTags(normalized);

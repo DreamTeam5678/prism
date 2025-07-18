@@ -1,22 +1,23 @@
 .upcoming-container {
-  width: 400px;
+  width: 490px;
   background-color: rgba(255, 255, 255, 0.428);
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   padding: 20px;
-  margin-left: 150px;
+  margin-left: 100px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   transform: translateX(-50px);
 }
 
 .upcoming-title {
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   font-weight: 700;
   margin-bottom: 1rem;
   color: #5b6d96; 
   text-align: center;
   border-bottom: 2px solid #5b6d96;
   padding-bottom: 8px;
+  font-family: 'Sofia', cursive;
 }
 
 .upcoming-list {
@@ -26,8 +27,9 @@
 }
 
 .upcoming-item {
-  padding: 10px 0;
-  border-bottom: 1px solid #e5e7eb;
+  padding: 13px 0;
+  margin-bottom: 6px;
+  border-bottom: 1px solid #5265751c;
 }
 
 .upcoming-item:last-child {
@@ -35,9 +37,12 @@
 }
 
 .upcoming-item-title {
-  font-weight: 600;
-  font-size: 1.1rem;
+  font-weight:700;
+  font-size: 1.2rem;
   color: #111827;
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  text-align: center;
+  
 }
 
 .upcoming-item-time {

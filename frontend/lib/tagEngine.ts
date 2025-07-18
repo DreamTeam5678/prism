@@ -1,11 +1,8 @@
 type UserProfileInput = {
   currentMode: string[];
-  planningStyle: string[];
   idealSelf: string[];
   blockers: string[];
   dislikes: string[];
-  environment: string[];
-  climate: string[];
 };
 
 export function mapTags(profile: UserProfileInput): string[] {

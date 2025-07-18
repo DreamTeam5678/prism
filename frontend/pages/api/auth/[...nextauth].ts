@@ -1,7 +1,25 @@
 import NextAuth from "next-auth";
-import GoogleProvider from 'next-auth/providers/google';
+import GoogleProvider from "next-auth/providers/google";
+import prisma from "@/lib/prisma"; 
 import type { NextAuthOptions } from "next-auth";
+import type { DefaultUser } from "next-auth";
 
+declare module "next-auth" {
+  interface Session {
+    accessToken?: string;
+    refreshToken?: string;
+  }
+  interface User extends DefaultUser {
+    id?: string;
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    accessToken?: string;
+    refreshToken?: string;
+  }
+}
 export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
@@ -9,10 +27,9 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
       authorization: {
         params: {
-          scope:
-            "openid email profile https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/calendar.events",
-            access_type: "offline",
-            prompt: "consent",
+          scope: "openid email profile https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/calendar.events",
+          access_type: "offline",
+          prompt: "consent",
         },
       },
     }),
@@ -25,21 +42,37 @@ export const authOptions: NextAuthOptions = {
   },
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
-    async jwt({ token, account }: { token: any; account?: any }) {
-        if (account) {
+    async jwt({ token, account }) {
+      if (account) {
         token.accessToken = account.access_token;
         token.refreshToken = account.refresh_token;
-        }
-        return token;
+      }
+      return token;
     },
-    async session({ session, token }: { session: any; token: any }) {
-        session.accessToken = token.accessToken;
-        session.refreshToken = token.refreshToken;
-        return session;
-    }
-   }
-}
+    async session({ session, token }) {
+      session.accessToken = token.accessToken;
+      session.refreshToken = token.refreshToken;
+      return session;
+    },
+    async signIn({ user }) {
+      const existingUser = await prisma.user.findUnique({
+        where: { email: user.email! },
+      });
+
+      if (!existingUser) {
+        await prisma.user.create({
+          data: {
+            email: user.email!,
+            name: user.name,
+            image: user.image,
+          },
+        });
+      }
+
+      return true;
+    },
+  },
+};
 
 export default NextAuth(authOptions);
-
 

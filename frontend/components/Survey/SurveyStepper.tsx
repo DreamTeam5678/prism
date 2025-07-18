@@ -148,18 +148,23 @@ import { User, ClipboardList, MapPin, Cloud, Sun, Target, AlertCircle, ThumbsDow
 import styles from './Survey.module.css';
 import { submitSurvey } from '@/lib/saveSurvey';
 const steps = [
-  'currentMode', 'planningStyle', 'idealSelf', 'blockers', 'environment', 'climate', 'dislikes'
+  'currentMode',
+  'idealSelf',
+  'blockers',
+  'dislikes'
 ] as const;
+
+
 
 type StepKey = typeof steps[number];
 
 const iconsMap: Record<StepKey, JSX.Element> = {
   currentMode: <User size={32} />, 
-  planningStyle: <ClipboardList size={32} />, 
+  //planningStyle: <ClipboardList size={32} />, //
   idealSelf: <Target size={32} />, 
   blockers: <AlertCircle size={32} />, 
-  environment: <Home size={32} />, 
-  climate: <Thermometer size={32} />, 
+ // environment: <Home size={32} />, //
+ // climate: <Thermometer size={32} />, //
   dislikes: <ThumbsDown size={32} />
 };
 
@@ -184,7 +189,7 @@ export default function SurveyStepper() {
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState<Record<StepKey, string[]>>({
-    currentMode: [], planningStyle: [], idealSelf: [], blockers: [], environment: [], climate: [], dislikes: []
+    currentMode: [],idealSelf: [], blockers: [], dislikes: []
   });
 
   const handleOptionToggle = (key: StepKey, value: string, isMultiSelect = true) => {
@@ -214,9 +219,10 @@ export default function SurveyStepper() {
       options: [
         { value: 'student', label: 'Student', emoji: '🎓' },
         { value: 'professional', label: 'Professional', emoji: '💼' },
-        { value: 'everyday', label: 'Everyday', emoji: '🌟' }
+        { value: 'personal', label: 'Personal', emoji: '🌟' }
       ]
     },
+    /*
     planningStyle: {
       title: "How do you currently plan?",
       subtitle: "Tell us about your planning approach.",
@@ -228,6 +234,7 @@ export default function SurveyStepper() {
         { value: 'not_at_all', label: 'Not at All', emoji: '🤷‍♀️', description: 'Wing it completely' }
       ]
     },
+    */
     idealSelf: {
       title: "What version of you are we helping you grow into?",
       subtitle: "Pick up to 2 that resonate most with you.",
@@ -251,15 +258,14 @@ export default function SurveyStepper() {
       options: [
         { value: 'overwhelmed', label: 'I get overwhelmed easily', emoji: '😵' },
         { value: 'start_strong_fall_off', label: 'I start strong but fall off', emoji: '🌀' },
-        { value: 'forget_important', label: 'I forget what\'s important', emoji: '🧠' },
         { value: 'burnt_out', label: 'I get burnt out from over-scheduling', emoji: '😩' },
         { value: 'lose_motivation', label: 'I lose motivation quickly', emoji: '💤' },
         { value: 'get_distracted', label: 'I get distracted too much', emoji: '📱' },
         { value: 'productivity_guilt', label: 'I feel guilty when I\'m unproductive', emoji: '📉' },
         { value: 'dont_know_start', label: 'I don\'t know where to start', emoji: '🤷‍♀️' },
-        { value: 'hate_routines', label: 'I hate rigid routines', emoji: '🗓️' }
       ]
     },
+    /*
     environment: {
       title: "Where do you live most of the time?",
       subtitle: "Your surroundings shape your energy and what's realistic.",
@@ -283,12 +289,12 @@ export default function SurveyStepper() {
         { value: 'changes_lot', label: 'Changes a lot', emoji: '🌪️' }
       ]
     },
+    */
     dislikes: {
       title: "What do you not vibe with?",
       subtitle: "We'll avoid suggesting anything that makes you groan.",
       isMultiSelect: true,
       options: [
-        { value: 'waking_early', label: 'Waking up early', emoji: '🌅' },
         { value: 'intense_workouts', label: 'Intense workouts', emoji: '🏋️‍♀️' },
         { value: 'strict_routines', label: 'Strict routines', emoji: '📋' },
         { value: 'long_focus', label: 'Long focus blocks', emoji: '🔍' },
