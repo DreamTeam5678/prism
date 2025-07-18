@@ -1,5 +1,5 @@
 .upcoming-container {
-  width: 490px;
+  min-width: 300px;
   background-color: rgba(255, 255, 255, 0.428);
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
@@ -7,6 +7,7 @@
   margin-left: 100px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   transform: translateX(-50px);
+  margin-right: 50px;
 }
 
 .upcoming-title {
