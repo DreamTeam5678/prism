@@ -8,12 +8,7 @@ import NavBar from "../../NavBar/NavBar";
 import Upcoming from "../Upcoming/Upcoming";
 import Optimize from "../Optimize/Optimize";
 
-
 const localizer = momentLocalizer(moment);
-
-
-
-
 
 export default function CalendarPage() {
   const { data: session, status } = useSession();
@@ -25,11 +20,9 @@ export default function CalendarPage() {
   useEffect(() => {
     if (status === "authenticated") {
       setLoading(true);
-      fetch("http://localhost:3000/api/calendar/list", { credentials: "include" })
+      fetch("/api/calendar/list", { credentials: "include" })
         .then((res) => {
-          if (!res.ok) {
-            throw new Error("Failed to fetch calendar events");
-          }
+          if (!res.ok) throw new Error("Failed to fetch calendar events");
           return res.json();
         })
         .then((data) => {
@@ -37,24 +30,20 @@ export default function CalendarPage() {
             id: event.id,
             title: event.summary || "No Title",
             start: new Date(event.start?.dateTime || event.start?.date),
-            end: new Date(event.end?.dateTime || event.end?.date),
+            end:   new Date(event.end?.dateTime   || event.end?.date),
             description: event.description || "",
-        }));
-        setEvents(formatted);  
-      }) 
-      .catch((err) => {
-        console.error("Error fetching calendar events:", err);
-        setError("Unable to load calendar events. Please try again later.");
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+          }));
+          setEvents(formatted);
+        })
+        .catch((err) => {
+          console.error("Error fetching calendar events:", err);
+          setError("Unable to load calendar events.");
+        })
+        .finally(() => setLoading(false));
     }
   }, [status]);
 
-  if (status === "loading" || loading) {
-    return <p>Loading your calendar...</p>;
-  }
+  if (status === "loading" || loading) return <p>Loading your calendar…</p>;
 
   if (status === "unauthenticated") {
     return (
@@ -71,72 +60,85 @@ export default function CalendarPage() {
 
   return (
     <div>
-        <NavBar />
-    <div className="page-wrapper">
-       <Optimize />
-      <div className="calendar-container">
-        <h1 className="calendar-title">Your Calendar</h1>
+      <NavBar />
+      <div className="page-wrapper">
+        <Optimize />
+        <div className="calendar-container">
+          <h1 className="calendar-title">Your Calendar</h1>
+          <div className="view-toggle-group">
+            {["day", "week", "month"].map((v) => (
+              <button
+                key={v}
+                onClick={() => setView(v as View)}
+                className={`view-toggle-button ${view === v ? "active" : ""}`}
+              >
+                {v.charAt(0).toUpperCase() + v.slice(1)}
+              </button>
+            ))}
+          </div>
 
-        <div className="view-toggle-group">
-          {["day", "week", "month"].map((v) => (
+        
+          <div className="calendar-wrapper">
+            <Calendar
+              localizer={localizer}
+              events={events}
+              startAccessor="start"
+              endAccessor="end"
+              view={view}
+              onView={(newView) => setView(newView)}
+              views={["day", "week", "month"]}
+              style={{ height: "100%", width: "100%", padding: 0 }}
+              min={new Date(new Date().setHours(6, 0, 0))}
+            />
+          </div>
+
+          <div className="signout-button-wrapper">
             <button
-              key={v}
-              onClick={() => setView(v as View)}
-              className={`view-toggle-button ${view === v ? "active" : ""}`}
+              onClick={() => signOut({ callbackUrl: "/" })}
+              className="signout-button"
             >
-              {v.charAt(0).toUpperCase() + v.slice(1)}
+              Sign out
             </button>
-          ))}
+          </div>
         </div>
 
-        <div className="calendar-wrapper">
-          <Calendar
-            localizer={localizer}
-            events={events}
-            startAccessor="start"
-            endAccessor="end"
-            view={view}
-            onView={(newView) => setView(newView)}
-            views={["day", "week", "month"]}
-            style={{ height: "70vh", width: "140%",  padding: 0 }}
-            min={new Date(new Date().setHours(6, 0, 0))}
-          />
-        </div>
+        <Upcoming events={events} />
 
-        <div className="signout-button-wrapper">
-           <button onClick={() => signOut({ callbackUrl: "/" })} className="signout-button">
-            Sign out
-          </button>
-        </div>
+       
+        <style jsx global>{`
+         
+          .calendar-wrapper {
+            width: 100%;
+            max-width: 900px;
+            height: 75vh;
+            margin: 0 auto;
+          }
+
+         
+          .calendar-wrapper .rbc-calendar {
+            width: 100% !important;
+            height: 100% !important;
+          }
+
+        
+          .calendar-wrapper .rbc-month-view .rbc-row {
+            width: 100% !important;
+          }
+
+          
+          .calendar-wrapper .rbc-time-view {
+            width: 100% !important;
+          }
+
+          
+          .calendar-wrapper
+            .rbc-time-view
+            .rbc-time-content
+            .rbc-day-slot {
+            flex: 1 !important;
+          }
+        `}</style>
       </div>
-
-      <Upcoming events={events} />
-
-      <style jsx global>{`
-        .rbc-toolbar {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 8px;
-        }
-
-        .rbc-toolbar .rbc-btn-group:last-of-type {
-          display: none !important;
-        }
-
-        .rbc-toolbar .rbc-btn-group:first-of-type {
-          order: 1;
-        }
-
-        .rbc-toolbar .rbc-toolbar-label {
-          order: 2;
-          font-size: 1.25rem;
-          font-weight: bold;
-          text-align: center;
-          padding: 8px 0;
-        }
-      `}</style>
-    </div>
     </div>
   );
 }
