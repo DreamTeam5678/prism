@@ -1,14 +1,14 @@
 .nav-bar {
-  width: 100px;          /* fixed sidebar width */
-  height: 100vh;         /* full viewport height */
-  background-color: #ffffff5d;
-  box-shadow: 2px 0 12px rgba(0,0,0,0.1); /* shadow on right side */
+  width: 80px;       
+  height: 100vh;         
+  background-color: #ffffffb4;
+  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.419);
   display: flex;
-  flex-direction: column;  /* stack items vertically */
+  flex-direction: column; 
   justify-content: flex-start;
   align-items: center;
   padding: 20px 0;
-  position: fixed;       /* fix on left */
+  position: fixed;     
   top: 0;
   left: 0;
   z-index: 1000;
@@ -17,7 +17,7 @@
 
 .nav-bar-container {
   display: flex;
-  flex-direction: column; /* stack vertically */
+  flex-direction: column; 
   align-items: center;
   gap: 30px;
   width: 100%;
@@ -28,20 +28,22 @@
   align-items: center;
   gap: 10px;
   padding: 0 20px;
-  width: 100%;
   justify-content: center; 
-  margin-left: -18px;
+  margin-bottom: -80px;
+  margin-left: -1440px;
+  margin-top: 15px;
+ 
 }
 
 .nav-bar-logo img {
-  width: 100px;
+  width: 180px;
   height: auto;
 
 }
 
 .nav-bar-links {
   display: flex;
-  flex-direction: column;  /* vertical nav links */
+  flex-direction: column; 
   gap: 20px;
   width: 100%;
   padding: 0 20px;
@@ -51,7 +53,7 @@
   border-radius: 500px;
   font-size: 2rem;
   font-weight: 600;
-  color: #111827c0;
+  color: #4b2916cd;
   text-decoration: none;
   transition: background-color 0.2s ease;
   display: block;
@@ -63,9 +65,9 @@
 }
 
 .nav-bar-link-text {
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   font-variant: small-caps;
-  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
 
 .nav-bar-link:hover {
@@ -80,13 +82,16 @@
   gap: 10px;
   padding: 20px;
   width: 100%;
-  border-top: 1px solid #e5e7eb;
+ 
+
+ 
 }
 
 .nav-bar-profile img {
   width: 50px;
   height: 50px;
   border-radius: 50%;
+  box-shadow:  0 0 10px rgba(22, 7, 4, 0.754);
 }
 
 .nav-bar-profile-name {

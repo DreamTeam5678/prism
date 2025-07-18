@@ -98,7 +98,7 @@ export default function CalendarPage() {
             view={view}
             onView={(newView) => setView(newView)}
             views={["day", "week", "month"]}
-            style={{ height: "100%" }}
+            style={{ height: "70vh", width: "140%",  padding: 0 }}
             min={new Date(new Date().setHours(6, 0, 0))}
           />
         </div>
@@ -111,6 +111,31 @@ export default function CalendarPage() {
       </div>
 
       <Upcoming events={events} />
+
+      <style jsx global>{`
+        .rbc-toolbar {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .rbc-toolbar .rbc-btn-group:last-of-type {
+          display: none !important;
+        }
+
+        .rbc-toolbar .rbc-btn-group:first-of-type {
+          order: 1;
+        }
+
+        .rbc-toolbar .rbc-toolbar-label {
+          order: 2;
+          font-size: 1.25rem;
+          font-weight: bold;
+          text-align: center;
+          padding: 8px 0;
+        }
+      `}</style>
     </div>
     </div>
   );

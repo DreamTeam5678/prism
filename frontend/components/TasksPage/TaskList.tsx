@@ -1,5 +1,5 @@
 "use client";
-
+import NavBar from "./../NavBar/NavBar";
 import { useState, useEffect, KeyboardEvent } from "react";
 
 interface Task {
@@ -97,6 +97,8 @@ export default function TaskList() {
   };
 
   return (
+    <div>
+        <NavBar />
     <div className="task-list-container">
       <h1 className="task-list-title">Your Tasks</h1>
       <div className="task-list">
@@ -116,9 +118,9 @@ export default function TaskList() {
                   className="icon-btn"
                   onClick={() => { setEditId(task.id); setEditText(task.title); }}
                 >
-                  ✏️
+                  📝
                 </button>
-                <button className="icon-btn" onClick={() => del(task.id)}>❌</button>
+                <button className="icon-btn" onClick={() => del(task.id)}>❎</button>
               </div>
             </div>
             <select
@@ -156,6 +158,7 @@ export default function TaskList() {
           <button className="add-task-button" onClick={saveEdit}>Save</button>
         </div>
       )}
+    </div>
     </div>
   );
 }

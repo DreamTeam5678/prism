@@ -3,13 +3,14 @@
 .task-list-container {
   max-width: 600px;
   width: 90%;
-  background: linear-gradient(to bottom right, #fdf6e399, #c893475e);
+  background: linear-gradient(to bottom right, #fdf6e399, #c892475b);
   border: 2px ridge #d4af7f;
   border-radius: 16px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 10px 10px 10px 5px rgba(67, 43, 25, 0.494);
   padding: 30px;
   margin: auto;
   transform: translateY(50px);
+  height: 80vh;
   
 
 }
@@ -52,11 +53,11 @@
 }
 
 .task-item-title {
-  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-  font-size: 1.2rem;
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  font-size: 1.15rem;
   color: #54412dda;
-  font-weight: 300;
   word-break: break-word;
+  
 }
 
 .task-item-title.completed {
@@ -127,6 +128,7 @@
 
 .task-item-controls {
   display: flex;
+  color: whitesmoke;
   
 }
 

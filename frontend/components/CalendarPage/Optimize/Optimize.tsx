@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useSession } from "next-auth/react";
-import MoodModal from "../../MoodModal/MoodModal"; // adjust if path is different
+import MoodModal from "../../MoodModal/MoodModal"; 
 
 type Mood = {
   emoji: string;
