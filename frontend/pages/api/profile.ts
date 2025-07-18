@@ -22,7 +22,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(200).json({hasProfile: false});
     }
     
-    
 
     res.status(200).json({hasProfile: true});
   } catch (err) {

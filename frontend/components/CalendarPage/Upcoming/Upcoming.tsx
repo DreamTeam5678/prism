@@ -11,6 +11,10 @@ interface Props {
     events: Event[];
 }
 
+  
+
+
+
 export default function Upcoming({ events }: Props) {
     const now = new Date();
 
@@ -55,5 +59,4 @@ export default function Upcoming({ events }: Props) {
     </div>
   );
 }
-
 
