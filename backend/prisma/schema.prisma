@@ -61,7 +61,6 @@ model UserProfile {
   blockers        String[] 
   dislikes        String[] 
   behaviorTags    String[]
-
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }

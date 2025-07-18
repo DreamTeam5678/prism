@@ -7,7 +7,7 @@ type Mood = {
 };
 
 const moods: Mood[] = [
-  { emoji: "🚀", label: "Ambitious" },
+  { emoji: "🤑", label: "Ambitious" },
   { emoji: "😊", label: "Content" },
   { emoji: "😐", label: "Neutral" },
   { emoji: "😓", label: "Overwhelmed" },

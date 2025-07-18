@@ -130,15 +130,24 @@ export default function CalendarPage() {
             width: 100% !important;
           }
 
-          
+  
           .calendar-wrapper
             .rbc-time-view
             .rbc-time-content
             .rbc-day-slot {
             flex: 1 !important;
           }
+
+          .rbc-toolbar > .rbc-btn-group {
+          display: none !important;
+        }
+
+
         `}</style>
+
+        
       </div>
     </div>
   );
 }
+
