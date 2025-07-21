@@ -84,9 +84,6 @@ export default function CalendarPage() {
             ))}
           </div>
 
-<<<<<<< HEAD
-          {/* import from react-big-calendar */}
-=======
           {/* 🟣 Legend */}
           <div className="event-legend">
             <span style={{ background: "#9b87a6" }} /> GPT Suggestion
@@ -94,7 +91,6 @@ export default function CalendarPage() {
             <span style={{ background: "#d0e4ec" }} /> Google Event
           </div>
 
->>>>>>> e7687c7896c9060d6baae5cb4610785a4099a2dc
           <div className="calendar-wrapper">
             <Calendar
               //connecting to moment.js for date formatting
@@ -152,22 +148,11 @@ export default function CalendarPage() {
             width: 100% !important;
           }
 
-<<<<<<< HEAD
-          .calendar-wrapper
-            .rbc-time-view
-            .rbc-time-content
-            .rbc-day-slot {
-=======
           .calendar-wrapper .rbc-time-view .rbc-time-content .rbc-day-slot {
->>>>>>> e7687c7896c9060d6baae5cb4610785a4099a2dc
             flex: 1 !important;
           }
 
           .rbc-toolbar > .rbc-btn-group {
-<<<<<<< HEAD
-          display: none !important;
-        }
-=======
             display: none !important;
           }
 
@@ -188,7 +173,6 @@ export default function CalendarPage() {
             margin-right: 6px;
             border-radius: 3px;
           }
->>>>>>> e7687c7896c9060d6baae5cb4610785a4099a2dc
         `}</style>
       </div>
     </div>

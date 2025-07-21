@@ -135,15 +135,6 @@
   transition: width 0.3s ease;
 }
 
-<<<<<<< HEAD
-.survey-body p {
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
-  font-weight: lighter;
-  font-size: 0.9rem;
-  color: #444444ec;
-}
-
-=======
 /* Tablet & below */
 @media (max-width: 768px) {
   .survey-container {
@@ -204,4 +195,3 @@
     font-size: 0.8rem;
   }
 }
->>>>>>> e7687c7896c9060d6baae5cb4610785a4099a2dc
