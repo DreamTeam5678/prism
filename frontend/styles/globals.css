@@ -7,3 +7,31 @@ h1, p {
   color: #444;
   text-align: center;
 }
+
+/* Tablet screens */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2rem;
+    line-height: 2.5rem;
+  }
+
+  p {
+    font-size: 1rem;
+    line-height: 1.6rem;
+    padding: 0 1rem;
+  }
+}
+
+/* Mobile screens */
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.6rem;
+    line-height: 2.2rem;
+  }
+
+  p {
+    font-size: 0.95rem;
+    line-height: 1.5rem;
+    padding: 0 0.5rem;
+  }
+}

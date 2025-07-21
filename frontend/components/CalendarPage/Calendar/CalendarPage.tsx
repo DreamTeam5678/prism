@@ -18,8 +18,7 @@ export default function CalendarPage() {
   const [view, setView] = useState<View>("month");
 
   useEffect(() => {
-    if (status === "authenticated") {
-      setLoading(true);
+    const fetchEvents = () => {
       fetch("/api/calendar/list", { credentials: "include" })
         .then((res) => {
           if (!res.ok) throw new Error("Failed to fetch calendar events");
@@ -28,10 +27,11 @@ export default function CalendarPage() {
         .then((data) => {
           const formatted = data.map((event: any) => ({
             id: event.id,
-            title: event.summary || "No Title",
-            start: new Date(event.start?.dateTime || event.start?.date),
-            end:   new Date(event.end?.dateTime   || event.end?.date),
-            description: event.description || "",
+            title: event.title || "No Title",
+            start: new Date(event.start),
+            end: new Date(event.end),
+            description: event.source || "",
+            color: event.color ?? "#d0e4ec"
           }));
           setEvents(formatted);
         })
@@ -40,6 +40,12 @@ export default function CalendarPage() {
           setError("Unable to load calendar events.");
         })
         .finally(() => setLoading(false));
+    };
+    if (status === "authenticated"){
+      fetchEvents();
+      const listener = () => fetchEvents();
+      document.addEventListener("optimizeComplete", listener);
+      return () => document.removeEventListener("optimizeComplete", listener); 
     }
   }, [status]);
 
@@ -63,6 +69,7 @@ export default function CalendarPage() {
       <NavBar />
       <div className="page-wrapper">
         <Optimize />
+
         <div className="calendar-container">
           <h1 className="calendar-title">Your Calendar</h1>
           <div className="view-toggle-group">
@@ -77,7 +84,13 @@ export default function CalendarPage() {
             ))}
           </div>
 
-        
+          {/* 🟣 Legend */}
+          <div className="event-legend">
+            <span style={{ background: "#9b87a6" }} /> GPT Suggestion
+            <span style={{ background: "#ebdbb4" }} /> Task Bank
+            <span style={{ background: "#d0e4ec" }} /> Google Event
+          </div>
+
           <div className="calendar-wrapper">
             <Calendar
               localizer={localizer}
@@ -89,24 +102,26 @@ export default function CalendarPage() {
               views={["day", "week", "month"]}
               style={{ height: "100%", width: "100%", padding: 0 }}
               min={new Date(new Date().setHours(6, 0, 0))}
+              eventPropGetter={(event) => {
+                const backgroundColor = event.color || "#3174ad"; // default blue fallback
+                return {
+                  style: { 
+                    backgroundColor,
+                    borderRadius: "5px",
+                    color: "black",
+                    border: "none",
+                    display : "block",
+                    padding : "2px 4px",
+                  },
+                };
+              }}
             />
-          </div>
-
-          <div className="signout-button-wrapper">
-            <button
-              onClick={() => signOut({ callbackUrl: "/" })}
-              className="signout-button"
-            >
-              Sign out
-            </button>
           </div>
         </div>
 
         <Upcoming events={events} />
 
-       
         <style jsx global>{`
-         
           .calendar-wrapper {
             width: 100%;
             max-width: 900px;
@@ -114,40 +129,46 @@ export default function CalendarPage() {
             margin: 0 auto;
           }
 
-         
           .calendar-wrapper .rbc-calendar {
             width: 100% !important;
             height: 100% !important;
           }
 
-        
           .calendar-wrapper .rbc-month-view .rbc-row {
             width: 100% !important;
           }
 
-          
           .calendar-wrapper .rbc-time-view {
             width: 100% !important;
           }
 
-  
-          .calendar-wrapper
-            .rbc-time-view
-            .rbc-time-content
-            .rbc-day-slot {
+          .calendar-wrapper .rbc-time-view .rbc-time-content .rbc-day-slot {
             flex: 1 !important;
           }
 
           .rbc-toolbar > .rbc-btn-group {
-          display: none !important;
-        }
+            display: none !important;
+          }
 
+          .event-legend {
+            display: flex;
+            gap: 1.5rem;
+            font-size: 0.9rem;
+            margin: 1rem auto;
+            max-width: 900px;
+            justify-content: flex-start;
+            align-items: center;
+          }
 
+          .event-legend span {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            margin-right: 6px;
+            border-radius: 3px;
+          }
         `}</style>
-
-        
       </div>
     </div>
   );
 }
-

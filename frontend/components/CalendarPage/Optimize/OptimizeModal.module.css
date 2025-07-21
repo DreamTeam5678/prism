@@ -1,0 +1,140 @@
+@import url('https://fonts.googleapis.com/css2?family=Sacramento&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sofia&display=swap');
+
+.optimizeOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(6px);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.optimizeModal {
+  max-width: 600px;
+  width: 90%;
+  max-height: 70vh;
+  padding: 2rem 1.5rem;
+  overflow-y: auto;
+  border-radius: 1.5rem;
+  backdrop-filter: blur(10px);
+  background-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  animation: fadeIn 0.4s ease-out;
+  font-family: 'Sofia', cursive;
+}
+
+
+@keyframes fadeIn {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.closeButton {
+  position: absolute;
+  top: 1rem;
+  right: 1.5rem;
+  font-size: 3rem;
+  background: none;
+  border: none;
+  color: #9b87a6;
+  cursor: pointer;
+  font-family: 'Sofia', cursive;
+}
+
+.optimizeSection {
+  margin-top: 2rem;
+}
+
+.optimizeTaskCard {
+  background: white;
+  border: 2px solid #eee;
+  border-radius: 1.5rem;
+  padding: 1rem 1.5rem;
+  margin: 1rem 0;
+  text-align: left;
+  transition: 0.3s ease;
+  font-family: 'Gill Sans', sans-serif;
+}
+
+.optimizeTaskCard:hover {
+  border-color: #9b87a6;
+  background: #faf6ff;
+  box-shadow: 0 0 12px rgba(155, 135, 166, 0.15);
+}
+
+.optimizeTaskTitle {
+  font-size: 1.3rem;
+  color: #444;
+  font-weight: 600;
+}
+
+.optimizeTaskTime {
+  font-size: 1.1rem;
+  color: #777;
+  margin-top: 0.2rem;
+}
+
+.inputField {
+  width: 100%;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 1rem;
+  font-size: 1rem;
+  font-family: 'Sofia', cursive;
+  background-color: rgba(255, 255, 255, 0.85);
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+}
+
+
+
+@keyframes shimmer {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.iconRow {
+  margin-top: 0.75rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.iconRow button {
+  font-size: 1.2rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.75rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Sofia', cursive;
+  background-color: #f5f3f7;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.iconRow button:hover {
+  transform: translateY(-2px);
+  background-color: #e9e2f0;
+}
+.optimizeModal::-webkit-scrollbar {
+  width: 8px;
+}
+
+.optimizeModal::-webkit-scrollbar-thumb {
+  background-color: rgba(155, 135, 166, 0.4);
+  border-radius: 10px;
+}
