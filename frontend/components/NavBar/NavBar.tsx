@@ -39,12 +39,19 @@ export default function NavBar() {
                 Tasks
             </div>
           </a>
+          <a href="/flowspace" className="nav-bar-link">
+            ༄
+            <div className ="nav-bar-link-text">
+                Flow Space
+            </div>
+          </a>
           <a href="/settings" className="nav-bar-link">
             ⚙
             <div className ="nav-bar-link-text">
                 Settings
             </div>
           </a>
+          
         </div>
 
       </div>
