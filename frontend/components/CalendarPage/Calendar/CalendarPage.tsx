@@ -18,8 +18,7 @@ export default function CalendarPage() {
   const [view, setView] = useState<View>("month");
 
   useEffect(() => {
-    if (status === "authenticated") {
-      setLoading(true);
+    const fetchEvents = () => {
       fetch("/api/calendar/list", { credentials: "include" })
         .then((res) => {
           if (!res.ok) throw new Error("Failed to fetch calendar events");
@@ -28,10 +27,11 @@ export default function CalendarPage() {
         .then((data) => {
           const formatted = data.map((event: any) => ({
             id: event.id,
-            title: event.summary || "No Title",
-            start: new Date(event.start?.dateTime || event.start?.date),
-            end:   new Date(event.end?.dateTime   || event.end?.date),
-            description: event.description || "",
+            title: event.title || "No Title",
+            start: new Date(event.start),
+            end: new Date(event.end),
+            description: event.source || "",
+            color: event.color ?? "#d0e4ec"
           }));
           setEvents(formatted);
         })
@@ -40,6 +40,12 @@ export default function CalendarPage() {
           setError("Unable to load calendar events.");
         })
         .finally(() => setLoading(false));
+    };
+    if (status === "authenticated"){
+      fetchEvents();
+      const listener = () => fetchEvents();
+      document.addEventListener("optimizeComplete", listener);
+      return () => document.removeEventListener("optimizeComplete", listener); 
     }
   }, [status]);
 
@@ -63,6 +69,7 @@ export default function CalendarPage() {
       <NavBar />
       <div className="page-wrapper">
         <Optimize />
+
         <div className="calendar-container">
           <h1 className="calendar-title">Your Calendar</h1>
           <div className="view-toggle-group">
@@ -77,7 +84,17 @@ export default function CalendarPage() {
             ))}
           </div>
 
+<<<<<<< HEAD
           {/* import from react-big-calendar */}
+=======
+          {/* 🟣 Legend */}
+          <div className="event-legend">
+            <span style={{ background: "#9b87a6" }} /> GPT Suggestion
+            <span style={{ background: "#ebdbb4" }} /> Task Bank
+            <span style={{ background: "#d0e4ec" }} /> Google Event
+          </div>
+
+>>>>>>> e7687c7896c9060d6baae5cb4610785a4099a2dc
           <div className="calendar-wrapper">
             <Calendar
               //connecting to moment.js for date formatting
@@ -95,22 +112,25 @@ export default function CalendarPage() {
               style={{ height: "100%", width: "100%", padding: 0 }}
               //sets minimum start time to begin at 6am
               min={new Date(new Date().setHours(6, 0, 0))}
+              eventPropGetter={(event) => {
+                const backgroundColor = event.color || "#3174ad"; // default blue fallback
+                return {
+                  style: { 
+                    backgroundColor,
+                    borderRadius: "5px",
+                    color: "black",
+                    border: "none",
+                    display : "block",
+                    padding : "2px 4px",
+                  },
+                };
+              }}
             />
-          </div>
-
-          <div className="signout-button-wrapper">
-            <button
-              onClick={() => signOut({ callbackUrl: "/" })}
-              className="signout-button"
-            >
-              Sign out
-            </button>
           </div>
         </div>
 
         <Upcoming events={events} />
 
-       
         <style jsx global>{`
           .calendar-wrapper {
             width: 100%;
@@ -132,21 +152,45 @@ export default function CalendarPage() {
             width: 100% !important;
           }
 
+<<<<<<< HEAD
           .calendar-wrapper
             .rbc-time-view
             .rbc-time-content
             .rbc-day-slot {
+=======
+          .calendar-wrapper .rbc-time-view .rbc-time-content .rbc-day-slot {
+>>>>>>> e7687c7896c9060d6baae5cb4610785a4099a2dc
             flex: 1 !important;
           }
 
           .rbc-toolbar > .rbc-btn-group {
+<<<<<<< HEAD
           display: none !important;
         }
-        `}</style>
+=======
+            display: none !important;
+          }
 
-        
+          .event-legend {
+            display: flex;
+            gap: 1.5rem;
+            font-size: 0.9rem;
+            margin: 1rem auto;
+            max-width: 900px;
+            justify-content: flex-start;
+            align-items: center;
+          }
+
+          .event-legend span {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            margin-right: 6px;
+            border-radius: 3px;
+          }
+>>>>>>> e7687c7896c9060d6baae5cb4610785a4099a2dc
+        `}</style>
       </div>
     </div>
   );
 }
-

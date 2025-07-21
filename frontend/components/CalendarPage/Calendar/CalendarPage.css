@@ -8,8 +8,8 @@
 }
 
 .calendar-container {
-  width: 1200px;
-  height: 750px;
+  width: 800px;
+  height: 700px;
   background-color: rgba(255, 255, 255, 0.409);
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   border-radius: 12px;
@@ -18,11 +18,12 @@
   padding: 20px;
   align-items: center;
   margin-bottom: 40px;
-
-
+  margin-left: -70px; 
+  overflow: visible;
 }
 
 .calendar-title {
+  color: #bd6044c8;
   font-size: 2rem; 
   font-weight: 700;    
   margin-bottom: 1.5rem; 
@@ -90,4 +91,73 @@
 .signout-button:hover {
   background-color: #61597e; 
   border: 1px ridge whitesmoke;
+}
+
+@media (max-width: 1024px) {
+  .calendar-container {
+    width: 95%;
+    margin-left: 0;
+    padding: 1.5rem;
+  }
+
+  .calendar-wrapper {
+    margin-left: 0;
+    max-width: 100%;
+  }
+
+  .calendar-title {
+    font-size: 1.75rem;
+    margin-left: 0;
+  }
+
+  .view-toggle-group {
+    transform: translateX(0);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .calendar-container {
+    padding: 1rem;
+  }
+
+  .calendar-title {
+    font-size: 1.5rem;
+  }
+
+  .view-toggle-button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+  }
+
+  .event-legend {
+    gap: 1rem;
+    font-size: 0.8rem;
+    flex-wrap: wrap;
+  }
+
+  .event-legend span {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .calendar-title {
+    font-size: 1.3rem;
+  }
+
+  .view-toggle-button {
+    font-size: 0.85rem;
+    padding: 0.3rem 0.6rem;
+  }
+
+  .calendar-wrapper {
+    height: 60vh;
+  }
+
+  .calendar-container {
+    height: auto;
+  }
 }

@@ -40,14 +40,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       dislikes,
     } = req.body;
 
-    // Validation: Ensure all fields are present
     if (
       !currentMode || !idealSelf || !blockers || !dislikes
     ) {
       return res.status(400).json({ message: 'Missing survey data' });
     }
 
-    // Normalize in case any field comes as an empty string or non-array
     const normalizeField = (field: any) => Array.isArray(field) ? field : [];
 
     const normalized = {

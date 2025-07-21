@@ -69,3 +69,7 @@
 .mood-modal h2{
   margin-bottom: 1rem;
 }
+.mood-selected {
+  background-color: #dd6e42 !important;
+  color: white;
+}

@@ -1,57 +1,6 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Sacramento&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Sofia&display=swap');
-/*
-body {
-  position: relative;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  background-color: rgb(236, 236, 236);
-  box-shadow: inset 0 0 25px rgba(113, 123, 103, 0.63);
-  border-radius: 20px;
-  overflow: hidden;
-  font-family: 'Sofia', cursive;
-}
-
-
-
-body::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle at 20% 30%, rgba(255, 207, 192, 0.403), transparent 30%),
-              radial-gradient(circle at 80% 20%, rgba(135, 197, 192, 0.29), transparent 30%),
-              radial-gradient(circle at 50% 80%, rgba(162, 194, 152, 0.169), transparent 30%),
-              radial-gradient(circle at 70% 60%, rgba(213, 162, 213, 0.279), transparent 30%),
-              radial-gradient(circle at 40% 70%, rgba(162, 194, 152, 0.234), transparent 30%),
-              radial-gradient(circle at 20% 80%, rgba(135, 197, 192, 0.321), transparent 30%),
-              radial-gradient(circle at 60% 20%, rgba(255, 207, 192, 0.401), transparent 30%),
-              radial-gradient(circle at 80% 60%, rgba(135, 197, 192, 0.361), transparent 30%),
-              radial-gradient(circle at 30% 40%, rgba(162, 194, 152, 0.308), transparent 30%),
-              radial-gradient(circle at 60% 70%, rgba(194, 147, 194, 0.103), transparent 30%);
-  z-index: -1;
-  pointer-events: none;
-  backdrop-filter: blur(1px);
-}
-/*
-.survey-container {
-  z-index: 10;
-  max-width: 700px;
-  width: 100%;
-  padding: 3rem;
-  text-align: center;
-  backdrop-filter: blur(6px);
-  border-radius: 3rem;
-  background-color: rgba(255, 255, 255, 0.15);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
-}
-*/
 
 .survey-body {
   display: flex;
@@ -186,6 +135,7 @@ body::before {
   transition: width 0.3s ease;
 }
 
+<<<<<<< HEAD
 .survey-body p {
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   font-weight: lighter;
@@ -193,3 +143,65 @@ body::before {
   color: #444444ec;
 }
 
+=======
+/* Tablet & below */
+@media (max-width: 768px) {
+  .survey-container {
+    padding: 2rem 1.5rem;
+    border-radius: 1.5rem;
+  }
+
+  .option-card {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem;
+    font-size: 0.95rem;
+  }
+
+  .option-card span {
+    margin-bottom: 0.5rem;
+    margin-right: 0;
+    font-size: 1.4rem;
+  }
+
+  .input-field {
+    font-size: 1rem;
+    padding: 0.8rem;
+  }
+
+  .nav-button {
+    font-size: 1rem;
+    padding: 0.5rem 1.5rem;
+  }
+}
+
+/* Phone size */
+@media (max-width: 480px) {
+  .survey-container {
+    padding: 1.5rem 1rem;
+    border-radius: 1rem;
+  }
+
+  .survey-body {
+    padding: 1rem;
+  }
+
+  .option-card {
+    width: 100%;
+    font-size: 0.9rem;
+  }
+
+  .progress-bar {
+    height: 6px;
+  }
+
+  .nav-button {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+
+  .selectionCount {
+    font-size: 0.8rem;
+  }
+}
+>>>>>>> e7687c7896c9060d6baae5cb4610785a4099a2dc

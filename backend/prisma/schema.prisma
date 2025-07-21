@@ -1,6 +1,8 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "../../frontend/node_modules/.prisma/client"
 }
+
 
 datasource db {
   provider = "postgresql"
@@ -20,6 +22,7 @@ model User {
   userProfile UserProfile?
   accounts     Account[]
   sessions     Session[]
+  calendarEvents CalendarEvent[]
 }
 
 
@@ -37,11 +40,20 @@ model Task {
 }
 
 model Suggestion {
-  id        String   @id @default(uuid())
-  user      User     @relation(fields: [userId], references: [id])
-  userId    String
+  id             String   @id @default(uuid())
+  userId         String
   suggestionText String
-  timestamp DateTime
+  timestamp      DateTime @default(now())
+  priority       String?
+  reason         String?
+  source         String?
+  start          DateTime?
+  end            DateTime?
+  mood           String?   
+  environment    String?
+  weather        String?    
+  user           User     @relation(fields: [userId], references: [id])
+  timeZone       String?
 }
 
 model MoodLog {
@@ -98,4 +110,18 @@ model VerificationToken {
 
   @@unique([identifier, token])
 }
+
+model CalendarEvent {
+  id        String   @id @default(uuid())
+  userId    String
+  title     String
+  start     DateTime
+  end       DateTime
+  source    String?
+  color     String?  
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
 

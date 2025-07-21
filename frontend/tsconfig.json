@@ -9,19 +9,19 @@
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
-    "moduleResolution": "bundler",
+    "moduleResolution": "node", // ✅ changed
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
     "types": ["node", "next", "next-auth"],
     "plugins": [{ "name": "next" }],
-    "baseUrl": ".",                            // 🔥 Required for alias to work
+    "baseUrl": ".",                       
     "paths": {
       "@/*": ["./*"],
       "@backend/*": ["../backend/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "lib/prisma.ts", "../backend/pages/api/auth/[...nextauth].ts", "pages/api/survey.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "lib/prisma.ts"],
   "exclude": ["node_modules"]
 }

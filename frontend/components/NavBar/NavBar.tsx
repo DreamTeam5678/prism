@@ -15,8 +15,9 @@ export default function NavBar() {
       <div className="nav-bar-container">
         {session && (
           <div className="nav-bar-profile">
-            <img src={session.user.image} alt="Profile Picture" />
-
+            <a href = "/settings">
+              <img src={session.user.image} alt="Profile Picture" />
+            </a>
           </div>
         )}
         <div className="nav-bar-links">
