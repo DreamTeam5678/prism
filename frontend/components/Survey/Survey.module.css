@@ -74,6 +74,8 @@ body::before {
   text-align: center;
   border: 1px solid rgba(255, 255, 255, 0.2);
   animation: fadeIn 0.6s ease-out;
+  margin-top: -50px;
+
 }
 
 
@@ -94,7 +96,7 @@ body::before {
   border: 1px solid #ccc;
   border-radius: 1rem;
   font-size: 1.1rem;
-  font-family: 'Sofia', cursive;
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
   background-color: rgba(255, 255, 255, 0.8);
   margin-top: 1rem;
 }
@@ -182,5 +184,12 @@ body::before {
   background: linear-gradient(to right, #dd6d42, #9b87a6);
   border-radius: 999px;
   transition: width 0.3s ease;
+}
+
+.survey-body p {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-weight: lighter;
+  font-size: 0.9rem;
+  color: #444444ec;
 }
 

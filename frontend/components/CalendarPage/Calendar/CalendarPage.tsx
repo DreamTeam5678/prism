@@ -77,17 +77,23 @@ export default function CalendarPage() {
             ))}
           </div>
 
-        
+          {/* import from react-big-calendar */}
           <div className="calendar-wrapper">
             <Calendar
+              //connecting to moment.js for date formatting
               localizer={localizer}
+              //passes in events from Google Calendar fetched data
               events={events}
+              //sets the start and end date accessors
               startAccessor="start"
               endAccessor="end"
+              //toggles view between day, week, and month
               view={view}
               onView={(newView) => setView(newView)}
               views={["day", "week", "month"]}
+              //styling for calendar display size
               style={{ height: "100%", width: "100%", padding: 0 }}
+              //sets minimum start time to begin at 6am
               min={new Date(new Date().setHours(6, 0, 0))}
             />
           </div>
@@ -106,7 +112,6 @@ export default function CalendarPage() {
 
        
         <style jsx global>{`
-         
           .calendar-wrapper {
             width: 100%;
             max-width: 900px;
@@ -114,23 +119,19 @@ export default function CalendarPage() {
             margin: 0 auto;
           }
 
-         
           .calendar-wrapper .rbc-calendar {
             width: 100% !important;
             height: 100% !important;
           }
 
-        
           .calendar-wrapper .rbc-month-view .rbc-row {
             width: 100% !important;
           }
 
-          
           .calendar-wrapper .rbc-time-view {
             width: 100% !important;
           }
 
-  
           .calendar-wrapper
             .rbc-time-view
             .rbc-time-content
@@ -141,8 +142,6 @@ export default function CalendarPage() {
           .rbc-toolbar > .rbc-btn-group {
           display: none !important;
         }
-
-
         `}</style>
 
         
