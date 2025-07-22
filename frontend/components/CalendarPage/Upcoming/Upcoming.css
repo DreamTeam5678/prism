@@ -24,13 +24,13 @@
 .upcoming-container {
   min-width: 260px;
   max-width: 300px;
-  /*background-color: rgba(255, 255, 255, 0.428);*/
-  /*border-radius: 12px;*/
-  /*box-shadow: 0 4px 12px rgba(0,0,0,0.1);*/
+  background-color: rgba(255, 255, 255, 0.014);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   padding: 16px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin-top: 2rem;
-  margin-left: 0;
+  margin-left: 30px;
   margin-right: 0;
 }
 
@@ -39,13 +39,14 @@
 
 .upcoming-title {
   font-size: 1.8rem;
-  font-weight: 700;
+  font-weight: 500;
   margin-bottom: 1rem;
   color: #bd6044c8; 
   text-align: center;
   border-bottom: 2px solid #bd6044c8;
   padding-bottom: 8px;
-  font-family: 'Sofia', cursive;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  
 }
 
 .upcoming-list {
