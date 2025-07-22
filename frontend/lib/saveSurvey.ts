@@ -1,3 +1,4 @@
+// frontend/lib/saveSurvey.ts
 export async function submitSurvey(surveyData: any) {
   const res = await fetch('/api/survey', {
     method: 'POST',

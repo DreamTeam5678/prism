@@ -1,3 +1,4 @@
+// pages/api/suggestions/retry.ts
 import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]";
@@ -66,7 +67,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const schedule = await getTaskSchedule({
       taskTitle: retry.task,
       priority: retry.priority,
-      durationMinutes: 60,
+      durationMinutes: (() => {
+        const task = retry.task.toLowerCase();
+        if (task.includes("walk") || task.includes("call") || task.includes("email")) return 30;
+        if (task.includes("meditate") || task.includes("journal")) return 15;
+        if (task.includes("brainstorm") || task.includes("read") || task.includes("design")) return 45;
+        if (retry.priority === "High") return 60;
+        if (retry.priority === "Medium") return 45;
+        return 30;
+      })(),
       mood: old.mood ?? undefined,
       events: calendarConflicts,
       timeZone: validatedTimeZone,

@@ -41,7 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           start: new Date(event.start?.dateTime || event.start?.date || ""),
           end: new Date(event.end?.dateTime || event.end?.date || ""),
           source: "google",
-          color: "#d0e4ec", // consistent color for Google events
+          color: "#d0e4ec", 
         },
       });
     }

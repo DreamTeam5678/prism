@@ -23,7 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
     
 
-    res.status(200).json({hasProfile: true});
+    res.status(200).json({hasProfile: true, userProfile: user.userProfile});
   } catch (err) {
     console.error("[API /profile]", err);
     res.status(500).json({ message: "Server error" });

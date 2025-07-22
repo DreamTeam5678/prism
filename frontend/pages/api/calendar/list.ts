@@ -7,7 +7,7 @@ import { google } from "googleapis";
 import { JWT } from "next-auth/jwt";
 import type { Session } from "next-auth";
 import { getToken } from "next-auth/jwt";
-import type { CalendarEvent } from "@prisma/client";
+
 
 
 
@@ -30,12 +30,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         orderBy: { start: "asc" },
     });
 
-    const localEvents = rawLocalEvents.flatMap((event: CalendarEvent) => {
+    const localEvents = rawLocalEvents.flatMap((event) => {
   // Check if title contains multiple time blocks (heuristic: contains "AM" or "PM" more than once)
         const timeBlockPattern = /(\d{1,2}:\d{2} [AP]M) ?– ?(\d{1,2}:\d{2} [AP]M)/g;
         const matches = [...(event.title?.matchAll(timeBlockPattern) || [])];
 
-        if (matches.length > 1) {
+        if (matches.length > 1 && event.source !== "gpt") {
             // Split into separate events
             return matches.map((match, index) => {
             const [ , startStr, endStr ] = match;
