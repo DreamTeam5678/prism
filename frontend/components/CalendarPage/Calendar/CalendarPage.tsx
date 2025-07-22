@@ -211,7 +211,7 @@ export default function CalendarPage() {
         .then((data) => {
           const formatted = data.map((event: any) => ({
             id: event.id,
-            title: event.title || "No Title",
+            title: event.title || event.suggestionText || "No Title",
             start: new Date(event.start),
             end: new Date(event.end),
             description: event.source || "",

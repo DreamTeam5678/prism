@@ -43,11 +43,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const parseTime = (t: string) => new Date(`${baseDate} ${t}`);
             return {
                 id: `${event.id}-${index}`,
-                title: "Block",
+                title: event.title ?? "Block",
                 start: parseTime(startStr),
                 end: parseTime(endStr),
                 source: event.source || "local",
-                color: event.color || (event.source === "gpt" ? "#9b87a6" : "#ebdbb4"),
+                color: event.color ?? (event.source === "gpt"
+                  ? "#9b87a6"
+                  : event.source === "task_bank"
+                    ? "#ebdbb4"
+                    : "#dddddd")
             };
             });
         }
