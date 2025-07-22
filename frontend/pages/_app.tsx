@@ -15,6 +15,7 @@ import "../components/TasksPage/TaskList.css";
 
 import "../components/MoodSelector/MoodModal.css";
 
+import "../components/FlowSpace/BackgroundPicker.css";
 export default function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   return (
     <SessionProvider session={session}>
