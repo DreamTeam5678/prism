@@ -17,6 +17,7 @@ const backgrounds = [
 
 export default function FlowSpacePage() {
   const [selected, setSelected] = useState<number>(0);
+  const [navOn, setNavOn] = useState<boolean>(true);
   
   return (
     <div style={{
@@ -25,12 +26,33 @@ export default function FlowSpacePage() {
       backgroundPosition: "center",
       minHeight: "105vh",
       transition: "background-image 0.5s ease-in-out",
-      marginTop: "-10px",
-      marginBottom: "-10px",
       opacity: 0.8,
+      borderRadius: "20px",
+      
     }}>
+      <button onClick={() => setNavOn((prev)=> !prev)} 
+        style={{
+        position: "absolute",
+        top: "-12px",
+        left: "9px",
+        zIndex: 100000,
+        backgroundColor: "0,0,100",
+        color: "black",
+        border: "none",
+        padding: "10px 20px",
+        borderRadius: "50px",
+        cursor: "pointer",
+        fontSize: "1.5rem",
+        transition: "background-color 0.2s ease",
     
+       }}>
+        {navOn ? "ⓧ" : "𓁺"}
+       
+      </button>
+      {navOn &&
       <NavBar />
+      }
+
       <Avatars />
       <BackgroundPicker
         current= {selected}
