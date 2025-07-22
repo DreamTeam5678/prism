@@ -274,8 +274,11 @@ export default function CalendarPage() {
             <span style={{ background: "#d0e4ec" }} /> Google Event
           </div>
 
-          <div className="calendar-wrapper">
+          <div className="calendar-wrapper"
+            style={{ height: view === "day" ? "85vh" : "85vh" }} 
+          >
             <Calendar
+              scrollToTime={new Date()}
               localizer={localizer}
               events={events}
               startAccessor="start"
@@ -351,6 +354,15 @@ export default function CalendarPage() {
             height: 14px;
             margin-right: 6px;
             border-radius: 3px;
+          }
+          
+          .rbc-time-slot{
+            min-height: 20px;
+          }
+
+          .rbc-allday-cell,
+          .rbc-time-view .rbc-header-cell {
+            height: auto; 
           }
         `}</style>
       </div>
