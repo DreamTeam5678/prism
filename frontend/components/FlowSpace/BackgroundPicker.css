@@ -4,6 +4,7 @@
     padding:10px;
     justify-content: center;
     border-bottom: 1px ridge #ffffff2c;
+    z-index: 1000;
 
 }
 

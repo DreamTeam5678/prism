@@ -1,27 +1,19 @@
 "use client";
 import NavBar from "./../NavBar/NavBar";
-import AchievementBar from "../AchievementBar"; // 👈 import bar
-import { useState, useEffect, KeyboardEvent } from "react";
+import AchievementBar from "../AchievementBar";
+import XPBar from "../XPBar";
 
-interface Task {
-  id: string;
-  title: string;
-  completed: boolean;
-  priority: "low" | "medium" | "high";
-}
+import { useState, KeyboardEvent } from "react";
+import { useXP } from "@/context/XPContext"; // ✅ use shared XP/tasks
 
 export default function TaskList() {
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const { xp, tasks, refreshTasks } = useXP(); // ✅ shared data
   const [newText, setNewText] = useState("");
   const [editId, setEditId] = useState<string | null>(null);
   const [editText, setEditText] = useState("");
 
-  useEffect(() => {
-    fetch("/api/tasks")
-      .then((r) => (r.ok ? r.json() : Promise.reject()))
-      .then(setTasks)
-      .catch(console.error);
-  }, []);
+  const completedTasks = tasks.filter((t) => t.completed).length;
+  const totalTasks = tasks.length;
 
   const add = async () => {
     if (!newText.trim()) return;
@@ -35,10 +27,9 @@ export default function TaskList() {
       }),
     });
     if (res.ok) {
-      const newTask = await res.json();
-      setTasks([...tasks, newTask]);
+      setNewText("");
+      refreshTasks(); // ✅ reload tasks from server
     }
-    setNewText("");
   };
 
   const toggle = async (id: string) => {
@@ -53,33 +44,31 @@ export default function TaskList() {
         priority: t.priority,
       }),
     });
-    if (res.ok) {
-      const updated = await res.json();
-      setTasks(tasks.map((t) => (t.id === id ? updated : t)));
-    }
+    if (res.ok) refreshTasks(); // ✅ reload tasks
   };
 
   const del = async (id: string) => {
     await fetch(`/api/tasks/${id}`, { method: "DELETE" });
-    setTasks(tasks.filter((t) => t.id !== id));
+    refreshTasks(); // ✅ reload tasks
   };
 
   const saveEdit = async () => {
     if (!editId) return;
+    const task = tasks.find((t) => t.id === editId);
+    if (!task) return;
     const res = await fetch(`/api/tasks/${editId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         title: editText,
         completed: false,
-        priority: tasks.find((t) => t.id === editId)!.priority,
+        priority: task.priority,
       }),
     });
     if (res.ok) {
-      const updated = await res.json();
-      setTasks(tasks.map((t) => (t.id === editId ? updated : t)));
       setEditId(null);
       setEditText("");
+      refreshTasks(); // ✅ reload tasks
     }
   };
 
@@ -89,24 +78,25 @@ export default function TaskList() {
     const res = await fetch(`/api/tasks/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title: t.title, completed: t.completed, priority }),
+      body: JSON.stringify({
+        title: t.title,
+        completed: t.completed,
+        priority,
+      }),
     });
-    if (res.ok) {
-      const updated = await res.json();
-      setTasks(tasks.map((t) => (t.id === id ? updated : t)));
-    }
+    if (res.ok) refreshTasks(); // ✅ reload tasks
   };
-
-  const totalTasks = tasks.length;
-  const completedTasks = tasks.filter((task) => task.completed).length;
 
   return (
     <div>
       <NavBar />
+      <NavBar />
+
+      <XPBar xp={xp} />
+
       <div className="task-list-container">
         <h1 className="task-list-title">Your Tasks</h1>
 
-        {/* 🔥 New Achievement Bar */}
         <AchievementBar completed={completedTasks} total={totalTasks} />
 
         <div className="task-list">
