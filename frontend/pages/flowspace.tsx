@@ -33,8 +33,8 @@ export default function FlowSpacePage() {
       <button onClick={() => setNavOn((prev)=> !prev)} 
         style={{
         position: "absolute",
-        top: "-12px",
-        left: "9px",
+        top: "-5px",
+        left: "13px",
         zIndex: 100000,
         backgroundColor: "transparent",
         color: "black",
@@ -46,7 +46,7 @@ export default function FlowSpacePage() {
         transition: "background-color 0.2s ease",
     
        }}>
-        {navOn ? "ⓧ" : "𓁺"}
+        {navOn ? "∧" : "∨"}
        
       </button>
       {navOn &&
