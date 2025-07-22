@@ -1,5 +1,6 @@
 "use client";
 import NavBar from "./../NavBar/NavBar";
+import AchievementBar from "../AchievementBar"; // 👈 import bar
 import { useState, useEffect, KeyboardEvent } from "react";
 
 interface Task {
@@ -17,7 +18,7 @@ export default function TaskList() {
 
   useEffect(() => {
     fetch("/api/tasks")
-      .then((r) => r.ok ? r.json() : Promise.reject())
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
       .then(setTasks)
       .catch(console.error);
   }, []);
@@ -54,7 +55,7 @@ export default function TaskList() {
     });
     if (res.ok) {
       const updated = await res.json();
-      setTasks(tasks.map((t) => t.id === id ? updated : t));
+      setTasks(tasks.map((t) => (t.id === id ? updated : t)));
     }
   };
 
@@ -76,7 +77,7 @@ export default function TaskList() {
     });
     if (res.ok) {
       const updated = await res.json();
-      setTasks(tasks.map((t) => t.id === editId ? updated : t));
+      setTasks(tasks.map((t) => (t.id === editId ? updated : t)));
       setEditId(null);
       setEditText("");
     }
@@ -92,73 +93,89 @@ export default function TaskList() {
     });
     if (res.ok) {
       const updated = await res.json();
-      setTasks(tasks.map((t) => t.id === id ? updated : t));
+      setTasks(tasks.map((t) => (t.id === id ? updated : t)));
     }
   };
 
+  const totalTasks = tasks.length;
+  const completedTasks = tasks.filter((task) => task.completed).length;
+
   return (
     <div>
-        <NavBar />
-    <div className="task-list-container">
-      <h1 className="task-list-title">Your Tasks</h1>
-      <div className="task-list">
-        {tasks.map((task) => (
-          <div key={task.id} className="task-item">
-            <div className="task-item-top">
-              <input
-                type="checkbox"
-                checked={task.completed}
-                onChange={() => toggle(task.id)}
-              />
-              <div className={`task-item-title ${task.completed ? "completed" : ""}`}>
-                {task.title}
+      <NavBar />
+      <div className="task-list-container">
+        <h1 className="task-list-title">Your Tasks</h1>
+
+        {/* 🔥 New Achievement Bar */}
+        <AchievementBar completed={completedTasks} total={totalTasks} />
+
+        <div className="task-list">
+          {tasks.map((task) => (
+            <div key={task.id} className="task-item">
+              <div className="task-item-top">
+                <input
+                  type="checkbox"
+                  checked={task.completed}
+                  onChange={() => toggle(task.id)}
+                />
+                <div className={`task-item-title ${task.completed ? "completed" : ""}`}>
+                  {task.title}
+                </div>
+                <div className="task-item-controls">
+                  <button
+                    className="icon-btn"
+                    onClick={() => {
+                      setEditId(task.id);
+                      setEditText(task.title);
+                    }}
+                  >
+                    📝
+                  </button>
+                  <button className="icon-btn" onClick={() => del(task.id)}>
+                    ❎
+                  </button>
+                </div>
               </div>
-              <div className="task-item-controls">
-                <button
-                  className="icon-btn"
-                  onClick={() => { setEditId(task.id); setEditText(task.title); }}
-                >
-                  📝
-                </button>
-                <button className="icon-btn" onClick={() => del(task.id)}>❎</button>
-              </div>
+              <select
+                className="priority-select"
+                value={task.priority}
+                onChange={(e) => changePriority(task.id, e.target.value)}
+              >
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+              </select>
             </div>
-            <select
-              className="priority-select"
-              value={task.priority}
-              onChange={(e) => changePriority(task.id, e.target.value)}
-            >
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
-            </select>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
 
-      <div className="task-input-container">
-        <input
-          className="task-input"
-          value={newText}
-          onChange={(e) => setNewText(e.target.value)}
-          onKeyDown={(e: KeyboardEvent) => e.key === "Enter" && add()}
-          placeholder="Add a new task…"
-        />
-        <button className="add-task-button" onClick={add}>+</button>
-      </div>
-
-      {editId && (
-        <div className="task-edit-container">
+        <div className="task-input-container">
           <input
             className="task-input"
-            value={editText}
-            onChange={(e) => setEditText(e.target.value)}
-            onKeyDown={(e: KeyboardEvent) => e.key === "Enter" && saveEdit()}
+            value={newText}
+            onChange={(e) => setNewText(e.target.value)}
+            onKeyDown={(e: KeyboardEvent) => e.key === "Enter" && add()}
+            placeholder="Add a new task…"
           />
-          <button className="add-task-button" onClick={saveEdit}>Save</button>
+          <button className="add-task-button" onClick={add}>
+            +
+          </button>
         </div>
-      )}
-    </div>
+
+        {editId && (
+          <div className="task-edit-container">
+            <input
+              className="task-input"
+              value={editText}
+              onChange={(e) => setEditText(e.target.value)}
+              onKeyDown={(e: KeyboardEvent) => e.key === "Enter" && saveEdit()}
+            />
+            <button className="add-task-button" onClick={saveEdit}>
+              Save
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

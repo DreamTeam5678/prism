@@ -1,6 +1,6 @@
 // backend/routes/mood.js
 import express from 'express';
-import prisma from '../lib/prisma.js'; // Prisma client instance
+import prisma from '../lib/index.js';
 
 const router = express.Router();
 

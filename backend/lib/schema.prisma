@@ -1,0 +1,123 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String          @id @default(uuid())
+  email          String          @unique
+  name           String?
+  image          String?
+  emailVerified  DateTime?
+  provider       String?
+  tasks          Task[]
+  suggestions    Suggestion[]
+  moodLogs       MoodLog[]
+  userProfile    UserProfile?
+  accounts       Account[]
+  sessions       Session[]
+  calendarEvents CalendarEvent[]
+}
+
+model Task {
+  id        String    @id @default(uuid())
+  user      User      @relation(fields: [userId], references: [id])
+  userId    String
+  title     String
+  scheduled Boolean   @default(false)
+  timestamp DateTime?
+  completed Boolean   @default(false)
+  priority  String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Suggestion {
+  id             String    @id @default(uuid())
+  userId         String
+  suggestionText String
+  timestamp      DateTime  @default(now())
+  priority       String?
+  reason         String?
+  source         String?
+  start          DateTime?
+  end            DateTime?
+  mood           String?
+  environment    String?
+  weather        String?
+  user           User      @relation(fields: [userId], references: [id])
+  timeZone       String?
+}
+
+model MoodLog {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  mood      String
+  createdAt DateTime @default(now())
+}
+
+model UserProfile {
+  id           String   @id @default(uuid())
+  user         User     @relation(fields: [userId], references: [id])
+  userId       String   @unique
+  currentMode  String[]
+  idealSelf    String[]
+  blockers     String[]
+  dislikes     String[]
+  behaviorTags String[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id])
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model CalendarEvent {
+  id        String   @id @default(uuid())
+  userId    String
+  title     String
+  start     DateTime
+  end       DateTime
+  source    String?
+  color     String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
