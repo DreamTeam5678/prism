@@ -192,6 +192,7 @@ import NavBar from "../../NavBar/NavBar";
 import Upcoming from "../Upcoming/Upcoming";
 import Optimize from "../Optimize/Optimize";
 
+
 const localizer = momentLocalizer(moment);
 
 export default function CalendarPage() {
