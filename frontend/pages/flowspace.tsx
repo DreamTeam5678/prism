@@ -1,7 +1,7 @@
 import NavBar from "@/components/NavBar/NavBar";
 import Avatars from "../components/FlowSpace/Avatars";
 import BackgroundPicker from "../components/FlowSpace/BackgroundPicker";
-import SpotifyPlayer from "../components/FlowSpace/SpotifyPlayer";
+import YoutubePlayer from "../components/FlowSpace/YoutubePlayer";
 import { useState } from "react";
 
 const backgrounds = [
@@ -36,7 +36,7 @@ export default function FlowSpacePage() {
         top: "-12px",
         left: "9px",
         zIndex: 100000,
-        backgroundColor: "0,0,100",
+        backgroundColor: "transparent",
         color: "black",
         border: "none",
         padding: "10px 20px",
@@ -58,6 +58,8 @@ export default function FlowSpacePage() {
         current= {selected}
         onChange={setSelected}
        />
+
+       <YoutubePlayer />
      
       </div>
     

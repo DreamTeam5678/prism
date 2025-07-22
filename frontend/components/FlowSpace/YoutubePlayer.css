@@ -1,0 +1,117 @@
+.youtube-player-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.youtube-player-search {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.youtube-player-search-input {
+  flex: 1;
+  padding: 0.75rem;
+  font-size: 1.1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.youtube-player-search-button {
+  padding: 0.75rem 1.5rem;
+  font-size: 1.1rem;
+  border-radius: 8px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+
+.youtube-player-results {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+.youtube-player-result-card {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  background: rgba(231, 249, 231, 0.53);
+  padding: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.youtube-player-result-card:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.youtube-player-result-info {
+  flex: 1;
+}
+
+.youtube-player-result-title {
+  font-size: 1rem;
+  font-weight: bold;
+  border-bottom: 1px solid #616161;
+  display: flex ;
+  justify-content: center   ;
+}
+
+.youtube-player-result-description {
+  font-size: 0.9rem;
+  color: #1c1717;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+
+.youtube-monitor-scene {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  margin-top: 2rem;
+}
+
+.youtube-monitor-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.retry-button {
+  position: relative;
+  transform: translate(40%, -355%);
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  z-index: 1000000;
+}
+
+
+.youtube-player-on-monitor {
+  position: absolute;
+  top: 5%;
+  left: 0%;
+  width: 74%;
+  height: 60%;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+}
+
+.youtube-player-video {
+  width: 100%;
+  height: 100%;
+  border: none;
+}

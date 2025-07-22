@@ -3,7 +3,7 @@ import { use Router } from "next/router";
 import { useSession } from "next-auth/react";
 import { PrismaClient } from "@prisma/client";
 import BackgroundPicker from "../../../components/FlowSpace/BackgroundPicker";
-import SpotifyPlayer from "../../../components/FlowSpace/SpotifyPlayer";
+import SpotifyPlayer from "../../../components/FlowSpace/YoutubePlayer";
 import Avatars from "../../../components/FlowSpace/Avatars";
 
 export default function FlowSpacePage() {

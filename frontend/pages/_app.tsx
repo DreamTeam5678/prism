@@ -12,7 +12,7 @@ import '../styles/globals.css';
 import "../components/NavBar/NavBar.css";
 import "../components/CalendarPage/Optimize/Optimize.module.css";
 import "../components/TasksPage/TaskList.css";
-
+import "../components/FlowSpace/YoutubePlayer.css";
 import "../components/MoodSelector/MoodModal.css";
 
 import "../components/FlowSpace/BackgroundPicker.css";
