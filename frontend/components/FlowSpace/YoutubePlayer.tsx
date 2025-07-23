@@ -27,14 +27,14 @@ if (!apiKey) {
 export default function YoutubePlayer() {
     const [query, setQuery] = useState<string>("");
     const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
-    const [results, setResults] = useState<any>([]);
+    const [results, setResults] = useState<Video[]>([]);
     
 
     const handleSearch = async (query: string) => {
         const res = await fetch(`https://youtube.googleapis.com/youtube/v3/search?part=snippet&q=${query}&key=${apiKey}&type=video`);
         const data = await res.json();
         if (Array.isArray(data.items)) {
-            setResults(data.items);
+            setResults(data.items as Video[]);
         }
     };
 
@@ -61,7 +61,7 @@ export default function YoutubePlayer() {
 
       {!selectedVideo && results.length > 0 && (
         <div className="youtube-player-results">
-          {results.map((result) => (
+          {results.map((result: Video) => (
             <div
               key={result.id.videoId}
               className="youtube-player-result-card"
