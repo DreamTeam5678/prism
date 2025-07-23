@@ -125,7 +125,7 @@ export default function PomodoroTimer() {
   return (
     <div className={styles.pomodoroTimerContainer}>
       <div className={styles.timerDisplay}>
-        <div className={styles.timerCircle}>
+        <div className={`${styles.timerCircle} ${timerState.isRunning ? styles.active : ''}`}>
           <div
             className={styles.timerProgress}
             style={{

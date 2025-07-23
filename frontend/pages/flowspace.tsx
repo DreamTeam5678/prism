@@ -28,7 +28,7 @@ export default function FlowSpace() {
         backgroundPosition: "center",
         minHeight: "110vh",
         paddingBottom: "5vh",
-        transition: "background-image 0.5s ease-in-out"
+        transition: "background-image 1s cubic-bezier(0.4, 0, 0.2, 1)"
       }}
     >
       <button
@@ -47,7 +47,15 @@ export default function FlowSpace() {
           fontSize: "1.2rem",
           boxShadow: "0 4px 8px rgba(0,0,0,0.3)",
           backdropFilter: "blur(6px)",
-          transition: "all 0.2s ease"
+          transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = "scale(1.1)";
+          e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.2)";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = "scale(1)";
+          e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.1)";
         }}
       >
         {navOn ? "∧" : "∨"}
@@ -59,7 +67,7 @@ export default function FlowSpace() {
 
       <div className="page-wrapper">
         <div className="flowspace-container">
-          <h1 className="page-title">FlowSpace</h1>
+          <h1 className="page-title">Flow Space</h1>
           <p className="page-subtitle">Your productivity sanctuary</p>
 
           <div className="productivity-grid">
@@ -109,8 +117,10 @@ export default function FlowSpace() {
 
         .productivity-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+          grid-template-columns: 1fr 1fr;
           gap: 2rem;
+          max-width: 1200px;
+          margin: 0 auto;
         }
 
         .youtube-section,
@@ -122,6 +132,7 @@ export default function FlowSpace() {
           border: 1px solid rgba(255, 255, 255, 0.15);
           box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
           transition: transform 0.3s ease;
+          min-height: 400px;
         }
 
         .youtube-section:hover,
@@ -177,6 +188,12 @@ export default function FlowSpace() {
           .productivity-grid {
             grid-template-columns: 1fr;
             gap: 1.5rem;
+            max-width: 100%;
+          }
+
+          .youtube-section,
+          .pomodoro-section {
+            min-height: 350px;
           }
         }
       `}</style>
