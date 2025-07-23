@@ -9,12 +9,18 @@ export default function ProfilePage() {
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [surveyData, setSurveyData] = useState({
-    currentMode: [],
-    idealSelf: [],
-    blockers: [],
-    dislikes: [],
-    behaviorTags: [],
+  const [surveyData, setSurveyData] = useState<{
+    currentMode: string[];
+    idealSelf: string[];
+    blockers: string[];
+    dislikes: string[];
+    behaviorTags: string[]; 
+  }>({
+      currentMode: [],
+      idealSelf: [],
+      blockers: [],
+      dislikes: [],
+      behaviorTags: [],
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
