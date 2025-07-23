@@ -1,5 +1,5 @@
 
-/* Pomodoro Timer Styles */
+/* frontend/components/FlowSpace/FlowSpace.module.css */
 .pomodoroContainer {
   max-width: 400px;
   margin: 0 auto;
@@ -125,3 +125,4 @@
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 } 
+

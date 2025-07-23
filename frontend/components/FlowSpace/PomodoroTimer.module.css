@@ -1,0 +1,200 @@
+.pomodoro-timer-container {
+  max-width: 500px;
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 2rem;
+  backdrop-filter: blur(14px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  color: white;
+  font-family: 'DM Sans', sans-serif;
+  animation: fadeIn 0.8s ease-in;
+}
+
+.timer-display {
+  position: relative;
+  width: 250px;
+  height: 250px;
+  margin: 0 auto;
+}
+
+.timer-circle {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.1), rgba(255,255,255,0));
+  position: relative;
+  box-shadow: 0 0 20px rgba(255,255,255,0.15);
+}
+
+.timer-progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  z-index: 1;
+  transition: background 0.5s ease-in-out;
+}
+
+.timer-time {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  text-align: center;
+}
+
+.time-display {
+  font-size: 3rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.session-type {
+  font-size: 1.2rem;
+  margin-top: 0.5rem;
+  color: #e0e0e0;
+}
+
+.session-info {
+  margin-top: 1.5rem;
+  font-size: 0.95rem;
+  color: #ccc;
+  text-align: center;
+}
+
+.timer-controls {
+  display: flex;
+  justify-content: space-around;
+  margin: 2rem 0 1rem;
+}
+
+.timer-button {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  padding: 0.7rem 1.4rem;
+  border-radius: 12px;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  backdrop-filter: blur(5px);
+  transition: transform 0.2s, box-shadow 0.3s ease;
+}
+
+.timer-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.15);
+}
+
+.pause { background: #ff9800; }
+.start { background: #4caf50; }
+.reset { background: #2196f3; }
+.skip  { background: #e91e63; }
+
+.timer-settings {
+  margin-top: 1.5rem;
+  background: rgba(255,255,255,0.07);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+
+.setting-item label {
+  display: block;
+  font-size: 0.85rem;
+  color: #D2E4EC;
+  margin-bottom: 0.25rem;
+}
+
+.setting-item input {
+  width: 100%;
+  padding: 0.4rem;
+  border-radius: 8px;
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 1rem;
+}
+
+.timer-tips {
+  margin-top: 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-left: 4px solid #81c784;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.timer-tips h4 {
+  margin-bottom: 0.5rem;
+}
+
+.timer-tips ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.timer-tips li {
+  margin-bottom: 0.4rem;
+  padding-left: 1rem;
+  position: relative;
+  font-size: 0.9rem;
+}
+
+.timer-tips li::before {
+  content: "💡";
+  position: absolute;
+  left: 0;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.timeDisplay {
+  font-size: 3.5rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: #DA6A3A; /* Rust Orange */
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: color 0.3s ease-in-out;
+}
+
+.sessionType {
+  font-size: 1.2rem;
+  color: #A18BA7; /* Muted Lavender */
+  font-weight: 500;
+  margin-top: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.sessionInfo {
+  margin-top: 1.5rem;
+  font-size: 1rem;
+  color: #EAD8AC; /* Warm Beige */
+  text-align: center;
+  font-weight: 400;
+}
+
+.timerTips h4 {
+  font-size: 1.3rem;
+  color: #9BAA86; /* Sage Green */
+  margin-bottom: 0.5rem;
+}
+
+.timerTips li {
+  color: #D2E4EC; /* Powder Blue */
+  font-weight: 300;
+  font-size: 0.95rem;
+}

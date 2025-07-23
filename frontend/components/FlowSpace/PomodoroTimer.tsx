@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import styles from "./PomodoroTimer.module.css";
 
 interface TimerState {
   isRunning: boolean;
@@ -12,7 +13,7 @@ export default function PomodoroTimer() {
   const [timerState, setTimerState] = useState<TimerState>({
     isRunning: false,
     isBreak: false,
-    timeLeft: 25 * 60, // 25 minutes in seconds
+    timeLeft: 25 * 60,
     session: 1,
     totalSessions: 0
   });
@@ -31,12 +32,10 @@ export default function PomodoroTimer() {
       intervalRef.current = setInterval(() => {
         setTimerState(prev => {
           if (prev.timeLeft <= 1) {
-            // Timer finished
-            const audio = new Audio('/notification.mp3'); // Add a notification sound
-            audio.play().catch(() => {}); // Ignore if audio fails
-            
+            const audio = new Audio('/notification.mp3');
+            audio.play().catch(() => {});
+
             if (prev.isBreak) {
-              // Break finished, start work session
               return {
                 ...prev,
                 isRunning: false,
@@ -46,10 +45,8 @@ export default function PomodoroTimer() {
                 totalSessions: prev.totalSessions + 1
               };
             } else {
-              // Work session finished, start break
               const isLongBreak = prev.session % settings.sessionsUntilLongBreak === 0;
               const breakDuration = isLongBreak ? settings.longBreakDuration : settings.shortBreakDuration;
-              
               return {
                 ...prev,
                 isRunning: false,
@@ -58,23 +55,19 @@ export default function PomodoroTimer() {
               };
             }
           }
-          
+
           return {
             ...prev,
             timeLeft: prev.timeLeft - 1
           };
         });
       }, 1000);
-    } else {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
+    } else if (intervalRef.current) {
+      clearInterval(intervalRef.current);
     }
 
     return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
+      if (intervalRef.current) clearInterval(intervalRef.current);
     };
   }, [timerState.isRunning, settings]);
 
@@ -111,128 +104,118 @@ export default function PomodoroTimer() {
   };
 
   const getProgressPercentage = (): number => {
-    const totalTime = timerState.isBreak 
-      ? (timerState.session % settings.sessionsUntilLongBreak === 0 
-          ? settings.longBreakDuration 
+    const totalTime = timerState.isBreak
+      ? (timerState.session % settings.sessionsUntilLongBreak === 0
+          ? settings.longBreakDuration
           : settings.shortBreakDuration) * 60
       : settings.workDuration * 60;
-    
+
     return ((totalTime - timerState.timeLeft) / totalTime) * 100;
   };
 
   const getSessionType = (): string => {
     if (timerState.isBreak) {
-      return timerState.session % settings.sessionsUntilLongBreak === 0 ? 'Long Break' : 'Short Break';
+      return timerState.session % settings.sessionsUntilLongBreak === 0
+        ? "Long Break"
+        : "Short Break";
     }
     return `Work Session ${timerState.session}`;
   };
 
   return (
-    <div className="pomodoro-timer-container">
-      <h3>🍅 Pomodoro Timer</h3>
-      
-      {/* Timer Display */}
-      <div className="timer-display">
-        <div className="timer-circle">
-          <div 
-            className="timer-progress" 
-            style={{ 
-              background: `conic-gradient(#4CAF50 ${getProgressPercentage()}%, #e0e0e0 0%)` 
+    <div className={styles.pomodoroTimerContainer}>
+      <div className={styles.timerDisplay}>
+        <div className={styles.timerCircle}>
+          <div
+            className={styles.timerProgress}
+            style={{
+              background: `conic-gradient(#4CAF50 ${getProgressPercentage()}%, #e0e0e0 0%)`
             }}
           />
-          <div className="timer-time">
-            <div className="time-display">{formatTime(timerState.timeLeft)}</div>
-            <div className="session-type">{getSessionType()}</div>
+          <div className={styles.timerTime}>
+            <div className={styles.timeDisplay}>{formatTime(timerState.timeLeft)}</div>
+            <div className={styles.sessionType}>{getSessionType()}</div>
           </div>
         </div>
       </div>
 
-      {/* Session Info */}
-      <div className="session-info">
-        <div className="session-counter">
-          Session {timerState.session} of {settings.sessionsUntilLongBreak}
-        </div>
-        <div className="total-sessions">
-          Total sessions completed: {timerState.totalSessions}
-        </div>
-      </div>
-
-      {/* Timer Controls */}
-      <div className="timer-controls">
+      <div className={styles.timerControls}>
         {timerState.isRunning ? (
-          <button onClick={pauseTimer} className="timer-button pause">
+          <button onClick={pauseTimer} className={`${styles.timerButton} ${styles.pause}`}>
             ⏸️ Pause
           </button>
         ) : (
-          <button onClick={startTimer} className="timer-button start">
+          <button onClick={startTimer} className={`${styles.timerButton} ${styles.start}`}>
             ▶️ Start
           </button>
         )}
-        
-        <button onClick={resetTimer} className="timer-button reset">
+        <button onClick={resetTimer} className={`${styles.timerButton} ${styles.reset}`}>
           🔄 Reset
         </button>
-        
-        <button onClick={skipTimer} className="timer-button skip">
+        <button onClick={skipTimer} className={`${styles.timerButton} ${styles.skip}`}>
           ⏭️ Skip
         </button>
       </div>
 
-      {/* Settings */}
-      <div className="timer-settings">
+      <div className={styles.timerSettings}>
         <h4>Settings</h4>
-        <div className="settings-grid">
-          <div className="setting-item">
+        <div className={styles.settingsGrid}>
+          <div className={styles.settingItem}>
             <label>Work Duration (min)</label>
             <input
               type="number"
               value={settings.workDuration}
-              onChange={(e) => setSettings(prev => ({
-                ...prev,
-                workDuration: parseInt(e.target.value) || 25
-              }))}
+              onChange={(e) =>
+                setSettings(prev => ({
+                  ...prev,
+                  workDuration: parseInt(e.target.value) || 25
+                }))
+              }
               min="1"
               max="60"
             />
           </div>
-          
-          <div className="setting-item">
+          <div className={styles.settingItem}>
             <label>Short Break (min)</label>
             <input
               type="number"
               value={settings.shortBreakDuration}
-              onChange={(e) => setSettings(prev => ({
-                ...prev,
-                shortBreakDuration: parseInt(e.target.value) || 5
-              }))}
+              onChange={(e) =>
+                setSettings(prev => ({
+                  ...prev,
+                  shortBreakDuration: parseInt(e.target.value) || 5
+                }))
+              }
               min="1"
               max="30"
             />
           </div>
-          
-          <div className="setting-item">
+          <div className={styles.settingItem}>
             <label>Long Break (min)</label>
             <input
               type="number"
               value={settings.longBreakDuration}
-              onChange={(e) => setSettings(prev => ({
-                ...prev,
-                longBreakDuration: parseInt(e.target.value) || 15
-              }))}
+              onChange={(e) =>
+                setSettings(prev => ({
+                  ...prev,
+                  longBreakDuration: parseInt(e.target.value) || 15
+                }))
+              }
               min="1"
               max="60"
             />
           </div>
-          
-          <div className="setting-item">
+          <div className={styles.settingItem}>
             <label>Sessions until Long Break</label>
             <input
               type="number"
               value={settings.sessionsUntilLongBreak}
-              onChange={(e) => setSettings(prev => ({
-                ...prev,
-                sessionsUntilLongBreak: parseInt(e.target.value) || 4
-              }))}
+              onChange={(e) =>
+                setSettings(prev => ({
+                  ...prev,
+                  sessionsUntilLongBreak: parseInt(e.target.value) || 4
+                }))
+              }
               min="1"
               max="10"
             />
@@ -240,8 +223,7 @@ export default function PomodoroTimer() {
         </div>
       </div>
 
-      {/* Tips */}
-      <div className="timer-tips">
+      <div className={styles.timerTips}>
         <h4>💡 Tips</h4>
         <ul>
           <li>Work for 25 minutes, then take a 5-minute break</li>
@@ -252,4 +234,4 @@ export default function PomodoroTimer() {
       </div>
     </div>
   );
-} 
+}

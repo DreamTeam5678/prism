@@ -5,6 +5,7 @@ import MoodSelector from "../../MoodSelector/MoodSelector";
 import styles from './OptimizeModal.module.css';
 import { format, set } from 'date-fns';
 import moment from 'moment-timezone'; // Import moment-timezone
+import OptimizeAnalytics from "./OptimizeAnalytics";
 
 const WEATHER_API_KEY = process.env.NEXT_PUBLIC_WEATHER_API_KEY;
 
@@ -203,7 +204,7 @@ export default function OptimizeModal({ onClose, setLoading }: OptimizeModalProp
         <button onClick={onClose} className={styles.closeButton}>×</button>
 
         {error && <div className={styles.errorMessage}>{error}</div>}
-
+        <button onClick = {OptimizeAnalytics} >Optimize Analytics</button>
         <div className={styles.optimizeSection}>
           <h2>Uncompleted Tasks</h2>
           {tasks.map((task) => (
