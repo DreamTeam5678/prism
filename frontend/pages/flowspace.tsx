@@ -1,5 +1,5 @@
 import NavBar from "@/components/NavBar/NavBar";
-import Avatars from "../components/FlowSpace/Avatars";
+//import Avatars from "../components/FlowSpace/Avatars";
 import BackgroundPicker from "../components/FlowSpace/BackgroundPicker";
 import { useState } from "react";
 import YoutubePlayer from "../components/FlowSpace/YoutubePlayer";
@@ -54,7 +54,7 @@ export default function FlowSpace() {
       </button>
 
       {navOn && <NavBar />}
-      <Avatars />
+     
       <BackgroundPicker current={selected} onChange={setSelected} />
 
       <div className="page-wrapper">

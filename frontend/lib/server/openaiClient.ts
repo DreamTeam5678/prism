@@ -67,7 +67,7 @@ export async function getTaskSchedule({
     
     // Calculate available slots for tomorrow
     const availableSlots = [];
-    let currentTime = tomorrowStartOfDay.clone();
+    const currentTime = tomorrowStartOfDay.clone();
     
     console.log(`🔍 Calculating tomorrow slots for "${taskTitle}" (${durationMinutes}min) from ${currentTime.format('HH:mm')} to ${tomorrowEndOfDay.format('HH:mm')}`);
     
@@ -159,7 +159,7 @@ export async function getTaskSchedule({
   
   // Calculate available time slots more precisely
   const availableSlots = [];
-  let currentTime = earliestPossibleStartTime.clone();
+  const currentTime = earliestPossibleStartTime.clone();
   
   // Convert all events to the correct timezone for proper comparison
   const timezoneEvents = events.map(event => ({
