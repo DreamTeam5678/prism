@@ -48,7 +48,7 @@
 
 .closeButton {
   position: absolute;
-  top: 1rem;
+  top: -1rem;
   right: 1.5rem;
   font-size: 3rem;
   background: none;
@@ -140,4 +140,132 @@
 .optimizeModal::-webkit-scrollbar-thumb {
   background-color: rgba(155, 135, 166, 0.4);
   border-radius: 10px;
+}
+
+/* Loading spinner styles */
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 1.5rem;
+  border: 2px solid #9b87a6;
+  margin: 1rem 0;
+}
+
+.loadingContainer p {
+  margin-top: 1rem;
+  font-size: 1.1rem;
+  color: #666;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #9b87a6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Accepted task styles */
+.acceptedTask {
+  background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 100%) !important;
+  border-color: #4CAF50 !important;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2) !important;
+  position: relative;
+}
+
+.acceptedTask::before {
+  content: "✓ Accepted";
+  position: absolute;
+  top: -8px;
+  right: 15px;
+  background: #4CAF50;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+.acceptedTask .optimizeTaskTitle {
+  color: #4CAF50;
+  font-weight: 700;
+}
+
+.acceptedTask .optimizeTaskTime {
+  color: #4CAF50;
+  font-weight: 600;
+}
+
+.acceptedButton {
+  background-color: #4CAF50 !important;
+  color: white !important;
+  transform: scale(1.1) !important;
+  box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3) !important;
+  cursor: default !important;
+}
+
+.acceptedButton:hover {
+  transform: scale(1.1) !important;
+  background-color: #4CAF50 !important;
+}
+
+/* Analytics button and section styles */
+.analyticsButton {
+  background: linear-gradient(135deg, #9b87a6 0%, #8b7a96 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  box-shadow: 0 2px 4px rgba(155, 135, 166, 0.3);
+  margin-bottom: 1rem;
+  width: 100%;
+  text-align: center;
+}
+
+.analyticsButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(155, 135, 166, 0.4);
+  background: linear-gradient(135deg, #8b7a96 0%, #7b6a86 100%);
+}
+
+.analyticsSection {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.backButton {
+  background: #f5f3f7;
+  color: #666;
+  border: 1px solid #ddd;
+  padding: 0.5rem 1rem;
+  border-radius: 0.75rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  margin-bottom: 1rem;
+}
+
+.backButton:hover {
+  background: #e9e2f0;
+  color: #444;
+  transform: translateY(-1px);
 }

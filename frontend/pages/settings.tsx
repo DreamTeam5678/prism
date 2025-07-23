@@ -309,7 +309,10 @@ export default function ProfilePage() {
         }
 
         .profile-card {
-
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-direction: column;
           flex: 0 0 22%;
           max-width: 400px;
           height: auto;
@@ -387,6 +390,9 @@ export default function ProfilePage() {
           margin: 0;
           font-weight: 600;
           letter-spacing: -0.04em;
+          align-self: center;
+          text-align: center;
+          margin-top: 1rem;
         }
 
         .profile-input {
@@ -407,7 +413,7 @@ export default function ProfilePage() {
         }
 
         .profile-btn {
-          background-color: #eaeaea;
+          background-color:rgb(214, 162, 146);
           color: white;
           padding: 0.8rem 1.6rem;
           border: none;
@@ -417,8 +423,10 @@ export default function ProfilePage() {
           font-weight: 600;
           letter-spacing: 0.5px;
           align-self: flex-start;
-          box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.38);
           transition: background-color 0.3s ease, transform 0.4s ease, box-shadow 0.3s ease;
+          align-self: center;
+          
         }
 
         .profile-btn:hover {
@@ -441,6 +449,7 @@ export default function ProfilePage() {
           box-shadow: 0 4px 10px rgba(0,0,0,0.2);
           animation: pulse 2s infinite ease-in-out;
           transition: background-color 0.3s ease, transform 0.4s ease, box-shadow 0.3s ease;
+          align-self: center;
         }
 
         .signout-btn:hover {

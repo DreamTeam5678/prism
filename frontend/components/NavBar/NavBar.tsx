@@ -21,18 +21,13 @@ export default function NavBar() {
           </div>
         )}
         <div className="nav-bar-links">
-          <a href="/" className="nav-bar-link">
+          <a href="/calendar" className="nav-bar-link">
             ⌂
             <div className ="nav-bar-link-text">
                 Home
             </div>
           </a>
-          <a href="/calendar" className="nav-bar-link">
-            ⊞
-            <div className ="nav-bar-link-text">
-                Calendar
-            </div>
-          </a>
+  
           <a href="/tasks" className="nav-bar-link">
             ☑
             <div className ="nav-bar-link-text">
@@ -45,12 +40,7 @@ export default function NavBar() {
                 Flow Space
             </div>
           </a>
-          <a href="/settings" className="nav-bar-link">
-            ⚙
-            <div className ="nav-bar-link-text">
-                Settings
-            </div>
-          </a>
+          
           
         </div>
 

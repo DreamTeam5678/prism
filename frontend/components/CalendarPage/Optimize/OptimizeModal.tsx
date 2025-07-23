@@ -46,6 +46,8 @@ export default function OptimizeModal({ onClose, setLoading }: OptimizeModalProp
   const [weather, setWeather] = useState<string>("");
   const [location, setLocation] = useState<string>("");
   const [error, setError] = useState<string | null>(null); // Add error state
+  const [isGeneratingSuggestions, setIsGeneratingSuggestions] = useState<boolean>(false); // Add loading state for suggestions
+  const [showAnalytics, setShowAnalytics] = useState<boolean>(false); // Add analytics state
 
   const formatTime = (date: string) =>
     new Date(date).toLocaleTimeString([], {
@@ -112,6 +114,7 @@ export default function OptimizeModal({ onClose, setLoading }: OptimizeModalProp
   const validatedTimeZone = moment.tz.names().includes(timeZone) ? timeZone : 'UTC';
 
   const handleGenerateSuggestions = async () => {
+    setIsGeneratingSuggestions(true); // Start loading spinner
     setLoading(true);
     setError(null); // Reset error state
     try {
@@ -130,6 +133,7 @@ export default function OptimizeModal({ onClose, setLoading }: OptimizeModalProp
       console.error("❌ Failed to generate suggestions:", err);
       setError("Failed to generate suggestions. Please try again.");
     } finally {
+      setIsGeneratingSuggestions(false); // Stop loading spinner
       setLoading(false);
     }
   };
@@ -202,66 +206,104 @@ export default function OptimizeModal({ onClose, setLoading }: OptimizeModalProp
     <div className={styles.optimizeOverlay}>
       <div className={styles.optimizeModal}>
         <button onClick={onClose} className={styles.closeButton}>×</button>
-
         {error && <div className={styles.errorMessage}>{error}</div>}
-        <button onClick = {OptimizeAnalytics} >Optimize Analytics</button>
-        <div className={styles.optimizeSection}>
-          <h2>Uncompleted Tasks</h2>
-          {tasks.map((task) => (
-            <div key={task.id} className={styles.optimizeTaskCard}>
-              <div className={styles.optimizeTaskTitle}>{task.title}</div>
-              <div className={styles.optimizeTaskTime}>Priority: {task.priority}</div>
-            </div>
-          ))}
-        </div>
-
-        <div className={styles.optimizeSection}>
-          <MoodSelector onSelectMood={handleMoodSelect} onClose={() => {}} disabled={suggestions.length > 0} />
-        </div>
-
-        <div className={styles.optimizeSection}>
-          <h2>Where are you today?</h2>
-          <select
-            className={styles.inputField}
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-          >
-            <option value="">Select a location</option>
-            <option value="home">🏠 Home</option>
-            <option value="work">💼 Work</option>
-            <option value="campus">📚 Campus</option>
-            <option value="commuting">🚗 Commuting</option>
-            <option value="cafe">☕ Cafe</option>
-            <option value="traveling">✈️ Traveling</option>
-          </select>
-
-          <h2>What is the weather today?</h2>
-          <input
-            className={styles.inputField}
-            type="text"
-            value={weather}
-            onChange={(e) => setWeather(e.target.value)}
-            placeholder="e.g., sunny, rainy, cold"
-          />
-        </div>
-
-        {suggestions.length > 0 && (
-          <div className={styles.optimizeSection}>
-            <h2>Smart Suggestions</h2>
-            {suggestions.map((s) => (
-              <div key={s.id} className={styles.optimizeTaskCard}>
-                <div className={styles.optimizeTaskTitle}>{s.title}</div>
-                <div className={styles.optimizeTaskTime}>
-                  {formatTime(s.start)} – {formatTime(s.end)}
+        
+        {showAnalytics ? (
+          <div className={styles.analyticsSection}>
+            <button 
+              onClick={() => setShowAnalytics(false)} 
+              className={styles.backButton}
+            >
+              ← Back to Optimization
+            </button>
+            <OptimizeAnalytics />
+          </div>
+        ) : (
+          <>
+            <div className={styles.optimizeSection}>
+              <button 
+                onClick={() => setShowAnalytics(true)}
+                className={styles.analyticsButton}
+              >
+                📊 View Analytics
+              </button>
+              <h2>Uncompleted Tasks</h2>
+              {tasks.map((task) => (
+                <div key={task.id} className={styles.optimizeTaskCard}>
+                  <div className={styles.optimizeTaskTitle}>{task.title}</div>
+                  <div className={styles.optimizeTaskTime}>Priority: {task.priority}</div>
                 </div>
-                <div className={styles.iconRow}>
-                  <button onClick={() => handleAccept(s)}>✅</button>
-                  <button onClick={() => handleRetry(s)}>🔁</button>
-                  <button onClick={() => handleReject(s)}>❌</button>
+              ))}
+            </div>
+
+            <div className={styles.optimizeSection}>
+              <MoodSelector onSelectMood={handleMoodSelect} onClose={() => {}} disabled={suggestions.length > 0} />
+            </div>
+
+            <div className={styles.optimizeSection}>
+              <h2>Where are you today?</h2>
+              <select
+                className={styles.inputField}
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+              >
+                <option value="">Select a location</option>
+                <option value="home">🏠 Home</option>
+                <option value="work">💼 Work</option>
+                <option value="campus">📚 Campus</option>
+                <option value="commuting">🚗 Commuting</option>
+                <option value="cafe">☕ Cafe</option>
+                <option value="traveling">✈️ Traveling</option>
+              </select>
+
+              <h2>What is the weather today?</h2>
+              <input
+                className={styles.inputField}
+                type="text"
+                value={weather}
+                onChange={(e) => setWeather(e.target.value)}
+                placeholder="e.g., sunny, rainy, cold"
+              />
+            </div>
+
+            {/* Loading spinner when generating suggestions */}
+            {isGeneratingSuggestions && (
+              <div className={styles.optimizeSection}>
+                <div className={styles.loadingContainer}>
+                  <div className={styles.spinner}></div>
+                  <p>Generating smart suggestions...</p>
                 </div>
               </div>
-            ))}
-          </div>
+            )}
+
+            {suggestions.length > 0 && (
+              <div className={styles.optimizeSection}>
+                <h2>Smart Suggestions</h2>
+                {suggestions.map((s) => {
+                  const isAccepted = accepted.some(acceptedSuggestion => acceptedSuggestion.id === s.id);
+                  return (
+                    <div key={s.id} className={`${styles.optimizeTaskCard} ${isAccepted ? styles.acceptedTask : ''}`}>
+                      <div className={styles.optimizeTaskTitle}>{s.title}</div>
+                      <div className={styles.optimizeTaskTime}>
+                        {formatTime(s.start)} – {formatTime(s.end)}
+                      </div>
+                      <div className={styles.iconRow}>
+                        <button 
+                          onClick={() => handleAccept(s)}
+                          className={isAccepted ? styles.acceptedButton : ''}
+                          disabled={isAccepted}
+                        >
+                          {isAccepted ? '✅' : '✅'}
+                        </button>
+                        <button onClick={() => handleRetry(s)}>🔁</button>
+                        <button onClick={() => handleReject(s)}>❌</button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
