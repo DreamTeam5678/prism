@@ -17,7 +17,7 @@ export default function NavBar() {
         {session && (
           <div className="nav-bar-profile">
             <Link href = "/settings">
-              <img src={session.user.image} alt="Profile Picture" />
+              <img src={session.user.image ?? "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/2048px-Default_pfp.svg.png"} alt="Profile Picture" />
             </Link>
           </div>
         )}
