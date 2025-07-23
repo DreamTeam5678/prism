@@ -13,26 +13,33 @@
   width: 100%;
   justify-content: center;
   margin-bottom: 2rem;
+  font-size : 0.5rem;
+  
 }
 
 .youtube-player-search-input {
   flex: 1;
   padding: 0.75rem;
-  font-size: 1.1rem;
+  font-size: 0.9rem;
   border-radius: 8px;
   border: 1px solid #ccc;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
 
 .youtube-player-search-button {
   padding: 0.75rem 1.5rem;
   font-size: 1.1rem;
   border-radius: 8px;
-  background-color: #007bff;
+  background-color: #8e9c87;
   color: white;
   border: none;
   cursor: pointer;
+  box-shadow: inset 0 0 0 0.5px #ffffff;
 }
 
+.youtube-player-search-button:hover {
+  background-color: #7b8a6f;
+}
 
 .youtube-player-results {
   display: flex;
