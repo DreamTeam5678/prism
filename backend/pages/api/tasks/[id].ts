@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { isToday, differenceInCalendarDays } from "date-fns";
+import { differenceInCalendarDays } from "date-fns";
 import prisma from "../../../lib/prisma"; // Adjust path if needed
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

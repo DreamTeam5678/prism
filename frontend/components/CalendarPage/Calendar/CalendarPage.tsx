@@ -183,7 +183,7 @@ export default function CalendarPage() {
 */
 // frontend/components/CalendarPage/CalendarPage.tsx
 "use client";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { Calendar, momentLocalizer, View } from "react-big-calendar";
 import moment from "moment";

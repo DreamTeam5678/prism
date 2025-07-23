@@ -2,7 +2,7 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { User, ClipboardList, MapPin, Cloud, Sun, Target, AlertCircle, ThumbsDown, Home, Thermometer } from 'lucide-react';
+import { User, ClipboardList, /*MapPin, Cloud, Sun, */Target, AlertCircle, ThumbsDown, /*Home, Thermometer */} from 'lucide-react';
 import styles from './Survey.module.css';
 import { submitSurvey } from '@/lib/saveSurvey';
 const steps = [

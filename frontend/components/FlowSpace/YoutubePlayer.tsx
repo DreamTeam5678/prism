@@ -1,5 +1,6 @@
-import { NextApiRequest, NextApiResponse } from "next";
+//import { NextApiRequest, NextApiResponse } from "next";
 import { useState, useEffect } from "react";
+import Link from "next/link";
 
 
 interface Video {
@@ -83,13 +84,13 @@ export default function YoutubePlayer() {
             alt="Monitor"
             className="youtube-monitor-image"
           />
-          <a href = "/flowspace">
+          <Link href = "/flowspace">
           <img
             src="https://png.pngtree.com/png-vector/20220608/ourmid/pngtree-reload-icon-retry-restart-recover-png-image_4891515.png"
             alt="Reload"
             className="retry-button"
           />
-          </a>
+          </Link>
           <div className="youtube-player-on-monitor">
             <iframe
               className="youtube-player-video"
