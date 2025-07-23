@@ -1,10 +1,12 @@
 // frontend/components/Survey/SurveyStepper.tsx
 'use client';
-import { useState } from 'react';
+import { JSX, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { User, ClipboardList, /*MapPin, Cloud, Sun, */Target, AlertCircle, ThumbsDown, /*Home, Thermometer */} from 'lucide-react';
 import styles from './Survey.module.css';
 import { submitSurvey } from '@/lib/saveSurvey';
+import React from 'react';
+
 const steps = [
   'currentMode',
   'idealSelf',
@@ -68,8 +70,21 @@ export default function SurveyStepper() {
       setLoading(false);
     }
   };
+ 
+  type stepConfig = {
+    title: string;
+    subtitle: string;
+    isMultiSelect: boolean;
+    maxSelections?: number;
+    options: {
+      value: string;
+      label: string;
+      emoji: string;
+      description?: string;
+    }[];
+  };
 
-  const stepData = {
+  const stepData: Record<StepKey, stepConfig> = {
     currentMode: {
       title: "Your Current Mode",
       subtitle: "This grounds us in where you are now.",
