@@ -1,5 +1,5 @@
 
-import { useState, useRef, useEffect } from "react";
+//import { useState, useRef, useEffect } from "react";
 
 const backgrounds = [
   'https://i.pinimg.com/originals/9c/d1/a0/9cd1a09bb5c3d5a6774128147c96b18b.gif',

@@ -2,7 +2,7 @@ import NavBar from "@/components/NavBar/NavBar";
 import Avatars from "../components/FlowSpace/Avatars";
 import BackgroundPicker from "../components/FlowSpace/BackgroundPicker";
 import { useState } from "react";
-import styles from "../components/FlowSpace/FlowSpace.module.css";
+//import styles from "../components/FlowSpace/FlowSpace.module.css";
 import YoutubePlayer from '../components/FlowSpace/YoutubePlayer';
 import PomodoroTimer from '../components/FlowSpace/PomodoroTimer';
 

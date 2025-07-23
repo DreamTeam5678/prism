@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import MoodSelector from "../../MoodSelector/MoodSelector";
 import styles from './OptimizeModal.module.css';
-import { format, set } from 'date-fns';
+//import { format, set } from 'date-fns';
 import moment from 'moment-timezone'; // Import moment-timezone
 
 const WEATHER_API_KEY = process.env.NEXT_PUBLIC_WEATHER_API_KEY;
