@@ -1,0 +1,127 @@
+
+/* Pomodoro Timer Styles */
+.pomodoroContainer {
+  max-width: 400px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 20px;
+}
+
+.timerDisplay {
+  font-size: 48px;
+  font-weight: bold;
+  color: #333;
+  margin: 20px 0;
+}
+
+.timerProgress {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  border: 8px solid #f0f0f0;
+  border-top: 8px solid #007bff;
+  animation: spin 1s linear infinite;
+  margin: 20px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.timerProgress.paused {
+  animation-play-state: paused;
+}
+
+.timerProgress.break {
+  border-top-color: #28a745;
+}
+
+.timerControls {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.timerButton {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.timerButton.primary {
+  background: #007bff;
+  color: white;
+}
+
+.timerButton.primary:hover {
+  background: #0056b3;
+}
+
+.timerButton.secondary {
+  background: #6c757d;
+  color: white;
+}
+
+.timerButton.secondary:hover {
+  background: #545b62;
+}
+
+.timerButton.danger {
+  background: #dc3545;
+  color: white;
+}
+
+.timerButton.danger:hover {
+  background: #c82333;
+}
+
+.timerSettings {
+  margin-top: 20px;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.timerSettings h4 {
+  margin-bottom: 12px;
+  color: #333;
+}
+
+.settingGroup {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.settingGroup label {
+  font-weight: 500;
+  color: #333;
+}
+
+.settingGroup input {
+  width: 60px;
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.sessionInfo {
+  margin-top: 16px;
+  padding: 12px;
+  background: #e9ecef;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #666;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+} 

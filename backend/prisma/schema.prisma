@@ -126,3 +126,4 @@ model CalendarEvent {
 
   user User @relation(fields: [userId], references: [id])
 }
+

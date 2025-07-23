@@ -1,0 +1,322 @@
+.analyticsContainer {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.analyticsTitle {
+  text-align: center;
+  color: #333;
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  font-weight: bold;
+}
+
+/* Loading and Error States */
+.loadingState,
+.errorState {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #007bff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+.retryButton {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+.retryButton:hover {
+  background: #0056b3;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Overview Cards */
+.overviewGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.overviewCard {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.overviewCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.cardIcon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.cardContent h3 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.cardContent p {
+  margin: 0.25rem 0 0 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* Insights Grid */
+.insightsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.insightCard {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.insightCard h3 {
+  margin: 0 0 1rem 0;
+  color: #333;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.insightContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.insightItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.insightItem:last-child {
+  border-bottom: none;
+}
+
+.insightLabel {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.insightValue {
+  font-weight: 600;
+  color: #333;
+  font-size: 1rem;
+}
+
+/* Recommendations Section */
+.recommendationsSection {
+  margin-bottom: 2rem;
+}
+
+.recommendationsSection h3 {
+  color: #333;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.recommendationsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.recommendationCard {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid;
+  transition: transform 0.3s ease;
+}
+
+.recommendationCard:hover {
+  transform: translateY(-2px);
+}
+
+.recommendationHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+
+.recommendationHeader h4 {
+  margin: 0;
+  color: #333;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.priorityBadge {
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.recommendationDescription {
+  margin: 0;
+  color: #666;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* Chart Section */
+.chartSection {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.chartSection h3 {
+  color: #333;
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+.moodChart {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.moodBar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.moodBarLabel {
+  min-width: 120px;
+  font-size: 0.9rem;
+  color: #333;
+  font-weight: 500;
+}
+
+.moodBarContainer {
+  flex: 1;
+  height: 20px;
+  background: #f0f0f0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.moodBarFill {
+  height: 100%;
+  background: linear-gradient(90deg, #007bff, #28a745);
+  border-radius: 10px;
+  transition: width 0.3s ease;
+}
+
+.moodBarCount {
+  min-width: 30px;
+  text-align: right;
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: 600;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .analyticsContainer {
+    padding: 1rem;
+  }
+  
+  .analyticsTitle {
+    font-size: 1.5rem;
+  }
+  
+  .overviewGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+  
+  .overviewCard {
+    padding: 1rem;
+  }
+  
+  .cardIcon {
+    font-size: 1.5rem;
+  }
+  
+  .cardContent h3 {
+    font-size: 1.4rem;
+  }
+  
+  .insightsGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .recommendationsGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .moodBar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .moodBarLabel {
+    min-width: auto;
+  }
+  
+  .moodBarContainer {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .overviewGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .overviewCard {
+    flex-direction: column;
+    text-align: center;
+  }
+} 

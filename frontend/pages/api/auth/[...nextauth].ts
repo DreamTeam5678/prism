@@ -3,6 +3,7 @@ import GoogleProvider from "next-auth/providers/google";
 import prisma from "@/lib/prisma"; 
 import type { NextAuthOptions } from "next-auth";
 import type { DefaultUser } from "next-auth";
+import { google } from "googleapis";
 
 declare module "next-auth" {
   interface Session {
@@ -20,6 +21,29 @@ declare module "next-auth/jwt" {
     refreshToken?: string;
   }
 }
+
+async function refreshAccessToken(token: any) {
+  try {
+    const oAuth2Client = new google.auth.OAuth2(
+      process.env.GOOGLE_CLIENT_ID,
+      process.env.GOOGLE_CLIENT_SECRET
+    );
+    oAuth2Client.setCredentials({
+      refresh_token: token.refreshToken,
+    });
+    const { credentials } = await oAuth2Client.refreshAccessToken();
+    return {
+      ...token,
+      accessToken: credentials.access_token,
+      accessTokenExpires: Date.now() + (credentials.expiry_date ? credentials.expiry_date * 1000 : 3600 * 1000),
+      refreshToken: credentials.refresh_token ?? token.refreshToken,
+    };
+  } catch (error) {
+    console.error("Error refreshing access token", error);
+    return { ...token, error: "RefreshAccessTokenError" };
+  }
+}
+
 export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
@@ -43,11 +67,21 @@ export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
     async jwt({ token, account }) {
+      // Initial sign in
       if (account) {
-        token.accessToken = account.access_token;
-        token.refreshToken = account.refresh_token;
+        return {
+          accessToken: account.access_token,
+          accessTokenExpires: Date.now() + (account.expires_at ? account.expires_at * 1000 : 3600 * 1000),
+          refreshToken: account.refresh_token,
+          ...token,
+        };
       }
-      return token;
+      // Return previous token if the access token has not expired yet
+      if (typeof token.accessTokenExpires === 'number' && Date.now() < token.accessTokenExpires) {
+        return token;
+      }
+      // Access token has expired, try to update it
+      return await refreshAccessToken(token);
     },
     async session({ session, token }) {
       session.accessToken = token.accessToken;

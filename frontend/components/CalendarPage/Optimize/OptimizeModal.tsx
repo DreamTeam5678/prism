@@ -12,15 +12,18 @@ interface Task {
   id: string;
   title: string;
   completed: boolean;
+  scheduled: boolean;
   priority: "low" | "medium" | "high";
 }
 
 interface GPTSuggestion {
   id: string;
-  suggestionText: string;
-  timestamp: string;
+  title: string; // Changed from suggestionText to title to match API response
+  timestamp?: string;
   start: string;
   end: string;
+  priority?: string;
+  reason?: string;
 }
 
 type Mood = {
@@ -144,7 +147,7 @@ export default function OptimizeModal({ onClose, setLoading }: OptimizeModalProp
       const res = await fetch("/api/suggestions/retry", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: s.id }),
+        body: JSON.stringify({ originalSuggestion: s }),
       });
       const newSuggestion = await res.json();
       if (res.ok) {
@@ -171,17 +174,16 @@ export default function OptimizeModal({ onClose, setLoading }: OptimizeModalProp
       Object.keys(responded).length === suggestions.length
     ) {
       (async () => {
-        console.log("📤 Sending to calendar:", { accepted, tasks });
+        // Only send unscheduled tasks to calendar add API
+        const unscheduledTasks = tasks.filter(task => !task.scheduled);
+        console.log("📤 Sending unscheduled task bank tasks to calendar:", { tasks: unscheduledTasks });
+        
         await fetch("/api/calendar/add", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            suggestions: accepted.map((s) => ({
-              ...s,
-              source: "gpt",
-              color: "#9b87a6",
-            })),
-            tasks: tasks.map((t) => ({
+            suggestions: [], // GPT suggestions already scheduled in generate.ts
+            tasks: unscheduledTasks.map((t) => ({
               ...t,
               source: "task_bank",
               color: "#ebdbb4",
@@ -247,7 +249,7 @@ export default function OptimizeModal({ onClose, setLoading }: OptimizeModalProp
             <h2>Smart Suggestions</h2>
             {suggestions.map((s) => (
               <div key={s.id} className={styles.optimizeTaskCard}>
-                <div className={styles.optimizeTaskTitle}>{s.suggestionText}</div>
+                <div className={styles.optimizeTaskTitle}>{s.title}</div>
                 <div className={styles.optimizeTaskTime}>
                   {formatTime(s.start)} – {formatTime(s.end)}
                 </div>

@@ -7,6 +7,10 @@ import moment from 'moment-timezone';
 import { mapTags } from '@/lib/tagEngine';
 import { getGPTSuggestion, getTaskSchedule } from '../../../lib/server/openaiClient';
 import { inferDuration } from '@/lib/utils/inferDuration';
+import crypto from 'crypto';
+import stringSimilarity from 'string-similarity';
+import { google } from 'googleapis';
+import { getToken } from 'next-auth/jwt';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') return res.status(405).json({ message: 'Method not allowed' });
@@ -31,17 +35,53 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     dislikes: user.userProfile.dislikes,
   });
 
-  const calendarEvents = await prisma.calendarEvent.findMany({
+  // Get local database events
+  const localEvents = await prisma.calendarEvent.findMany({
     where: { userId: user.id, start: { gte: new Date(new Date().setHours(0, 0, 0, 0)) } },
   });
 
+  // Get Google Calendar events
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+  const accessToken = token?.accessToken as string | undefined;
+  const googleEvents = await fetchGoogleCalendarEvents(accessToken);
+
+  // Combine all events for conflict detection
+  const allEvents = [...localEvents, ...googleEvents];
+
+  console.log(`📊 Found ${localEvents.length} local events and ${googleEvents.length} Google events for user`);
+  console.log(`📅 All events:`, allEvents.map(e => `${e.title} (${e.start.toLocaleTimeString()}-${e.end.toLocaleTimeString()}) [${e.source}]`));
+
   const now = moment.tz(validatedTimeZone);
-  const gptScheduledTitlesToday = calendarEvents
+  
+  // Get all scheduled tasks for today (both GPT and task bank)
+  const allScheduledTasksToday = allEvents
+    .filter(e => moment(e.start).isSame(now, 'day'))
+    .map(e => e.title.toLowerCase());
+  
+  // Get GPT-specific scheduled titles for similarity filtering
+  const gptScheduledTitlesToday = allEvents
     .filter(e => e.source === 'gpt' && moment(e.start).isSame(now, 'day'))
     .map(e => e.title.toLowerCase());
 
-  const safeEvents = calendarEvents.map(e => ({ start: e.start.toISOString(), end: e.end.toISOString() }));
-  const suggestions = (await getGPTSuggestion({
+  const safeEvents = allEvents.map(e => ({ start: e.start.toISOString(), end: e.end.toISOString() }));
+
+  // Get user history for better personalization
+  const recentSuggestions = await prisma.suggestion.findMany({
+    where: { 
+      userId: user.id,
+      timestamp: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) } // Last 7 days
+    },
+    orderBy: { timestamp: 'desc' },
+    take: 20
+  });
+
+  const userHistory = recentSuggestions.map(s => ({
+    task: s.suggestionText,
+    accepted: true, // If it's in the database, it was accepted
+    timestamp: s.timestamp.toISOString()
+  }));
+
+  const suggestionsRaw = await getGPTSuggestion({
     userTags: tags,
     mood,
     environment: location,
@@ -49,96 +89,193 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     calendarConflicts: safeEvents,
     timeWindow: '8AM–9PM',
     timeZone: validatedTimeZone,
-  })).filter(s => !gptScheduledTitlesToday.includes(s.task.toLowerCase()));
+    avoidTitles: allScheduledTasksToday, // Avoid ALL scheduled tasks, not just GPT ones
+    userHistory,
+    currentTime: new Date().toISOString(),
+  });
 
+  // Backend-side similarity filtering
+  function filterSimilarSuggestions(suggestions: { task: string; priority: string; reason?: string }[], alreadyScheduledTitles: string[]): { task: string; priority: string; reason?: string }[] {
+    const unique: { task: string; priority: string; reason?: string }[] = [];
+    for (const s of suggestions) {
+      // Check against already scheduled
+      if (alreadyScheduledTitles.some((title: string) => stringSimilarity.compareTwoStrings(s.task, title) > 0.8)) {
+        continue;
+      }
+      // Check against already accepted in this batch
+      if (unique.some((u: { task: string; priority: string; reason?: string }) => stringSimilarity.compareTwoStrings(s.task, u.task) > 0.8)) {
+        continue;
+      }
+      unique.push(s);
+    }
+    return unique;
+  }
+
+  const suggestions = filterSimilarSuggestions(suggestionsRaw, gptScheduledTitlesToday);
+
+  // Get unscheduled task bank tasks
   const taskBankTasks = await prisma.task.findMany({
     where: { userId: user.id, scheduled: false, completed: false },
   });
 
-  const mergedTasks = [
-    ...taskBankTasks.map(task => ({
-      task: task.title,
-      priority: task.priority,
-      source: 'taskbank',
-      id: task.id,
-    })),
-    ...suggestions.map(s => ({ ...s, source: 'gpt' })),
-  ];
-
-  const sorted = mergedTasks.sort((a, b) => {
-    const order = { High: 3, Medium: 2, Low: 1 };
-    return order[b.priority] - order[a.priority];
-  });
-
+  // Only schedule GPT suggestions here
   const scheduled = [];
   const skipped = [];
 
-  for (const task of sorted) {
-    const duration = inferDuration(task.task, task.priority);
+  // Track scheduled times to avoid conflicts - include ALL existing calendar events
+  const scheduledTimes: { start: Date; end: Date }[] = [];
+
+  // Schedule only GPT suggestions
+  for (const suggestion of suggestions) {
+    const duration = inferDuration(suggestion.task, suggestion.priority);
+    
+    // Get ALL existing calendar events for today (including GPT, task bank, and Google Calendar)
+    const todayEvents = allEvents.filter((e: any) => {
+      const eventDate = moment(e.start).tz(validatedTimeZone);
+      const today = moment.tz(validatedTimeZone).startOf('day');
+      return eventDate.isSame(today, 'day');
+    });
+    
+    console.log(`📅 Today's events (${todayEvents.length}):`, todayEvents.map((e: any) => `${e.title} (${moment(e.start).tz(validatedTimeZone).format('HH:mm')}-${moment(e.end).tz(validatedTimeZone).format('HH:mm')}) [${e.source}]`));
+    
+    // Convert calendarEvents to the correct type (start/end as strings)
+    const safeEventsForSchedule = todayEvents.map((e: any) => ({
+      start: e.start instanceof Date ? e.start.toISOString() : e.start,
+      end: e.end instanceof Date ? e.end.toISOString() : e.end,
+      title: e.title,
+    }));
+    
+    // Add already scheduled times from this session to avoid conflicts
+    const allEventsForSchedule = [...safeEventsForSchedule, ...scheduledTimes.map(st => ({
+      start: st.start.toISOString(),
+      end: st.end.toISOString(),
+      title: 'Scheduled in this session'
+    }))];
+    
+    // ALSO include task bank tasks that will be scheduled later to avoid conflicts
+    const taskBankEvents = taskBankTasks.map(task => {
+      // Estimate a default time for task bank tasks (they'll be scheduled by add.ts)
+      // Use priority-based time slots to avoid conflicts
+      let estimatedStart;
+      if (task.priority === 'high') {
+        estimatedStart = moment.tz(validatedTimeZone).startOf('day').hour(8).minute(0); // 8:00 AM
+      } else if (task.priority === 'medium') {
+        estimatedStart = moment.tz(validatedTimeZone).startOf('day').hour(13).minute(0); // 1:00 PM
+      } else {
+        estimatedStart = moment.tz(validatedTimeZone).startOf('day').hour(16).minute(0); // 4:00 PM
+      }
+      
+      const estimatedDuration = inferDuration(task.title, task.priority);
+      const estimatedEnd = estimatedStart.clone().add(estimatedDuration, 'minutes');
+      
+      return {
+        start: estimatedStart.toISOString(),
+        end: estimatedEnd.toISOString(),
+        title: `Task Bank: ${task.title}`,
+      };
+    });
+    
+    // Include task bank events in conflict detection
+    const allEventsWithTaskBank = [...allEventsForSchedule, ...taskBankEvents];
+    
+    console.log(`🔍 Scheduling "${suggestion.task}" with ${allEventsWithTaskBank.length} existing events (including ${taskBankEvents.length} task bank tasks)`);
+    console.log(`📅 Existing events:`, allEventsWithTaskBank.map((e: any) => `${e.title} (${new Date(e.start).toLocaleTimeString()}-${new Date(e.end).toLocaleTimeString()})`));
+    console.log(`📊 Scheduled times in this session:`, scheduledTimes.map(st => `${st.start.toLocaleTimeString()}-${st.end.toLocaleTimeString()}`));
+    console.log(`📋 Task bank tasks to avoid:`, taskBankEvents.map((e: any) => `${e.title} (${new Date(e.start).toLocaleTimeString()}-${new Date(e.end).toLocaleTimeString()})`));
+    
     const schedule = await getTaskSchedule({
-      taskTitle: task.task,
-      priority: task.priority,
+      taskTitle: suggestion.task,
+      priority: suggestion.priority as 'High' | 'Medium' | 'Low',
       durationMinutes: duration,
       mood,
-      events: calendarEvents,
+      events: allEventsWithTaskBank, // Include task bank tasks in conflict detection
       timeZone: validatedTimeZone,
     });
 
     if (!schedule.recommendedStart || !schedule.recommendedEnd) {
-      skipped.push({ title: task.task, reason: schedule.reason });
+      skipped.push({ title: suggestion.task, reason: schedule.reason });
       continue;
     }
 
+    console.log(`✅ Scheduled "${suggestion.task}" at ${schedule.recommendedStart.toLocaleTimeString()}`);
+
+    // Track this scheduled time to avoid conflicts with subsequent tasks
+    scheduledTimes.push({
+      start: schedule.recommendedStart,
+      end: schedule.recommendedEnd
+    });
+    
+    console.log(`📈 Updated scheduled times:`, scheduledTimes.map(st => `${st.start.toLocaleTimeString()}-${st.end.toLocaleTimeString()}`));
+
+    // Save GPT suggestion to calendar
     await prisma.calendarEvent.create({
       data: {
         userId: user.id,
-        title: task.task,
+        title: suggestion.task,
         start: schedule.recommendedStart,
         end: schedule.recommendedEnd,
-        source: task.source,
-        color: task.source === 'gpt' ? '#9b87a6' : '#f3d5b5',
+        source: 'gpt',
+        color: '#9b87a6',
       },
     });
 
-    if (task.source === 'gpt') {
-      await prisma.suggestion.create({
-        data: {
-          userId: user.id,
-          suggestionText: task.task,
-          timestamp: new Date(),
-          start: schedule.recommendedStart,
-          end: schedule.recommendedEnd,
-          priority: task.priority,
-          reason: task.reason,
-          mood,
-          weather,
-          environment: location,
-          source: 'gpt',
-          timeZone: validatedTimeZone,
-        },
-      });
-    } else if (task.source === 'taskbank') {
-      await prisma.task.update({
-        where: { id: task.id },
-        data: {
-          scheduled: true,
-          timestamp: schedule.recommendedStart,
-        },
-      });
-    }
-
     scheduled.push({
-      title: task.task,
+      id: crypto.randomUUID(),
+      title: suggestion.task,
       start: schedule.recommendedStart.toISOString(),
       end: schedule.recommendedEnd.toISOString(),
-      priority: task.priority,
-      reason: task.reason || '',
+      priority: suggestion.priority,
+      reason: suggestion.reason || '',
     });
   }
+
+  // Return task bank tasks separately for add.ts to handle
+  const taskBankForAdd = taskBankTasks.map(task => ({
+    id: task.id,
+    title: task.title,
+    priority: task.priority,
+    source: 'taskbank' as const,
+  }));
 
   return res.status(200).json({
     message: scheduled.length ? 'Suggestions scheduled' : 'Nothing could be scheduled',
     suggestions: scheduled,
+    taskBankTasks: taskBankForAdd,
     skippedSuggestions: skipped,
   });
+}
+
+// Helper function to fetch Google Calendar events
+async function fetchGoogleCalendarEvents(accessToken?: string) {
+  if (!accessToken) {
+    console.warn("⚠️ No Google access token available");
+    return [];
+  }
+
+  try {
+    const oauth2Client = new google.auth.OAuth2();
+    oauth2Client.setCredentials({ access_token: accessToken });
+
+    const calendar = google.calendar({ version: "v3", auth: oauth2Client });
+    console.log('🔑 Using access token for conflict detection:', accessToken);
+
+    const response = await calendar.events.list({
+      calendarId: "primary",
+      timeMin: new Date().toISOString(),
+      maxResults: 10,
+      singleEvents: true,
+      orderBy: "startTime",
+    });
+
+    return (response.data.items || []).map((event) => ({
+      id: event.id,
+      title: event.summary || "Untitled",
+      start: new Date(event.start?.dateTime || event.start?.date || ""),
+      end: new Date(event.end?.dateTime || event.end?.date || ""),
+      source: "google",
+    }));
+  } catch (err) {
+    console.error("❌ Error fetching Google events for conflict detection:", err);
+    return []; // Don't crash everything — fallback to DB events only
+  }
 }

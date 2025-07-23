@@ -256,7 +256,6 @@ export default function CalendarPage() {
         <Optimize />
 
         <div className="calendar-container">
-          <h1 className="calendar-title">Your Calendar</h1>
           <div className="view-toggle-group">
             {["day", "week", "month"].map((v) => (
               <button
@@ -317,6 +316,7 @@ export default function CalendarPage() {
             height: 85vh;
             margin: 0 auto;
           }
+          .calemdar
 
           .calendar-wrapper .rbc-calendar {
             width: 100% !important;

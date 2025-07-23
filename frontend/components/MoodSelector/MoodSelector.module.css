@@ -1,0 +1,58 @@
+.moodSelector {
+  text-align: center;
+  color: white;
+}
+
+.moodSelector h2 {
+  margin-bottom: 1rem;
+  color: white;
+}
+
+.moodOptions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 1.5rem;
+  gap: 12px;
+}
+
+.moodButton {
+  background-color: #f2f2f2;
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  width: 100px;
+  transition: background-color 0.2s ease;
+}
+
+.moodButton:hover {
+  background-color: #e0e0e0;
+}
+
+.moodButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.emoji {
+  font-size: 1.8rem;
+}
+
+.label {
+  margin-top: 6px;
+  color: #333;
+}
+
+.moodSelected {
+  background-color: #dd6e42 !important;
+  color: white;
+}
+
+.moodSelected .label {
+  color: white;
+} 

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-
+import styles from "./MoodSelector.module.css";
 
 
 type Mood = {
@@ -27,14 +27,14 @@ type MoodSelectorProps = {
 const MoodSelector: React.FC<MoodSelectorProps> = ({ onSelectMood, onClose, disabled }) => {
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
   return (
-    <div className="mood-selector">
+    <div className={styles.moodSelector}>
       <h2>How are you feeling today?</h2>
 
-      <div className="mood-options">
+      <div className={styles.moodOptions}>
         {moods.map((mood) => (
           <button
             key={mood.label}
-            className={`mood-button ${selectedMood === mood.label ? 'mood-selected' : ''}`}
+            className={`${styles.moodButton} ${selectedMood === mood.label ? styles.moodSelected : ''}`}
             onClick={() => {
               if (disabled) return;
               setSelectedMood(mood.label);
@@ -43,8 +43,8 @@ const MoodSelector: React.FC<MoodSelectorProps> = ({ onSelectMood, onClose, disa
             }}
             disabled={disabled}
           >
-            <span className="emoji">{mood.emoji}</span>
-            <span className="label">{mood.label}</span>
+            <span className={styles.emoji}>{mood.emoji}</span>
+            <span className={styles.label}>{mood.label}</span>
           </button>
         ))}
       </div>

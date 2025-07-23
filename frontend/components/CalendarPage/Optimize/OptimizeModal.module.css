@@ -28,7 +28,10 @@
   text-align: center;
   border: 1px solid rgba(255, 255, 255, 0.3);
   animation: fadeIn 0.4s ease-out;
-  font-family: 'Sofia', cursive;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  font-weight: lighter;
+  font-variant: small-caps;
+
 }
 
 
@@ -94,7 +97,7 @@
   border: 1px solid #ccc;
   border-radius: 1rem;
   font-size: 1rem;
-  font-family: 'Sofia', cursive;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
   background-color: rgba(255, 255, 255, 0.85);
   margin-top: 1rem;
   margin-bottom: 2rem;
@@ -121,7 +124,7 @@
   border: none;
   cursor: pointer;
   transition: all 0.2s ease;
-  font-family: 'Sofia', cursive;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
   background-color: #f5f3f7;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
