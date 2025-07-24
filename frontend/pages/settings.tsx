@@ -71,7 +71,7 @@ export default function ProfilePage() {
   };
 
   const tagGroups = {
-    currentMode: ["student", "professional", "everyday_mode"],
+    currentMode: ["student", "professional", "personal"],
     idealSelf: [
       "structured_planner",
       "calm_builder",

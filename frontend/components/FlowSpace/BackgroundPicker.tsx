@@ -6,7 +6,6 @@ type BackgroundPickerProps = {
 };
 
 const backgrounds = [
-    'https://i.pinimg.com/originals/0b/c0/30/0bc030803dc18816b398e611d09ceaa6.gif',
     'https://i.pinimg.com/originals/1b/45/63/1b456377a9dce67a7dc3630260aa7572.gif',
     'https://i.pinimg.com/originals/9c/d1/a0/9cd1a09bb5c3d5a6774128147c96b18b.gif',
     'https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExMWF1cjl1cHlud2JrYm5kcjE5Y2ZkYjZkMWwzOGZqZnM1dDhzNGR4ZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/d3PcEfjRsLUqgTGZSE/giphy.gif',
@@ -18,7 +17,8 @@ const backgrounds = [
     'https://cdnb.artstation.com/p/assets/images/images/058/523/795/original/teetuch-timgasigum-star-space.gif?1674371659',
     'https://i.pinimg.com/originals/5b/25/b0/5b25b0143c81301e0247b9716477b88d.gif',
     'https://wallpapercave.com/wp/wp2760971.gif',
-    'https://cdnb.artstation.com/p/assets/images/images/048/274/619/original/ryan-haight-lincoln-park-large.gif?1649656333'
+    'https://cdnb.artstation.com/p/assets/images/images/048/274/619/original/ryan-haight-lincoln-park-large.gif?1649656333',
+    'https://i.pinimg.com/originals/0b/c0/30/0bc030803dc18816b398e611d09ceaa6.gif'
 ];
 
 export default function BackgroundPicker({current, onChange}: BackgroundPickerProps) {

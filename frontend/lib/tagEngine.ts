@@ -12,7 +12,7 @@ export function mapTags(profile: UserProfileInput): string[] {
   // === Role ===
   if (profile.currentMode.includes("student")) tags.push("student");
   if (profile.currentMode.includes("professional")) tags.push("professional");
-  if (profile.currentMode.includes("everyday")) tags.push("everyday_mode");
+  if (profile.currentMode.includes("personal")) tags.push("personal");
   
   // === Planning Style ===
   /*

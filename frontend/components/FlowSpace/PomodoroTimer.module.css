@@ -9,21 +9,21 @@
   color: white;
   font-family: 'DM Sans', sans-serif;
   animation: fadeIn 0.8s ease-in;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   text-align: center;
-  transform: translateZ()
-  
+}
 
-  
+.pomodoro-timer-container:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .timer-display {
   position: relative;
-  width: 250px;
-  height: 250px;
+  width: 280px;
+  height: 280px;
   margin: 0 auto;
   align-items: center;
   align-self: center;
@@ -38,7 +38,15 @@
   border-radius: 50%;
   background: radial-gradient(circle at center, rgba(255,255,255,0.1), rgba(255,255,255,0));
   position: relative;
-  box-shadow: 0 0 20px rgba(255,255,255,0.15);
+  box-shadow: 0 0 30px rgba(255,255,255,0.15);
+  transition: all 0.3s ease;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.timer-circle.active {
+  animation: pulse 2s ease-in-out infinite;
+  box-shadow: 0 0 40px rgba(76, 175, 80, 0.5);
+  border-color: rgba(76, 175, 80, 0.3);
 }
 
 .timer-progress {
@@ -49,7 +57,8 @@
   height: 100%;
   border-radius: 50%;
   z-index: 1;
-  transition: background 0.5s ease-in-out;
+  transition: background 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: rotate(-90deg);
 }
 
 .timer-time {
@@ -59,72 +68,133 @@
   transform: translate(-50%, -50%);
   z-index: 2;
   text-align: center;
+  transition: all 0.3s ease;
 }
 
 .time-display {
-  font-size: 3rem;
+  font-size: 3.5rem;
   font-weight: bold;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
+  color: #DA6A3A;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease-in-out;
+  font-family: 'Courier New', monospace;
+}
+
+.timer-circle.active .time-display {
+  animation: gentleGlow 2s ease-in-out infinite alternate;
+  color: #4CAF50;
 }
 
 .session-type {
-  font-size: 1.2rem;
+  font-size: 1.3rem;
+  color: #A18BA7;
+  font-weight: 500;
   margin-top: 0.5rem;
-  color: #e0e0e0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
 }
 
 .session-info {
   margin-top: 1.5rem;
-  font-size: 0.95rem;
-  color: #ccc;
+  font-size: 1rem;
+  color: #EAD8AC; 
   text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  
+  font-weight: 400;
 }
 
 .timer-controls {
   display: flex;
   justify-content: center;
-  align-self: center;
-  margin: 2rem 0 1rem;
-
   align-items: center;
-
+  margin: 2rem 0 1rem;
+  gap: 0.8rem;
+  flex-wrap: wrap;
 }
 
 .timer-button {
   background: rgba(255, 255, 255, 0.1);
   border: none;
-  padding: 0.7rem 1.4rem;
+  padding: 0.8rem 1.6rem;
   border-radius: 12px;
   color: white;
   font-size: 1rem;
   cursor: pointer;
   backdrop-filter: blur(5px);
-  transition: transform 0.2s, box-shadow 0.3s ease;
-  display: flex;
-  justify-content: center;  
-  align-items: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-align: center;
+  min-width: 100px;
+}
 
+.timer-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+.timer-button:hover::before {
+  left: 100%;
 }
 
 .timer-button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.15);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
 }
 
-.pause { background: #ff9800; }
-.start { background: #4caf50; }
-.reset { background: #2196f3; }
-.skip  { background: #e91e63; }
+.timer-button:active {
+  transform: translateY(-1px) scale(0.98);
+}
+
+.pause { 
+  background: linear-gradient(135deg, #ff9800, #f57c00);
+  box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
+}
+
+.start { 
+  background: linear-gradient(135deg, #4caf50, #388e3c);
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+}
+
+.reset { 
+  background: linear-gradient(135deg, #2196f3, #1976d2);
+  box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+}
+
+.skip { 
+  background: linear-gradient(135deg, #e91e63, #c2185b);
+  box-shadow: 0 4px 15px rgba(233, 30, 99, 0.3);
+}
 
 .timer-settings {
   margin-top: 1.5rem;
   background: rgba(255,255,255,0.07);
-  border-radius: 12px;
-  padding: 1rem;
+  border-radius: 15px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  max-width: 100%;
+}
+
+.timer-settings:hover {
+  background: rgba(255,255,255,0.1);
+  transform: translateY(-1px);
+}
+
+.timer-settings h4 {
+  margin-bottom: 1rem;
+  color: #9BAA86;
+  font-size: 1.2rem;
+  font-weight: 600;
 }
 
 .settings-grid {
@@ -133,53 +203,36 @@
   gap: 20px;
 }
 
-
 .setting-item label {
   display: block;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   color: #D2E4EC;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+  transition: color 0.3s ease;
 }
 
 .setting-item input {
   width: 100%;
-  padding: 0.4rem;
+  padding: 0.6rem;
   border-radius: 8px;
   border: none;
   background: rgba(255, 255, 255, 0.2);
   color: white;
   font-size: 1rem;
+  transition: all 0.3s ease;
+  font-family: 'Courier New', monospace;
 }
 
-.timer-tips {
-  margin-top: 1.5rem;
-  background: rgba(255, 255, 255, 0.05);
-  border-left: 4px solid #81c784;
-  padding: 1rem;
-  border-radius: 8px;
+.setting-item input:focus {
+  background: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.5);
+  outline: none;
+  transform: scale(1.02);
 }
 
-.timer-tips h4 {
-  margin-bottom: 0.5rem;
-}
-
-.timer-tips ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.timer-tips li {
-  margin-bottom: 0.4rem;
-  padding-left: 1rem;
-  position: relative;
-  font-size: 0.9rem;
-}
-
-.timer-tips li::before {
-  content: "💡";
-  position: absolute;
-  left: 0;
+.setting-item:hover label {
+  color: #4CAF50;
 }
 
 @keyframes fadeIn {
@@ -187,54 +240,82 @@
   to { opacity: 1; transform: scale(1); }
 }
 
+@keyframes pulse {
+  0%, 100% { 
+    transform: scale(1);
+    box-shadow: 0 0 40px rgba(76, 175, 80, 0.5);
+  }
+  50% { 
+    transform: scale(1.02);
+    box-shadow: 0 0 50px rgba(76, 175, 80, 0.7);
+  }
+}
+
+@keyframes gentleGlow {
+  0% { 
+    text-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+  }
+  100% { 
+    text-shadow: 0 0 15px rgba(76, 175, 80, 0.6);
+  }
+}
+
 .timeDisplay {
   font-size: 3.5rem;
   font-weight: 600;
   letter-spacing: 2px;
-  color: #DA6A3A; /* Rust Orange */
+  color: #DA6A3A;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   transition: color 0.3s ease-in-out;
 }
 
 .sessionType {
   font-size: 1.2rem;
-  color: #A18BA7; /* Muted Lavender */
+  color: #A18BA7;
   font-weight: 500;
   margin-top: 0.5rem;
   text-transform: uppercase;
   letter-spacing: 1px;
+  transition: all 0.3s ease;
 }
 
 .sessionInfo {
   margin-top: 1.5rem;
   font-size: 1rem;
-  color: #EAD8AC; /* Warm Beige */
+  color: #EAD8AC; 
   text-align: center;
   font-weight: 400;
 }
 
 .timerTips h4 {
   font-size: 1.3rem;
-  color: #9BAA86; /* Sage Green */
+  color: #9BAA86;
   margin-bottom: 0.5rem;
 }
 
 .timerTips li {
-  color: #D2E4EC; /* Powder Blue */
+  color: #D2E4EC;
   font-weight: 300;
-  font-size: 0.95rem;
+  font-size: 1.3rem;
 }
+
 .timerSettings {
   margin-top: 1.5rem;
   background: rgba(255, 255, 255, 0.06);
   border-radius: 12px;
   padding: 1.2rem;
   border: 1px solid rgba(255, 255, 255, 0.12);
+  transition: all 0.3s ease;
+}
+
+.timerSettings:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
 }
 
 .timerSettings h4 {
   font-size: 1.4rem;
-  color: #9BAA86; /* Sage Green like Tips */
+  color: #9BAA86; 
   margin-bottom: 1rem;
   font-weight: 600;
   display: flex;
@@ -250,9 +331,10 @@
 .settingItem label {
   display: block;
   font-size: 0.95rem;
-  color: #EAD8AC; /* Warm Beige */
+  color: #EAD8AC; 
   margin-bottom: 0.4rem;
   font-weight: 500;
+  transition: color 0.3s ease;
 }
 
 .settingItem input {
@@ -265,9 +347,15 @@
   color: #333;
   outline: none;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  transition: box-shadow 0.2s ease;
+  transition: all 0.3s ease;
+  font-family: 'Courier New', monospace;
 }
 
 .settingItem input:focus {
   box-shadow: 0 0 0 2px #DA6A3A;
+  transform: scale(1.02);
+}
+
+.settingItem:hover label {
+  color: #DA6A3A;
 }
