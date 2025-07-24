@@ -126,37 +126,42 @@ export default function PomodoroTimer() {
   };
 
   return (
-    <div className={styles['timer-display']}>
-      <div className={`${styles['timer-circle']} ${timerState.isRunning ? styles.active : ''}`}>
-        <div
-          className={styles['timer-progress']}
-          style={{
-            background: `conic-gradient(#4CAF50 ${getProgressPercentage()}%, #e0e0e0 0%)`
-          }}
-        />
-        <div className={styles['timer-time']}>
-          <div className={styles['time-display']}>{formatTime(timerState.timeLeft)}</div>
-          <div className={styles['session-type']}>{getSessionType()}</div>
+    <div className={styles['pomodoro-container']}>
+      <div className={styles['timer-display']}>
+        <div className={`${styles['timer-circle']} ${timerState.isRunning ? styles.active : ''}`}>
+          <div
+            className={styles['timer-progress']}
+            style={{
+              background: `conic-gradient(#4CAF50 ${getProgressPercentage()}%, #e0e0e0 0%)`
+            }}
+          />
+          <div className={styles['timer-time']}>
+            <div className={styles['time-display']}>{formatTime(timerState.timeLeft)}</div>
+            <div className={styles['session-type']}>{getSessionType()}</div>
+          </div>
         </div>
       </div>
 
-      <div className={styles['timer-controls']}>
-        {timerState.isRunning ? (
-          <button onClick={pauseTimer} className={`${styles['timer-button']} ${styles.pause}`}>
-            ⏸️ Pause
+        <div className={styles['timer-controls']}>
+          {timerState.isRunning ? (
+            <button onClick={pauseTimer} className={`${styles['timer-button']} ${styles.pause}`}>
+              <CirclePlay />
+            </button>
+          ) : (
+            <button onClick={startTimer} className={`${styles['timer-button']} ${styles.start}`}>
+              <CirclePlay />
+            </button>
+          )}
+          
+          <button onClick={resetTimer} className={`${styles['timer-button']} ${styles.reset}`}>
+            <RefreshCcw />
           </button>
-        ) : (
-          <button onClick={startTimer} className={`${styles['timer-button']} ${styles.start}`}>
-            <CirclePlay />
+          <button onClick={skipTimer} className={`${styles['timer-button']} ${styles.skip}`}>
+            <SkipForward />
           </button>
-        )}
-        <button onClick={resetTimer} className={`${styles['timer-button']} ${styles.reset}`}>
-          <RefreshCcw />
-        </button>
-        <button onClick={skipTimer} className={`${styles['timer-button']} ${styles.skip}`}>
-          <SkipForward />
-        </button>
-      </div>
+        </div>
+
+
 
       <div className={styles['timer-settings']}>
         <h4>Settings</h4>
