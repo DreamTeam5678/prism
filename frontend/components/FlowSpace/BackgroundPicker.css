@@ -4,7 +4,7 @@
     padding:10px;
     justify-content: center;
     border-bottom: 1px ridge #ffffff2c;
-    z-index: 1000;
+    z-index: 1000000;
 
 }
 
@@ -16,6 +16,7 @@
     overflow: hidden;
     cursor: pointer;
     transition: border-color 0.2s ease;
+    z-index: 10000;
 }
 
 .background-picker-item.selected {

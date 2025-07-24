@@ -8,7 +8,7 @@
 }
 
 .calendar-container {
-  width: 800px;
+  width: 900px;
   height: 750px;
   background-color: rgba(255, 255, 255, 0.409);
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
@@ -18,11 +18,13 @@
   padding: 20px;
   align-items: center;
   margin-bottom: 40px;
-  margin-top: 50px;
+  margin-top: 10px;
   margin-left: -70px; 
   margin-right: 10px;
   overflow: visible;
-  transform: translateY(-40px);
+  transform: translateY(-10px);
+  
+  transform: translateX(-80px);
  
 }
 
