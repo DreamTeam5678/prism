@@ -1,5 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import styles from "./PomodoroTimer.module.css";
+import { CirclePlay } from "lucide-react";
+import { RefreshCcw } from "lucide-react";
+import { SkipForward } from "lucide-react";
 
 interface TimerState {
   isRunning: boolean;
@@ -146,14 +149,14 @@ export default function PomodoroTimer() {
           </button>
         ) : (
           <button onClick={startTimer} className={`${styles.timerButton} ${styles.start}`}>
-            ▶️ Start
+           <CirclePlay />
           </button>
         )}
         <button onClick={resetTimer} className={`${styles.timerButton} ${styles.reset}`}>
-          🔄 Reset
+          <RefreshCcw />
         </button>
         <button onClick={skipTimer} className={`${styles.timerButton} ${styles.skip}`}>
-          ⏭️ Skip
+          <SkipForward />
         </button>
       </div>
 

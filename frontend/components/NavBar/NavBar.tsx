@@ -6,11 +6,11 @@ export default function NavBar() {
 
   return (
     <div>
-      <Link href="/">
+      
         <div className="nav-bar-logo">
           <img src="/logo.png" alt="Prism Logo" />
         </div>
-        </Link>
+       
     
     <div className="nav-bar">
       <div className="nav-bar-container">
