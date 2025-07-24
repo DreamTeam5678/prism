@@ -90,7 +90,7 @@ export default function TaskList() {
   return (
     <div>
       <NavBar />
-      <NavBar />
+      
 
       <XPBar xp={xp} />
 

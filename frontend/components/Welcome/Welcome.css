@@ -99,7 +99,7 @@ body::before {
     font-style: oblique;
     font-weight: 400;
     background: -webkit-linear-gradient(#494949, #8b9d84, #073a43);
-    
+    -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     text-align: center;
     text-shadow: 2px 2px 7px rgba(0, 0, 0, 0.096);

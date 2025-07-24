@@ -201,6 +201,7 @@ export default function CalendarPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [view, setView] = useState<View>("month");
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   useEffect(() => {
     const fetchEvents = () => {
@@ -253,7 +254,7 @@ export default function CalendarPage() {
     <div>
       <NavBar />
       <div className="page-wrapper">
-        <Optimize />
+       <Optimize />
 
         <div className="calendar-container">
           <div className="view-toggle-group">
@@ -274,8 +275,11 @@ export default function CalendarPage() {
             <span style={{ background: "#d0e4ec" }} /> Google Event
           </div>
 
-          <div className="calendar-wrapper"
-            style={{ height: view === "day" ? "85vh" : "85vh" }} 
+          <div
+            className="calendar-wrapper"
+            style={{
+              height: isCollapsed ? "85vh" : "70vh", // or adjust to your preference
+            }}
           >
             <Calendar
               scrollToTime={new Date()}
@@ -306,17 +310,18 @@ export default function CalendarPage() {
             />
           </div>
         </div>
-
-        <Upcoming events={events} />
+        
+        <Upcoming events={events} isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
+         
 
         <style jsx global>{`
           .calendar-wrapper {
             width: 100%;
             max-width: 900px;
-            height: 85vh;
+            height:105vh;
             margin: 0 auto;
           }
-          .calemdar
+          .calendar
 
           .calendar-wrapper .rbc-calendar {
             width: 100% !important;
@@ -366,7 +371,9 @@ export default function CalendarPage() {
             height: auto; 
           }
         `}</style>
+        
       </div>
+      
     </div>
   );
 }

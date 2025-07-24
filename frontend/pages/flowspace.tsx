@@ -37,13 +37,13 @@ export default function FlowSpace() {
         onClick={() => setNavOn((prev) => !prev)}
         style={{
           position: "absolute",
-          top: "10px",
-          left: "10px",
+          top: "3px",
+          left: "25px",
           zIndex: 100000,
           backgroundColor: "rgba(255,255,255,0.1)",
-          color: "white",
+          color: "rgba(198, 194, 194, 0.98)",
           border: "1px solid rgba(255,255,255,0.2)",
-          padding: "6px 14px",
+          padding: "2px 8px",
           borderRadius: "50%",
           cursor: "pointer",
           fontSize: "1.2rem",

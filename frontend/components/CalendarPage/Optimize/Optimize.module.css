@@ -10,7 +10,8 @@
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     margin: 80px;
     margin-top: 0px;
-    margin-left:80px;
+    margin-left:90px;
+    margin-right: 90px;
 }           
 
 .optimizeButton {
