@@ -24,6 +24,10 @@ interface CuratedPlaylist {
     description: string;
 }
 
+interface YoutubePlayerProps {
+    onVideoStateChange?: (isPlaying: boolean) => void;
+}
+
 const apiKey = process.env.NEXT_PUBLIC_YOUTUBE_API_KEY;
 if (!apiKey) {
     console.warn("⚠️ Missing NEXT_PUBLIC_YOUTUBE_API_KEY in env");
@@ -63,7 +67,7 @@ const curatedPlaylists: CuratedPlaylist[] = [
     }
 ];
 
-export default function YoutubePlayer() {
+export default function YoutubePlayer({ onVideoStateChange }: YoutubePlayerProps) {
     const [query, setQuery] = useState<string>("");
     const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
     const [results, setResults] = useState<any>([]);
@@ -71,6 +75,11 @@ export default function YoutubePlayer() {
     const [videoOpacity, setVideoOpacity] = useState<number>(100);
     const [showCurated, setShowCurated] = useState<boolean>(true);
     const [loading, setLoading] = useState<boolean>(false);
+
+    // Notify parent when video state changes
+    useEffect(() => {
+        onVideoStateChange?.(!!selectedVideo);
+    }, [selectedVideo, onVideoStateChange]);
 
     const handleSearch = async (searchQuery: string) => {
         setLoading(true);
@@ -176,23 +185,23 @@ export default function YoutubePlayer() {
                 </>
             )}
 
-            {!selectedVideo && results.length > 0 && (
-                <div className="youtube-player-results">
-                    {results.map((result: any) => (
-                        <div
-                            key={result.id.videoId}
-                            className="youtube-player-result-card"
-                            onClick={() => handlePlay(result.id.videoId)}
-                        >
-                            <img src={result.snippet.thumbnails.default.url} alt={result.snippet.title} />
-                            <div className="youtube-player-result-info">
-                                <h3 className="youtube-player-result-title">{result.snippet.title}</h3>
-                                <p className="youtube-player-result-description">{result.snippet.description}</p>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            )}
+      {!selectedVideo && results.length > 0 && (
+        <div className="youtube-player-results">
+          {results.map((result: any) => (
+            <div
+              key={result.id.videoId}
+              className="youtube-player-result-card"
+              onClick={() => handlePlay(result.id.videoId)}
+            >
+              <img src={result.snippet.thumbnails.default.url} alt={result.snippet.title} />
+              <div className="youtube-player-result-info">
+                <h3 className="youtube-player-result-title">{result.snippet.title}</h3>
+                <p className="youtube-player-result-description">{result.snippet.description}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
             {selectedVideo && (
                 <div className="youtube-monitor-scene">
@@ -202,19 +211,6 @@ export default function YoutubePlayer() {
                         className="youtube-monitor-image"
                     />
                     
-                    {/* Volume Control */}
-                    <div className="volume-control">
-                        <span>🔊</span>
-                        <input
-                            type="range"
-                            min="0"
-                            max="100"
-                            value={volume}
-                            onChange={(e) => setVolume(Number(e.target.value))}
-                            className="volume-slider"
-                        />
-                        <span>{volume}%</span>
-                    </div>
 
                     {/* Video Visibility Controls */}
                     <div className="fade-controls">
