@@ -285,11 +285,12 @@ export default function ProfilePage() {
         }
 
         h1 {
-          font-size: 3.2rem;
+          font-size: 3.4rem;
           color: #333;
           text-align: center;
           margin: -1.5rem;
           margin-top: -5rem;
+          padding-top: 30px;
           font-weight: 700;
           letter-spacing: -0.05em;
           text-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15);
@@ -297,6 +298,7 @@ export default function ProfilePage() {
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           animation: slideInBounce 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.1s forwards;
+
         }
 
         .error-message {

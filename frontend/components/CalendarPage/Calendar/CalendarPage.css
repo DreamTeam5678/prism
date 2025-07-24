@@ -9,7 +9,7 @@
 
 .calendar-container {
   width: 800px;
-  height: 700px;
+  height: 750px;
   background-color: rgba(255, 255, 255, 0.409);
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   border-radius: 12px;
@@ -20,8 +20,16 @@
   margin-bottom: 40px;
   margin-top: 50px;
   margin-left: -70px; 
+  margin-right: 10px;
   overflow: visible;
+  transform: translateY(-40px);
+ 
 }
+
+.calendar-wrapper {
+  transition: height 0.3s ease;
+}
+
 
 .calendar-title {
   color: #bd6044c8;
@@ -39,7 +47,7 @@
   margin-bottom: 1rem; 
   gap: 0.75rem; 
   transform: translateX(-13px);
-  margin-top: 20px;
+  margin-top: 30px;
 }
 
 .view-toggle-button {

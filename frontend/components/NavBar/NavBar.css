@@ -27,11 +27,12 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 0 20px;
+  padding: 0 20px; 
   justify-content: center; 
   margin-bottom: -80px;
-  margin-left: 1720px;
-  margin-top: 15px;
+  margin-left: -1255px;
+  margin-top: 10px;
+  transform: translateY(-10px);
  
 }
 
