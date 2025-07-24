@@ -651,7 +651,7 @@ export default function FlowSpace() {
       <div
         className="page-wrapper"
         style={{
-          paddingTop: isVideoPlaying ? "4rem" : "1.2rem",
+          paddingTop: isVideoPlaying ? "1rem" : "0.5rem",
           paddingBottom: "2rem"
         }}
       >
@@ -659,7 +659,7 @@ export default function FlowSpace() {
           <h1
             className="page-title"
             style={{
-              marginTop: isVideoPlaying ? "-80px" : "0.5rem"
+              marginTop: isVideoPlaying ? "-100px" : "0.2rem"
             }}
           >
             Flow Space
