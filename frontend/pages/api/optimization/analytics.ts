@@ -4,8 +4,9 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]';
 import prisma from '@/lib/prisma';
 import moment from 'moment-timezone';
-import type { Suggestion } from '@prisma/client';
 
+
+type Suggestion = any;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
