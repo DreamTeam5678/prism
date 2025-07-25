@@ -37,7 +37,8 @@
     "react-dom": "^19.0.0",
     "react-hot-toast": "^2.5.2",
     "string-similarity": "^4.0.4",
-    "tsconfig-paths": "^4.2.0"
+    "tsconfig-paths": "^4.2.0",
+    "vercel": "^44.5.5"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
