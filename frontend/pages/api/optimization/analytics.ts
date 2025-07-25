@@ -4,6 +4,8 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]';
 import prisma from '@/lib/prisma';
 import moment from 'moment-timezone';
+import { Suggestion } from '@prisma/client';
+
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
@@ -28,7 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 
     // Get optimization sessions
-    const optimizationSessions = await prisma.suggestion.findMany({
+    const optimizationSessions: Suggestion[] = await prisma.suggestion.findMany({
       where: {
         userId: user.id,
         timestamp: { gte: thirtyDaysAgo },
