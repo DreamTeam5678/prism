@@ -75,10 +75,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     take: 20
   });
 
-  const userHistory = recentSuggestions.map(s => ({
+  const userHistory = recentSuggestions.map((s: { suggestionText: string; timestamp: Date }) => ({
     task: s.suggestionText,
-    accepted: true, // If it's in the database, it was accepted
-    timestamp: s.timestamp.toISOString()
+    accepted: true,
+    timestamp: s.timestamp.toISOString(),
   }));
 
   const suggestionsRaw = await getGPTSuggestion({
