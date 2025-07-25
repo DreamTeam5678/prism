@@ -7,9 +7,6 @@ export default function NavBar() {
   return (
     <div>
       
-        <div className="nav-bar-logo">
-          <img src="/logo.png" alt="Prism Logo" />
-        </div>
        
     
     <div className="nav-bar">
