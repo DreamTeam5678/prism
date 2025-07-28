@@ -37,10 +37,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const accessToken = token?.accessToken as string | undefined;
     const googleEvents = await fetchGoogleCalendarEvents(accessToken);
 
-    // Combine all events for conflict detection
-    const existingEvents = [...localEvents, ...googleEvents];
+    // Combine all events for conflict detection, but filter out 0-minute events and all-day events
+    const validGoogleEvents = googleEvents.filter(event => {
+      const duration = event.end.getTime() - event.start.getTime();
+      const isZeroMinute = duration === 0;
+      const isAllDay = duration >= 24 * 60 * 60 * 1000; // 24 hours or more
+      const isValid = !isZeroMinute && !isAllDay; // Only include events that have real duration
+      
+      if (!isValid) {
+        if (isZeroMinute) {
+          console.log(`🚫 Filtering out 0-minute event: ${event.title} (${event.start.toLocaleTimeString()}-${event.end.toLocaleTimeString()})`);
+        } else if (isAllDay) {
+          console.log(`🚫 Filtering out all-day event: ${event.title} (${event.start.toLocaleTimeString()}-${event.end.toLocaleTimeString()}) duration: ${duration}ms`);
+        }
+      } else {
+        console.log(`✅ Keeping valid event: ${event.title} (${event.start.toLocaleTimeString()}-${event.end.toLocaleTimeString()}) duration: ${duration}ms`);
+      }
+      return isValid;
+    });
+    
+    const existingEvents = [...localEvents, ...validGoogleEvents];
 
-    console.log(`📊 Found ${localEvents.length} local events and ${googleEvents.length} Google events for conflict detection`);
+    console.log(`📊 Found ${localEvents.length} local events and ${validGoogleEvents.length} valid Google events for conflict detection (filtered out ${googleEvents.length - validGoogleEvents.length} 0-minute events)`);
 
     // This function will find the next available slot based on a set of existing events
     const getNextAvailableSlot = (
@@ -195,6 +213,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       start: event.start,
       end: event.end,
     }));
+    
+    console.log(`📅 Occupied slots after filtering:`, occupiedSlots.map(s => `${s.start.toLocaleTimeString()}-${s.end.toLocaleTimeString()}`));
+    console.log(`🔍 Debug: existingEvents count: ${existingEvents.length}, validGoogleEvents count: ${validGoogleEvents.length}, localEvents count: ${localEvents.length}`);
 
     const newScheduledEntries: any[] = []; // To store newly scheduled tasks and suggestions
 
@@ -324,7 +345,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       message = "Your day is already optimized - no new tasks could be scheduled";
     }
 
-    res.status(200).json({ message });
+    res.status(200).json({ 
+      message,
+      scheduledTasks: newScheduledEntries.map(entry => entry.title),
+      failedTasks: unscheduledTasks,
+      totalScheduled: newScheduledEntries.length,
+      totalFailed: unscheduledTasks.length
+    });
   } catch (error) {
     console.error("Failed to add calendar entries:", error);
     res.status(500).json({ message: "Failed to update calendar" });

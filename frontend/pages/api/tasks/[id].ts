@@ -27,7 +27,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   if (req.method === "PUT" || req.method === "PATCH") {
-    const { title, completed, priority, completedAt } = req.body;
+    const { title, completed, priority } = req.body;
     console.log(`${req.method} request for task:`, taskId, { title, completed, priority });
 
     try {
@@ -50,14 +50,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           title: title ?? safeTask.title,
           completed: typeof completed === "boolean" ? completed : safeTask.completed,
           priority: priority ?? safeTask.priority,
-          completedAt:
-            typeof completed === "boolean"
-              ? completed
-                ? completedAt
-                  ? new Date(completedAt)
-                  : new Date()
-                : null
-              : safeTask.completedAt,
         },
       });
 

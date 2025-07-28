@@ -45,10 +45,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const accessToken = token?.accessToken as string | undefined;
   const googleEvents = await fetchGoogleCalendarEvents(accessToken);
 
-  // Combine all events for conflict detection
-  const allEvents = [...localEvents, ...googleEvents];
+  // Combine all events for conflict detection, but filter out 0-minute events
+  const validGoogleEvents = googleEvents.filter(event => {
+    const duration = event.end.getTime() - event.start.getTime();
+    return duration > 0; // Only include events that actually have duration
+  });
+  
+  const allEvents = [...localEvents, ...validGoogleEvents];
 
-  console.log(`📊 Found ${localEvents.length} local events and ${googleEvents.length} Google events for user`);
+  console.log(`📊 Found ${localEvents.length} local events and ${validGoogleEvents.length} valid Google events for user (filtered out ${googleEvents.length - validGoogleEvents.length} 0-minute events)`);
   console.log(`📅 All events:`, allEvents.map(e => `${e.title} (${e.start.toLocaleTimeString()}-${e.end.toLocaleTimeString()}) [${e.source}]`));
 
   const now = moment.tz(validatedTimeZone);
@@ -148,19 +153,88 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // Limit GPT suggestions based on available space and number of task bank tasks
   let maxGptSuggestions = 3; // Default max
   
-  // If there are many task bank tasks, limit GPT suggestions more aggressively
-  if (taskBankTasks.length >= 4) {
-    maxGptSuggestions = 1; // Only 1 GPT suggestion if 4+ task bank tasks
-  } else if (taskBankTasks.length >= 2 && remainingTime < 180) {
-    // Only limit to 2 if there are 2-3 task bank tasks AND less than 3 hours remaining
-    maxGptSuggestions = 2;
-  } else if (remainingTime < 120) { // Less than 2 hours available
+  // More intelligent logic based on available time and task bank tasks
+  if (remainingTime < 120) { // Less than 2 hours available
     maxGptSuggestions = 1;
   } else if (remainingTime < 240) { // Less than 4 hours available
+    maxGptSuggestions = 2;
+  } else if (taskBankTasks.length >= 1 && remainingTime < 180) {
+    // If there are any task bank tasks and less than 3 hours remaining, prioritize task bank
+    maxGptSuggestions = 0;
+  } else if (taskBankTasks.length >= 4 && remainingTime < 300) {
+    // If there are 4+ task bank tasks AND less than 5 hours remaining, prioritize task bank
+    maxGptSuggestions = 0;
+  } else if (taskBankTasks.length >= 4) {
+    // If there are 4+ task bank tasks but plenty of time, allow 1 GPT suggestion
+    maxGptSuggestions = 1;
+  } else if (taskBankTasks.length >= 3 && remainingTime < 240) {
+    // Only limit to 1 if 3+ task bank tasks AND less than 4 hours remaining
+    maxGptSuggestions = 1;
+  } else if (taskBankTasks.length >= 3) {
+    // If there are 3+ task bank tasks but plenty of time, allow 2 GPT suggestions
+    maxGptSuggestions = 2;
+  } else if (taskBankTasks.length >= 2 && remainingTime < 180) {
+    // Only limit to 1 if 2+ task bank tasks AND less than 3 hours remaining
+    maxGptSuggestions = 1;
+  } else if (taskBankTasks.length >= 2) {
+    // If there are 2+ task bank tasks but plenty of time, allow 2 GPT suggestions
+    maxGptSuggestions = 2;
+  } else if (taskBankTasks.length >= 1 && remainingTime < 120) {
+    // Only limit to 1 if 1+ task bank tasks AND less than 2 hours remaining
+    maxGptSuggestions = 1;
+  } else if (taskBankTasks.length >= 1) {
+    // If there is 1+ task bank task but plenty of time, allow 2 GPT suggestions
     maxGptSuggestions = 2;
   }
 
   console.log(`🎯 Limiting GPT suggestions to ${maxGptSuggestions} due to ${taskBankTasks.length} task bank tasks and ${remainingTime}min remaining`);
+
+  // Check if task bank tasks can be scheduled before generating GPT suggestions
+  if (taskBankTasks.length > 0) {
+    console.log(`🔍 Checking if task bank tasks can be scheduled before generating GPT suggestions...`);
+    
+    // Get ALL existing calendar events for today
+    const todayEvents = allEvents.filter((e: any) => {
+      const eventDate = moment(e.start).tz(validatedTimeZone);
+      const today = moment.tz(validatedTimeZone).startOf('day');
+      return eventDate.isSame(today, 'day');
+    });
+    
+    // Convert calendarEvents to the correct type
+    const safeEventsForSchedule = todayEvents.map((e: any) => ({
+      start: e.start instanceof Date ? e.start.toISOString() : e.start,
+      end: e.end instanceof Date ? e.end.toISOString() : e.end,
+      title: e.title,
+    }));
+    
+    // Check if each task bank task can be scheduled
+    let canScheduleTaskBank = true;
+    for (const task of taskBankTasks) {
+      const duration = inferDuration(task.title, task.priority);
+      
+      const schedule = await getTaskSchedule({
+        taskTitle: task.title,
+        priority: task.priority as 'High' | 'Medium' | 'Low',
+        durationMinutes: duration,
+        mood,
+        events: safeEventsForSchedule,
+        timeZone: validatedTimeZone,
+      });
+      
+      if (!schedule.recommendedStart || !schedule.recommendedEnd) {
+        console.log(`❌ Task bank task "${task.title}" cannot be scheduled - no available slots`);
+        canScheduleTaskBank = false;
+        break;
+      }
+    }
+    
+    if (!canScheduleTaskBank) {
+      console.log(`🛑 Task bank tasks cannot be scheduled - skipping GPT suggestions to prioritize task bank`);
+      maxGptSuggestions = 0;
+    } else {
+      console.log(`✅ Task bank tasks can be scheduled - proceeding with GPT suggestions`);
+    }
+  }
 
   // Only schedule GPT suggestions here
   const scheduled = [];
@@ -203,10 +277,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       title: 'Scheduled in this session'
     }))];
     
-    // ALSO include task bank tasks that will be scheduled later to avoid conflicts
-    const taskBankEvents = taskBankTasks.map(task => {
-      // Estimate a default time for task bank tasks (they'll be scheduled by add.ts)
-      // Use priority-based time slots to avoid conflicts
+    // Only include unscheduled task bank tasks in conflict detection
+    // Scheduled task bank tasks are already included in allEventsForSchedule
+    const unscheduledTaskBankTasks = taskBankTasks.filter(task => !task.scheduled);
+    
+    const taskBankEvents = unscheduledTaskBankTasks.map(task => {
+      // Estimate a default time for unscheduled task bank tasks
       let estimatedStart;
       if (task.priority === 'high') {
         estimatedStart = moment.tz(validatedTimeZone).startOf('day').hour(8).minute(0); // 8:00 AM
@@ -226,13 +302,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       };
     });
     
-    // Include task bank events in conflict detection
+    // Include only unscheduled task bank events in conflict detection
     const allEventsWithTaskBank = [...allEventsForSchedule, ...taskBankEvents];
     
-    console.log(`🔍 Scheduling "${suggestion.task}" with ${allEventsWithTaskBank.length} existing events (including ${taskBankEvents.length} task bank tasks)`);
+    console.log(`🔍 Scheduling "${suggestion.task}" with ${allEventsWithTaskBank.length} existing events (including ${taskBankEvents.length} unscheduled task bank tasks)`);
     console.log(`📅 Existing events:`, allEventsWithTaskBank.map((e: any) => `${e.title} (${new Date(e.start).toLocaleTimeString()}-${new Date(e.end).toLocaleTimeString()})`));
     console.log(`📊 Scheduled times in this session:`, scheduledTimes.map(st => `${st.start.toLocaleTimeString()}-${st.end.toLocaleTimeString()}`));
-    console.log(`📋 Task bank tasks to avoid:`, taskBankEvents.map((e: any) => `${e.title} (${new Date(e.start).toLocaleTimeString()}-${new Date(e.end).toLocaleTimeString()})`));
+    console.log(`📋 Unscheduled task bank tasks to avoid:`, taskBankEvents.map((e: any) => `${e.title} (${new Date(e.start).toLocaleTimeString()}-${new Date(e.end).toLocaleTimeString()})`));
     
     const schedule = await getTaskSchedule({
       taskTitle: suggestion.task,

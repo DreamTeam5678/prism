@@ -146,7 +146,7 @@ export default function PomodoroTimer() {
       </div>
 
         <div className={styles['timer-controls']}>
-          {timerState.isRunning ? (
+        {timerState.isRunning ? (
             <button onClick={pauseTimer} className={`${styles['timer-button']} ${styles.pause}`}>
               <CirclePlay />
             </button>
@@ -161,8 +161,8 @@ export default function PomodoroTimer() {
           </button>
           <button onClick={skipTimer} className={`${styles['timer-button']} ${styles.skip}`}>
             <SkipForward />
-          </button>
-        </div>
+        </button>
+      </div>
 
 
 

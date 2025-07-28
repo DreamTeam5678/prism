@@ -54,14 +54,38 @@ export default function OptimizeModal({ onClose, setLoading }: OptimizeModalProp
 
   const [showCelebration, setShowCelebration] = useState<boolean>(false); // Celebration modal
   const [celebrationMessage, setCelebrationMessage] = useState<string>(''); // Celebration message
+  const [dayIsFull, setDayIsFull] = useState<boolean>(false); // Track if day is full
 
   const formatTime = (date: string) => {
     try {
-      const parsedDate = new Date(date);
-      if (isNaN(parsedDate.getTime())) {
-        console.error('Invalid date string:', date);
+      // Handle empty or null dates
+      if (!date || date === 'null' || date === 'undefined') {
+        console.error('Empty or null date string:', date);
         return 'Invalid time';
       }
+
+      // Try parsing as ISO string first
+      let parsedDate = new Date(date);
+      
+      // If that fails, try parsing as a different format
+      if (isNaN(parsedDate.getTime())) {
+        // Try parsing as a different format or handle edge cases
+        console.warn('Failed to parse date as ISO string:', date);
+        return 'Invalid time';
+      }
+
+      // Ensure the date is valid before formatting
+      if (parsedDate.toString() === 'Invalid Date') {
+        console.error('Invalid date object created from:', date);
+        return 'Invalid time';
+      }
+
+      // Additional validation
+      if (parsedDate.getFullYear() < 1900 || parsedDate.getFullYear() > 2100) {
+        console.error('Date out of reasonable range:', parsedDate);
+        return 'Invalid time';
+      }
+
       return parsedDate.toLocaleTimeString([], {
         hour: 'numeric',
         minute: '2-digit',
@@ -180,7 +204,12 @@ export default function OptimizeModal({ onClose, setLoading }: OptimizeModalProp
       setTaskBankTasks(data.taskBankTasks || []); // Store task bank tasks from API
       console.log("📋 Task bank tasks from API:", data.taskBankTasks);
       if (data.suggestions.length === 0){
+        // Check if there are task bank tasks that couldn't be scheduled
+        if (data.taskBankTasks && data.taskBankTasks.length > 0) {
+          setDayIsFull(true);
+        } else {
         setError(data.message || "No available time slots today between 8:00AM and 8:00PM"); 
+        }
       }
     } catch (err) {
       console.error("❌ Failed to generate suggestions:", err);
@@ -209,15 +238,88 @@ export default function OptimizeModal({ onClose, setLoading }: OptimizeModalProp
         body: JSON.stringify({ originalSuggestion: s }),
       });
       const newSuggestion = await res.json();
+      console.log('🔄 Retry response:', newSuggestion); // Debug log
       if (res.ok) {
+        // Check if the response is an error message
+        if (newSuggestion.message && !newSuggestion.start) {
+          console.log('🔄 Retry returned message:', newSuggestion.message);
+          setError(newSuggestion.message);
+          return;
+        }
+        
+        // Validate the new suggestion has the required fields
+        if (!newSuggestion.start || !newSuggestion.end) {
+          console.error('❌ Invalid retry suggestion:', newSuggestion);
+          setError("Invalid retry suggestion received");
+          return;
+        }
+        
+        console.log('✅ Valid retry suggestion:', {
+          id: newSuggestion.id,
+          title: newSuggestion.title,
+          start: newSuggestion.start,
+          end: newSuggestion.end,
+          startParsed: new Date(newSuggestion.start),
+          endParsed: new Date(newSuggestion.end)
+        });
+        
+        // Update the suggestion in the list
         setSuggestions(prev =>
           prev.map(item => item.id === s.id ? newSuggestion : item)
         );
+        
+        // Check if the retry suggestion actually changed the time
+        const originalTime = new Date(s.start).getTime();
+        const newTime = new Date(newSuggestion.start).getTime();
+        const timeChanged = originalTime !== newTime;
+        
+        console.log("🔄 Retry time comparison:", {
+          original: s.start,
+          new: newSuggestion.start,
+          changed: timeChanged
+        });
+        
+        // Only update calendar if the time actually changed
+        if (timeChanged) {
+          try {
+            const response = await fetch("/api/calendar/add", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                suggestions: [newSuggestion], // Add the retry suggestion
+                tasks: [], // No task bank tasks for retry
+              }),
+            });
+            
+            if (!response.ok) {
+              console.error("❌ Failed to add retry suggestion to calendar");
+              setError("Failed to update calendar with retry suggestion");
+              return;
+            }
+            
+            console.log("✅ Retry suggestion added to calendar:", newSuggestion);
+            
+            // Refresh the calendar
+            document.dispatchEvent(new CustomEvent("optimizeComplete"));
+            
+          } catch (error) {
+            console.error("❌ Error adding retry suggestion to calendar:", error);
+            setError("Failed to update calendar");
+            return;
+          }
+        } else {
+          console.log("🔄 Retry suggestion time unchanged, skipping calendar update");
+        }
+        
+        // Remove the original suggestion from responded state
         setResponded(prev => {
           const updated = { ...prev };
           delete updated[s.id];
           return updated;
         });
+        
+        // Also remove the original suggestion from accepted state if it was accepted
+        setAccepted(prev => prev.filter(item => item.id !== s.id));
       } else {
         setError("Failed to retry suggestion. Please try again.");
       }
@@ -234,10 +336,42 @@ export default function OptimizeModal({ onClose, setLoading }: OptimizeModalProp
   };
 
   useEffect(() => {
-    if (
-      suggestions.length > 0 &&
-      Object.keys(responded).length === suggestions.length
-    ) {
+    // Check if all suggestions have been responded to (only trigger if user has actually responded)
+    const allSuggestionsResponded = suggestions.length > 0 && Object.keys(responded).length === suggestions.length && Object.keys(responded).length > 0;
+    
+    // Check if there are accepted suggestions and no more suggestions to respond to
+    const hasAcceptedSuggestions = accepted.length > 0 && suggestions.length === 0;
+    
+    // Check if there are task bank tasks to process (but only if no suggestions were generated)
+    const hasTaskBankTasks = taskBankTasks.length > 0 && hasAttemptedOptimization && suggestions.length === 0;
+    
+    // Check if user has responded to all suggestions (including single suggestion case)
+    const userHasResponded = suggestions.length > 0 && Object.keys(responded).length === suggestions.length;
+    
+    // Check if user has accepted all suggestions (this should trigger modal closure)
+    const allSuggestionsAccepted = suggestions.length > 0 && accepted.length === suggestions.length;
+    
+    // Check if user has accepted suggestions and there are no task bank tasks to process
+    const hasAcceptedSuggestionsAndNoTaskBank = accepted.length > 0 && taskBankTasks.length === 0;
+    
+    // Only trigger if user has actually interacted with suggestions or if day is full
+    const shouldProcess = (allSuggestionsResponded || hasAcceptedSuggestions || hasTaskBankTasks || userHasResponded || allSuggestionsAccepted || hasAcceptedSuggestionsAndNoTaskBank) && hasAttemptedOptimization;
+    
+          console.log("🔄 useEffect conditions:", {
+        allSuggestionsResponded,
+        hasAcceptedSuggestions,
+        hasTaskBankTasks,
+        userHasResponded,
+        allSuggestionsAccepted,
+        hasAcceptedSuggestionsAndNoTaskBank,
+        suggestionsLength: suggestions.length,
+        respondedLength: Object.keys(responded).length,
+        acceptedLength: accepted.length,
+        taskBankTasksLength: taskBankTasks.length,
+        hasAttemptedOptimization
+      });
+    
+    if (shouldProcess) {
       (async () => {
         // Use task bank tasks from generate API response
         console.log("📤 Sending task bank tasks to calendar:", { tasks: taskBankTasks });
@@ -264,11 +398,23 @@ export default function OptimizeModal({ onClose, setLoading }: OptimizeModalProp
           return;
         }
 
+        // Check if any tasks were actually scheduled
+        const scheduledTasks = responseData.scheduledTasks || [];
+        const failedTasks = responseData.failedTasks || [];
+        
+        if (failedTasks.length > 0) {
+          // Set day as full and show message at bottom
+          setDayIsFull(true);
+          // Don't close the modal automatically - let user decide
+          return;
+        }
+
+        // Only close if everything was scheduled successfully
         document.dispatchEvent(new CustomEvent("optimizeComplete"));
         onClose();
       })();
     }
-  }, [responded]);
+  }, [responded, suggestions.length, taskBankTasks.length, hasAttemptedOptimization]);
 
   return (
     <div className={styles.optimizeOverlay}>
@@ -375,7 +521,6 @@ export default function OptimizeModal({ onClose, setLoading }: OptimizeModalProp
                         >
                           🔄
                         </button>
-                        <button onClick={() => handleReject(s)}>❌</button>
                       </div>
                     </div>
                   );
@@ -383,7 +528,7 @@ export default function OptimizeModal({ onClose, setLoading }: OptimizeModalProp
               </div>
             )}
 
-            {!isGeneratingSuggestions && hasAttemptedOptimization && suggestions.length === 0 && taskBankTasks.length === 0 && (
+            {!isGeneratingSuggestions && hasAttemptedOptimization && dayIsFull && suggestions.length === 0 && (
               <div className={styles.optimizeSection}>
                 <h2>Your day is already fully optimized! All tasks are scheduled and there's no room for additional suggestions</h2>
               </div>

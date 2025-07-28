@@ -48,7 +48,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     console.log(`📊 Found ${localEvents.length} local events and ${googleEvents.length} Google events for retry`);
 
-    const now = moment.tz('UTC'); // Use UTC for consistency
+    const now = moment.tz(originalSuggestion.timeZone || 'America/Los_Angeles'); // Use consistent timezone
     
     // Get all scheduled tasks for today (both GPT and task bank)
     const allScheduledTasksToday = allEvents
@@ -60,7 +60,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .filter(e => e.source === 'gpt' && moment(e.start).isSame(now, 'day'))
       .map(e => e.title.toLowerCase());
 
-    const safeEvents = allEvents.map(e => ({ start: e.start.toISOString(), end: e.end.toISOString() }));
+    const safeEvents = allEvents.map(e => ({ 
+      start: e.start.toISOString(), 
+      end: e.end.toISOString(),
+      title: e.title || 'Untitled Event'
+    }));
 
     // Get user history for better personalization
     const recentSuggestions = await prisma.suggestion.findMany({
@@ -119,11 +123,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const taskBankEvents = taskBankTasks.map(task => {
       let estimatedStart;
       if (task.priority === 'high') {
-        estimatedStart = moment.tz(originalSuggestion.timeZone || 'UTC').startOf('day').hour(8).minute(0);
+        estimatedStart = moment.tz(originalSuggestion.timeZone || 'America/Los_Angeles').startOf('day').hour(8).minute(0);
       } else if (task.priority === 'medium') {
-        estimatedStart = moment.tz(originalSuggestion.timeZone || 'UTC').startOf('day').hour(13).minute(0);
+        estimatedStart = moment.tz(originalSuggestion.timeZone || 'America/Los_Angeles').startOf('day').hour(13).minute(0);
       } else {
-        estimatedStart = moment.tz(originalSuggestion.timeZone || 'UTC').startOf('day').hour(16).minute(0);
+        estimatedStart = moment.tz(originalSuggestion.timeZone || 'America/Los_Angeles').startOf('day').hour(16).minute(0);
       }
       
       const estimatedDuration = inferDuration(task.title, task.priority);
@@ -137,6 +141,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
 
     const allEventsForSchedule = [...safeEvents, ...taskBankEvents];
+    
+    console.log('🔄 Retry events for scheduling:', allEventsForSchedule.map(e => `${e.title} (${e.start}-${e.end})`));
 
     const schedule = await getTaskSchedule({
       taskTitle: retry.task,
@@ -144,11 +150,34 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       durationMinutes: duration,
       mood: originalSuggestion.mood,
       events: allEventsForSchedule,
-      timeZone: originalSuggestion.timeZone || 'UTC',
+      timeZone: originalSuggestion.timeZone || 'America/Los_Angeles',
     });
 
     if (!schedule.recommendedStart || !schedule.recommendedEnd) {
-      return res.status(200).json({ message: "No available time slots for retry suggestion." });
+      // If no slots available today, keep the original time slot
+      console.log('🔄 No slots available today, keeping original time slot');
+      
+      const retrySuggestion = {
+        id: `retry_${Date.now()}`,
+        title: retry.task,
+        start: originalSuggestion.start,
+        end: originalSuggestion.end,
+        priority: retry.priority,
+        reason: retry.reason || '',
+        timestamp: originalSuggestion.timestamp || originalSuggestion.start,
+      };
+      
+      console.log('🔄 Retry suggestion keeping original time:', retrySuggestion);
+      return res.status(200).json(retrySuggestion);
+    }
+
+    // Validate that the dates are valid
+    const startDate = new Date(schedule.recommendedStart);
+    const endDate = new Date(schedule.recommendedEnd);
+    
+    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+      console.error('❌ Invalid dates from schedule:', { start: schedule.recommendedStart, end: schedule.recommendedEnd });
+      return res.status(500).json({ message: "Invalid date format from scheduling" });
     }
 
     // Return the new suggestion in the format expected by the frontend
@@ -156,10 +185,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const retrySuggestion = {
       id: `retry_${Date.now()}`, // Generate a unique ID for the retry
       title: retry.task,
-      start: schedule.recommendedStart.toISOString(),
-      end: schedule.recommendedEnd.toISOString(),
+      start: startDate.toISOString(),
+      end: endDate.toISOString(),
       priority: retry.priority,
       reason: retry.reason || '',
+      // Add timestamp for compatibility with frontend expectations
+      timestamp: startDate.toISOString(),
     };
     
     console.log('🔄 Retry suggestion created:', retrySuggestion);
