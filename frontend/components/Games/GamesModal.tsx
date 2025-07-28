@@ -38,19 +38,22 @@ const ClickGame: React.FC<{ onScore: (score: number) => void }> = ({ onScore }) 
       //sets a timer to decrement the time left and update the score
       const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
       return () => clearTimeout(timer);
-      //
+      //resets active state when time is up
     } else if (timeLeft === 0) {
       setIsActive(false);
       onScore(score);
     }
   }, [isActive, timeLeft, score, onScore]);
 
+  
   const handleClick = () => {
+    //sets active state and resets time and score
     if (!isActive) {
       setIsActive(true);
       setTimeLeft(10);
       setScore(0);
     }
+    //increments score on click
     setScore(score + 1);
   };
 
@@ -225,14 +228,18 @@ const ColorGame: React.FC<{ onScore: (score: number) => void }> = ({ onScore }) 
 
 // Speed Typing Game Component
 const SpeedTypingGame: React.FC<{ onScore: (score: number) => void }> = ({ onScore }) => {
+  //tracking current word and user input for typing 
   const [currentWord, setCurrentWord] = useState('');
   const [userInput, setUserInput] = useState('');
+  //tracking score, time left, and active state
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(30);
   const [isActive, setIsActive] = useState(false);
 
+  //bank of words to be typed
   const words = ['productivity', 'focus', 'success', 'achieve', 'goals', 'motivation', 'discipline', 'progress'];
 
+  //hook to update time left and score when game is active
   useEffect(() => {
     if (isActive && timeLeft > 0) {
       const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
@@ -243,6 +250,7 @@ const SpeedTypingGame: React.FC<{ onScore: (score: number) => void }> = ({ onSco
     }
   }, [isActive, timeLeft, score, onScore]);
 
+  //sets active state and resets time, score, and words when game starts
   const startGame = () => {
     setIsActive(true);
     setTimeLeft(30);
@@ -251,16 +259,19 @@ const SpeedTypingGame: React.FC<{ onScore: (score: number) => void }> = ({ onSco
     generateNewWord();
   };
 
+  //randomly selects word to be typed by the user
   const generateNewWord = () => {
     const word = words[Math.floor(Math.random() * words.length)];
     setCurrentWord(word);
     setUserInput('');
   };
 
+  //sets input equal to user's typed word and checks if it matches the current word
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
     setUserInput(input);
-    
+  
+    //increases score count if user input matches current word
     if (input === currentWord) {
       setScore(score + 10);
       generateNewWord();
@@ -388,17 +399,24 @@ const MathGame: React.FC<{ onScore: (score: number) => void }> = ({ onScore }) =
 
 // Pattern Memory Game Component
 const PatternGame: React.FC<{ onScore: (score: number) => void }> = ({ onScore }) => {
+  //holds the pattern sequence to be memorized
   const [pattern, setPattern] = useState<number[]>([]);
+  //holds the user's inputted pattern sequence
   const [userPattern, setUserPattern] = useState<number[]>([]);
+  //tracks score and activity states
   const [score, setScore] = useState(0);
   const [isActive, setIsActive] = useState(false);
   const [isShowingPattern, setIsShowingPattern] = useState(false);
 
+  
   useEffect(() => {
+    //checkes when user validity when pattern isn't playing and user had inputted a pattern
     if (isActive && !isShowingPattern && userPattern.length === pattern.length && pattern.length > 0) {
+      //increases score count if user input matches current pattern
       if (JSON.stringify(userPattern) === JSON.stringify(pattern)) {
         setScore(score + 10);
         generateNewPattern();
+        //resets active state
       } else {
         onScore(score);
         setIsActive(false);
@@ -406,23 +424,31 @@ const PatternGame: React.FC<{ onScore: (score: number) => void }> = ({ onScore }
     }
   }, [userPattern, pattern, score, isActive, isShowingPattern, onScore]);
 
+  //sets active state and resets score when game starts
   const startGame = () => {
     setIsActive(true);
     setScore(0);
     generateNewPattern();
   };
 
+  //generates new pattern sequence
   const generateNewPattern = () => {
+    //selects pattern sequence by generating a random sequence of numbers 
+    // and increasing difficulty as score increases
     const newPattern = Array.from({ length: score + 3 }, () => Math.floor(Math.random() * 4));
+    //sets pattern sequence and user input sequence to empty
     setPattern(newPattern);
     setUserPattern([]);
+    //sets showing pattern state to true and displays pattern for 2 seconds
     setIsShowingPattern(true);
     
+    //sets showing pattern state to false after 2 seconds after displaying pattern
     setTimeout(() => {
       setIsShowingPattern(false);
     }, 2000);
   };
 
+  //adds color index to user pattern sequence when clicked
   const handleColorClick = (colorIndex: number) => {
     if (!isShowingPattern && isActive) {
       setUserPattern([...userPattern, colorIndex]);
@@ -678,27 +704,33 @@ const games: Game[] = [
 ];
 
 export default function GamesModal({ isVisible, onClose, userLevel, userXP }: GamesModalProps) {
+  //holds the selected game and game score
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
   const [gameScore, setGameScore] = useState<number>(0);
 
+  //filters out games that are not available for the user based on their level
   const availableGames = games.filter(game => userLevel >= game.minLevel);
 
+  //sets selected game and resets game score when game is selected
   const handleGameSelect = (game: Game) => {
     setSelectedGame(game);
     setGameScore(0);
   };
 
+  //sets game score when game is completed
   const handleGameScore = (score: number) => {
     setGameScore(score);
-    // Here you could add XP rewards for good scores
     console.log(`Game completed with score: ${score}`);
   };
 
+  //sets selected game and game score to null when back to games is clicked 
+  // and goes back to all games modal
   const handleBackToGames = () => {
     setSelectedGame(null);
     setGameScore(0);
   };
 
+  //returns null if modal is not visible and does not render anything
   if (!isVisible) return null;
 
   return (
