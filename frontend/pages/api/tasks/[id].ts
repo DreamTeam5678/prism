@@ -26,18 +26,30 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(200).json(task);
   }
 
-  if (req.method === "PUT") {
-    const { title, completed, priority } = req.body;
-    if (!title) {
-      return res.status(400).json({ error: "Missing title" });
+  if (req.method === "PUT" || req.method === "PATCH") {
+    const { title, completed, priority, completedAt } = req.body;
+
+    const task = await prisma.task.findUnique({ where: { id: taskId } });
+    if (!task || task.userId !== user.id) {
+      return res.status(404).json({ error: "Task not found or not authorized" });
     }
+
     const updated = await prisma.task.update({
       where: { id: taskId },
-      data: { title, completed, priority },
+      data: {
+        title: title ?? task.title,
+        completed: typeof completed === "boolean" ? completed : task.completed,
+        priority: priority ?? task.priority,
+        completedAt: typeof completed === "boolean"
+          ? completed
+            ? completedAt
+              ? new Date(completedAt)
+              : new Date()
+            : null
+          : task.completedAt,
+      },
     });
-    if (updated.userId !== user.id) {
-      return res.status(403).json({ error: "Forbidden" });
-    }
+
     return res.status(200).json(updated);
   }
 
@@ -50,7 +62,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(204).end();
   }
 
-  
-  res.setHeader("Allow", ["GET", "PUT", "DELETE"]);
+  res.setHeader("Allow", ["GET", "PUT", "PATCH", "DELETE"]);
   res.status(405).end(`Method ${req.method} Not Allowed`);
 }
