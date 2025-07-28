@@ -617,7 +617,7 @@ const games: Game[] = [
     icon: '🎯',
     component: ClickGame
   },
-  {
+  /*{
     id: 'memory',
     name: 'Memory Match',
     description: 'Find matching pairs',
@@ -632,7 +632,7 @@ const games: Game[] = [
     minLevel: 3,
     icon: '🎨',
     component: ColorGame
-  },
+  },*/
   {
     id: 'speed',
     name: 'Speed Typing',
@@ -641,6 +641,7 @@ const games: Game[] = [
     icon: '⌨️',
     component: SpeedTypingGame
   },
+  /*
   {
     id: 'math',
     name: 'Math Challenge',
@@ -648,7 +649,7 @@ const games: Game[] = [
     minLevel: 5,
     icon: '🔢',
     component: MathGame
-  },
+  },*/
   {
     id: 'pattern',
     name: 'Pattern Memory',
@@ -656,7 +657,8 @@ const games: Game[] = [
     minLevel: 6,
     icon: '🔮',
     component: PatternGame
-  },
+  }
+  /*
   {
     id: 'reaction',
     name: 'Reaction Time',
@@ -672,7 +674,7 @@ const games: Game[] = [
     minLevel: 8,
     icon: '🧩',
     component: PuzzleGame
-  }
+  }*/
 ];
 
 export default function GamesModal({ isVisible, onClose, userLevel, userXP }: GamesModalProps) {
