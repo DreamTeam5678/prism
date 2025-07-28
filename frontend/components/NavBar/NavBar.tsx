@@ -28,9 +28,7 @@ export default function NavBar() {
         {isCollapsed ? "→" : "←"}
       </button>
       
-       
-    
-    <div className="nav-bar">
+      <div className={`nav-bar ${isCollapsed ? 'collapsed' : ''}`}>
       <div className="nav-bar-container">
         {session && (
           <div className="nav-bar-profile">

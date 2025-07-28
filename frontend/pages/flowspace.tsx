@@ -70,37 +70,6 @@ export default function FlowSpace() {
       {navOn && <NavBar />}
       <BackgroundPicker current={selected} onChange={setSelected} />
 
-      {/* Virtual Coworking Button */}
-      <button
-        onClick={() => setShowCoworking(true)}
-        style={{
-          position: "absolute",
-          top: "3px",
-          right: "25px",
-          zIndex: 100000,
-          backgroundColor: "rgba(255,255,255,0.1)",
-          color: "rgba(198, 194, 194, 0.98)",
-          border: "1px solid rgba(255,255,255,0.2)",
-          padding: "8px 16px",
-          borderRadius: "20px",
-          cursor: "pointer",
-          fontSize: "1rem",
-          boxShadow: "0 4px 8px rgba(0,0,0,0.3)",
-          backdropFilter: "blur(6px)",
-          transition: "all 0.2s ease"
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.transform = "scale(1.05)";
-          e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.2)";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.transform = "scale(1)";
-          e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.1)";
-        }}
-      >
-        Virtual Coworking
-      </button>
-
       <div
         className="page-wrapper"
         style={{

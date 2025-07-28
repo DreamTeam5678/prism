@@ -29,7 +29,7 @@ const XPContext = createContext<XPContextType>({
 
 export function XPProvider({ children }: { children: React.ReactNode }) {
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [bonusXP, setBonusXP] = useState(0);
+  const [bonusXP, setBonusXP] = useState(1000); // Set to level 10 (1000 XP needed)
 
   const fetchTasks = () => {
     console.log('🔄 Fetching tasks...');

@@ -244,7 +244,7 @@ export default function VoiceCommandManager({
           {isListening ? '🎤' : '🔇'}
         </span>
         <span className={styles.statusText}>
-          {isListening ? 'Listening for commands...' : 'Voice commands rea'}
+          {isListening ? 'Listening for commands...' : 'Voice commands ready'}
         </span>
       </div>
     </div>
