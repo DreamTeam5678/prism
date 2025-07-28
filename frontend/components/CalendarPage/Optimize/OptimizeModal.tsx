@@ -65,7 +65,7 @@ export default function OptimizeModal({ onClose, setLoading }: OptimizeModalProp
       }
 
       // Try parsing as ISO string first
-      let parsedDate = new Date(date);
+      const parsedDate = new Date(date);
       
       // If that fails, try parsing as a different format
       if (isNaN(parsedDate.getTime())) {
