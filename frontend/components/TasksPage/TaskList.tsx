@@ -8,7 +8,6 @@ import VoiceCommandManager from "../VoiceCommands/VoiceCommandManager";
 import VoiceCommandToggle from "../VoiceCommands/VoiceCommandToggle";
 import { useState, KeyboardEvent, useEffect } from "react";
 import { useXP } from "@/context/XPContext";
-import { ParsedTask } from "@/lib/utils/naturalLanguageParser";
 
 export default function TaskList() {
   const { xp, tasks, refreshTasks } = useXP();
@@ -31,16 +30,15 @@ export default function TaskList() {
     }
   }, [showConfetti]);
 
-  const handleTaskCreate = async (parsedTask: ParsedTask) => {
+  const handleTaskCreate = async (task: { title: string; priority: string; scheduled: boolean; completed: boolean }) => {
     const res = await fetch("/api/tasks", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        title: parsedTask.title,
+        title: task.title,
         completed: false,
-        priority: parsedTask.priority,
-        scheduled: parsedTask.scheduled,
-        timestamp: parsedTask.timestamp?.toISOString(),
+        priority: task.priority,
+        scheduled: task.scheduled,
       }),
     });
     if (res.ok) {
@@ -818,8 +816,7 @@ export default function TaskList() {
           title: task.title,
           priority: task.priority || 'medium',
           scheduled: task.scheduled || false,
-          timestamp: undefined,
-          originalText: task.title
+          completed: false
         })}
         tasks={tasks}
         isListening={isVoiceListening}
