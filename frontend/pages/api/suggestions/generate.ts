@@ -75,10 +75,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     take: 20
   });
 
-  const userHistory = recentSuggestions.map(s => ({
+  const userHistory = recentSuggestions.map((s: { suggestionText: string; timestamp: Date }) => ({
     task: s.suggestionText,
-    accepted: true, // If it's in the database, it was accepted
-    timestamp: s.timestamp.toISOString()
+    accepted: true,
+    timestamp: s.timestamp.toISOString(),
   }));
 
   const suggestionsRaw = await getGPTSuggestion({
@@ -87,7 +87,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     environment: location,
     weather,
     calendarConflicts: safeEvents,
-    timeWindow: '8AM–9PM',
+    timeWindow: '8AM–10PM',
     timeZone: validatedTimeZone,
     avoidTitles: allScheduledTasksToday, // Avoid ALL scheduled tasks, not just GPT ones
     userHistory,
@@ -118,6 +118,50 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     where: { userId: user.id, scheduled: false, completed: false },
   });
 
+  console.log(`📋 Found ${taskBankTasks.length} unscheduled task bank tasks:`, taskBankTasks.map(t => `${t.title} (${t.priority})`));
+
+  // Calculate estimated time needed for task bank tasks
+  const taskBankTimeNeeded = taskBankTasks.reduce((total, task) => {
+    const duration = inferDuration(task.title, task.priority);
+    return total + duration;
+  }, 0);
+
+  // Calculate available time today (8AM-10PM = 14 hours = 840 minutes)
+  const totalAvailableTime = 14 * 60; // 840 minutes
+  const todayEvents = allEvents.filter((e: any) => {
+    const eventDate = moment(e.start).tz(validatedTimeZone);
+    const today = moment.tz(validatedTimeZone).startOf('day');
+    return eventDate.isSame(today, 'day');
+  });
+  
+  const existingEventTime = todayEvents.reduce((total, event) => {
+    const start = moment(event.start);
+    const end = moment(event.end);
+    const duration = end.diff(start, 'minutes');
+    return total + duration;
+  }, 0);
+
+  const remainingTime = totalAvailableTime - existingEventTime - taskBankTimeNeeded;
+  
+  console.log(`📊 Time analysis: ${totalAvailableTime}min total, ${existingEventTime}min existing events, ${taskBankTimeNeeded}min task bank tasks, ${remainingTime}min remaining`);
+
+  // Limit GPT suggestions based on available space and number of task bank tasks
+  let maxGptSuggestions = 3; // Default max
+  
+  // If there are many task bank tasks, limit GPT suggestions more aggressively
+  if (taskBankTasks.length >= 4) {
+    maxGptSuggestions = 1; // Only 1 GPT suggestion if 4+ task bank tasks
+  } else if (taskBankTasks.length >= 2 && remainingTime < 180) {
+    // Only limit to 2 if there are 2-3 task bank tasks AND less than 3 hours remaining
+    maxGptSuggestions = 2;
+  } else if (remainingTime < 120) { // Less than 2 hours available
+    maxGptSuggestions = 1;
+  } else if (remainingTime < 240) { // Less than 4 hours available
+    maxGptSuggestions = 2;
+  }
+
+  console.log(`🎯 Limiting GPT suggestions to ${maxGptSuggestions} due to ${taskBankTasks.length} task bank tasks and ${remainingTime}min remaining`);
+
   // Only schedule GPT suggestions here
   const scheduled = [];
   const skipped = [];
@@ -126,7 +170,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const scheduledTimes: { start: Date; end: Date }[] = [];
 
   // Schedule only GPT suggestions
+  let scheduledCount = 0;
   for (const suggestion of suggestions) {
+    // Stop if we've reached the maximum GPT suggestions
+    if (scheduledCount >= maxGptSuggestions) {
+      console.log(`🛑 Reached maximum GPT suggestions (${maxGptSuggestions}), skipping remaining suggestions`);
+      break;
+    }
+
     const duration = inferDuration(suggestion.task, suggestion.priority);
     
     // Get ALL existing calendar events for today (including GPT, task bank, and Google Calendar)
@@ -227,6 +278,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       priority: suggestion.priority,
       reason: suggestion.reason || '',
     });
+    scheduledCount++; // Increment the counter after successful scheduling
   }
 
   // Return task bank tasks separately for add.ts to handle
@@ -237,8 +289,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     source: 'taskbank' as const,
   }));
 
+  console.log(`📋 Task bank tasks found: ${taskBankTasks.length}`, taskBankTasks.map(t => t.title));
+  console.log(`📤 Task bank tasks for add API: ${taskBankForAdd.length}`, taskBankForAdd.map(t => t.title));
+
   return res.status(200).json({
-    message: scheduled.length ? 'Suggestions scheduled' : 'Nothing could be scheduled',
+    message: scheduled.length ? 
+      (scheduledCount >= maxGptSuggestions ? 
+        `Limited to ${maxGptSuggestions} GPT suggestions due to space constraints` : 
+        'Suggestions scheduled') : 
+      'Your day is already fully optimized - no room for additional suggestions',
     suggestions: scheduled,
     taskBankTasks: taskBankForAdd,
     skippedSuggestions: skipped,

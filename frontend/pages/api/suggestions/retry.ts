@@ -85,7 +85,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       environment: originalSuggestion.environment || "home",
       weather: originalSuggestion.weather || "unknown",
       calendarConflicts: safeEvents,
-      timeWindow: '8AM–9PM',
+      timeWindow: '8AM–10PM',
       timeZone: originalSuggestion.timeZone || 'UTC',
       avoidTitles: allScheduledTasksToday,
       userHistory,
@@ -151,27 +151,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(200).json({ message: "No available time slots for retry suggestion." });
     }
 
-    // Save the retry suggestion to calendar
-    const calendarEvent = await prisma.calendarEvent.create({
-      data: {
-        userId: user.id,
-        title: retry.task,
-        start: schedule.recommendedStart,
-        end: schedule.recommendedEnd,
-        source: 'gpt',
-        color: '#9b87a6',
-      },
-    });
-
     // Return the new suggestion in the format expected by the frontend
-    return res.status(200).json({
-      id: calendarEvent.id,
+    // Don't create calendar event here - let it be processed normally
+    const retrySuggestion = {
+      id: `retry_${Date.now()}`, // Generate a unique ID for the retry
       title: retry.task,
       start: schedule.recommendedStart.toISOString(),
       end: schedule.recommendedEnd.toISOString(),
       priority: retry.priority,
       reason: retry.reason || '',
-    });
+    };
+    
+    console.log('🔄 Retry suggestion created:', retrySuggestion);
+    return res.status(200).json(retrySuggestion);
 
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Unknown error";

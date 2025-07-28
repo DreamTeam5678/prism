@@ -10,8 +10,16 @@
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     margin: 80px;
     margin-top: 0px;
-    margin-left:80px;
+    margin-left:-10px;
+    margin-right: 170px;
+    transition: margin-left 0.3s ease;
+    
 }           
+
+.optimizeContainer.navCollapsed {
+    margin-left: -50px;
+    margin-right: 220px;
+}
 
 .optimizeButton {
     position: relative;
@@ -23,10 +31,34 @@
     background-color: #bd6044c8;
     border: none;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: all 0.3s ease;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    overflow: hidden; 
+    overflow: hidden;
+    animation: optimizePulse 2s ease-in-out infinite, optimizeFloat 3s ease-in-out infinite;
+    box-shadow: 0 4px 15px rgba(189, 96, 68, 0.4);
 }
+
+@keyframes optimizeFloat {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+@keyframes optimizePulse {
+    0% {
+        box-shadow: 0 4px 15px rgba(189, 96, 68, 0.4);
+    }
+    50% {
+        box-shadow: 0 8px 25px rgba(189, 96, 68, 0.6), 0 0 30px rgba(189, 96, 68, 0.3);
+    }
+    100% {
+        box-shadow: 0 4px 15px rgba(189, 96, 68, 0.4);
+    }
+}
+
 
 .optimizeButtonText {
   position: relative;

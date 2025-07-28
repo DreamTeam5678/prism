@@ -1,0 +1,365 @@
+.container {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.form {
+  width: 100%;
+}
+
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.inputWrapper:focus-within {
+  border-color: #667eea;
+  box-shadow: 0 8px 32px rgba(102, 126, 234, 0.2);
+  transform: translateY(-2px);
+}
+
+.input {
+  flex: 1;
+  padding: 16px 20px;
+  border: none;
+  background: transparent;
+  font-size: 1.1rem;
+  color: #333;
+  outline: none;
+  font-family: inherit;
+}
+
+.input::placeholder {
+  color: #999;
+  font-style: italic;
+}
+
+.voiceButton {
+  background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+  color: white;
+  border: none;
+  padding: 16px 18px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 50px;
+  border-radius: 0;
+}
+
+.voiceButton:hover {
+  background: linear-gradient(135deg, #ff5252, #d63031);
+  transform: scale(1.05);
+}
+
+.voiceButton.recording {
+  background: linear-gradient(135deg, #ff3838, #c44569);
+  animation: recordingPulse 1.5s ease-in-out infinite;
+}
+
+.recordingPulse {
+  animation: pulse 1s ease-in-out infinite;
+}
+
+.submitButton {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  padding: 16px 20px;
+  border-radius: 0 18px 18px 0;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 60px;
+}
+
+.submitButton:hover:not(:disabled) {
+  background: linear-gradient(135deg, #5a6fd8, #6a4190);
+  transform: scale(1.05);
+}
+
+.submitButton:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Preview Styles */
+.preview {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(15px);
+  border-radius: 15px;
+  margin-top: 10px;
+  padding: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  z-index: 1000;
+  animation: slideDown 0.3s ease;
+}
+
+.previewHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.previewIcon {
+  font-size: 1.2rem;
+}
+
+.previewTitle {
+  font-weight: 600;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.previewContent {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.taskTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  padding: 8px 12px;
+  background: rgba(102, 126, 234, 0.1);
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
+}
+
+.taskDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.detail {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.detailIcon {
+  font-size: 1rem;
+}
+
+.priority {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.priority.high {
+  background: rgba(244, 67, 54, 0.1);
+  color: #d32f2f;
+}
+
+.priority.medium {
+  background: rgba(255, 193, 7, 0.1);
+  color: #f57c00;
+}
+
+.priority.low {
+  background: rgba(76, 175, 80, 0.1);
+  color: #388e3c;
+}
+
+/* Suggestions Styles */
+.suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(15px);
+  border-radius: 15px;
+  margin-top: 10px;
+  padding: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  z-index: 1000;
+  animation: slideDown 0.3s ease;
+}
+
+.suggestionsHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 15px;
+  font-weight: 600;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.suggestionsIcon {
+  font-size: 1.1rem;
+}
+
+.suggestionsList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.suggestion {
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: #666;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.suggestion:hover {
+  background: rgba(102, 126, 234, 0.1);
+  color: #667eea;
+  transform: translateX(5px);
+}
+
+/* Help Text */
+.helpText {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 15px;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(5px);
+  border-radius: 10px;
+  font-size: 0.9rem;
+  color: #666;
+  font-style: italic;
+}
+
+.helpIcon {
+  font-size: 1rem;
+  opacity: 0.7;
+}
+
+/* Voice Transcript */
+.transcript {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: rgba(255, 107, 107, 0.95);
+  backdrop-filter: blur(15px);
+  border-radius: 15px;
+  margin-top: 10px;
+  padding: 15px;
+  box-shadow: 0 8px 32px rgba(255, 107, 107, 0.3);
+  border: 1px solid rgba(255, 107, 107, 0.2);
+  z-index: 1000;
+  animation: slideDown 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.transcriptIcon {
+  font-size: 1.2rem;
+  animation: pulse 1s ease-in-out infinite;
+}
+
+.transcriptText {
+  color: white;
+  font-size: 1rem;
+  font-style: italic;
+  flex: 1;
+}
+
+/* Animations */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes recordingPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(255, 56, 56, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(255, 56, 56, 0);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    max-width: 100%;
+  }
+  
+  .input {
+    font-size: 1rem;
+    padding: 14px 16px;
+  }
+  
+  .submitButton {
+    padding: 14px 16px;
+    font-size: 1.1rem;
+  }
+  
+  .preview,
+  .suggestions {
+    margin-top: 8px;
+    padding: 16px;
+  }
+  
+  .taskTitle {
+    font-size: 1rem;
+  }
+  
+  .suggestion {
+    font-size: 0.85rem;
+    padding: 8px 10px;
+  }
+} 

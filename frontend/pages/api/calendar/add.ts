@@ -79,7 +79,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       dayStart.setHours(8, 0, 0, 0); // 8:00 AM today
 
       const dayEnd = new Date();
-      dayEnd.setHours(21, 0, 0, 0); // 9:00 PM today
+      dayEnd.setHours(22, 0, 0, 0); // 10:00 PM today
 
       // Adjust initial candidate start time based on priority and current time
       let candidate = new Date(Math.max(dayStart.getTime(), now.getTime() + bufferMs)); // Start no earlier than 8 AM or 15 mins from now
@@ -92,11 +92,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         candidate = new Date(Math.max(candidate.getTime(), earliestHighPriStart.getTime()));
       }
 
-      const latestStart = new Date(dayEnd.getTime() - durationMinutes * 60 * 1000); // latest possible start time to end by 9 PM
+      const latestStart = new Date(dayEnd.getTime() - durationMinutes * 60 * 1000); // latest possible start time to end by 10 PM
 
       const sortedEvents = [...currentOccupiedSlots].sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
 
-      while (candidate.getTime() + durationMinutes * 60 * 1000 <= dayEnd.getTime()) { // Ensure candidate + duration doesn't exceed 9 PM
+      while (candidate.getTime() + durationMinutes * 60 * 1000 <= dayEnd.getTime()) { // Ensure candidate + duration doesn't exceed 10 PM
         let hasConflict = false;
         const candidateEnd = new Date(candidate.getTime() + durationMinutes * 60 * 1000);
 
@@ -140,24 +140,32 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
       }
 
-      // If no slots found today, schedule for tomorrow
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
+      // If no slots found today, try to find any available time, even if it's tight
+      console.log(`⚠️ No ideal slots found for ${durationMinutes}min task, trying to find any available time`);
       
-      let tomorrowStart;
-      if (priority === "High") {
-        tomorrowStart = new Date(tomorrow);
-        tomorrowStart.setHours(8, 0, 0, 0); // 8:00 AM
-      } else if (priority === "Medium") {
-        tomorrowStart = new Date(tomorrow);
-        tomorrowStart.setHours(13, 0, 0, 0); // 1:00 PM (after lunch)
-      } else {
-        tomorrowStart = new Date(tomorrow);
-        tomorrowStart.setHours(16, 0, 0, 0); // 4:00 PM
+      // Try to squeeze it in between existing events, but only before 10 PM
+      for (let i = 0; i < sortedEvents.length - 1; i++) {
+        const currentEvent = sortedEvents[i];
+        const nextEvent = sortedEvents[i + 1];
+        
+        const gapStart = new Date(currentEvent.end.getTime() + bufferMs);
+        const gapEnd = new Date(nextEvent.start.getTime() - bufferMs);
+        const gapDuration = gapEnd.getTime() - gapStart.getTime();
+        
+        // Only schedule if the slot ends before 10 PM
+        const slotEnd = new Date(gapStart.getTime() + durationMinutes * 60 * 1000);
+        if (gapDuration >= durationMinutes * 60 * 1000 && slotEnd.getTime() <= dayEnd.getTime()) {
+          console.log(`✅ Found tight slot: ${gapStart.toLocaleTimeString()}-${slotEnd.toLocaleTimeString()}`);
+          return {
+            start: gapStart,
+            end: slotEnd,
+          };
+        }
       }
       
-      const tomorrowEnd = new Date(tomorrowStart.getTime() + durationMinutes * 60 * 1000);
-      return { start: tomorrowStart, end: tomorrowEnd };
+      // If still no slots, return null
+      console.log(`❌ No available slots found for ${durationMinutes}min task (must end before 10 PM)`);
+      return null;
     };
 
     const getPriorityValue = (priority: "High" | "Medium" | "Low"): number => {
@@ -172,10 +180,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return 'Low';
     }
 
-    // Prepare arrays for scheduling
-    const tasksToSchedule = [...tasks].sort((a: any, b: any) =>
-      getPriorityValue(capitalizePriority(b.priority)) - getPriorityValue(capitalizePriority(a.priority))
-    );
+    // Prepare arrays for scheduling - sort by priority (High first, then Medium, then Low)
+    const tasksToSchedule = [...tasks].sort((a: any, b: any) => {
+      const priorityA = getPriorityValue(capitalizePriority(a.priority));
+      const priorityB = getPriorityValue(capitalizePriority(b.priority));
+      console.log(`🔍 Sorting: ${a.title} (${a.priority} = ${priorityA}) vs ${b.title} (${b.priority} = ${priorityB})`);
+      return priorityB - priorityA; // High priority first
+    });
+    
+    console.log(`📋 Task bank tasks sorted by priority:`, tasksToSchedule.map(t => `${t.title} (${t.priority})`));
 
     // All events that are already on the calendar (Google events, etc.)
     const occupiedSlots: { start: Date; end: Date }[] = existingEvents.map(event => ({
@@ -186,7 +199,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const newScheduledEntries: any[] = []; // To store newly scheduled tasks and suggestions
 
     // STEP 1: Schedule Task Bank Items (prioritized)
+    console.log(`📋 Scheduling ${tasksToSchedule.length} task bank tasks:`, tasksToSchedule.map(t => `${t.title} (${t.priority})`));
+    const unscheduledTasks = [];
     for (const task of tasksToSchedule) {
+      console.log(`🔍 Processing task: ${task.title} (${task.priority})`);
+      
       // Check if task is already scheduled
       const existingTask = await prisma.task.findFirst({
         where: {
@@ -202,9 +219,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
       const duration = inferDuration(task.title, capitalizePriority(task.priority));
+      console.log(`⏱️ Task duration: ${duration} minutes`);
+      console.log(`📅 Current occupied slots: ${occupiedSlots.length}`, occupiedSlots.map(s => `${s.start.toLocaleTimeString()}-${s.end.toLocaleTimeString()}`));
+      
       const slot = getNextAvailableSlot(occupiedSlots, duration, capitalizePriority(task.priority));
 
       if (slot) {
+        console.log(`✅ Scheduled task "${task.title}" at ${slot.start.toLocaleTimeString()}-${slot.end.toLocaleTimeString()}`);
         newScheduledEntries.push({
           userId: user.id,
           title: task.title,
@@ -227,8 +248,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           }
         });
         occupiedSlots.sort((a, b) => a.start.getTime() - b.start.getTime()); // Keep sorted
+        console.log(`📈 Updated occupied slots: ${occupiedSlots.length}`, occupiedSlots.map(s => `${s.start.toLocaleTimeString()}-${s.end.toLocaleTimeString()}`));
       } else {
-        console.warn(`Could not schedule Task Bank item: ${task.title}`);
+        console.warn(`❌ Could not schedule Task Bank item: ${task.title} - no available slots today`);
+        unscheduledTasks.push(task.title);
       }
     }
 
@@ -293,7 +316,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
     }
 
-    res.status(200).json({ message: "Calendar updated successfully" });
+    // Determine response message based on scheduling results
+    let message = "Calendar updated successfully";
+    if (unscheduledTasks.length > 0) {
+      message = `Your day is already optimized! ${unscheduledTasks.length} task(s) couldn't be scheduled due to no available slots: ${unscheduledTasks.join(', ')}`;
+    } else if (newScheduledEntries.length === 0) {
+      message = "Your day is already optimized - no new tasks could be scheduled";
+    }
+
+    res.status(200).json({ message });
   } catch (error) {
     console.error("Failed to add calendar entries:", error);
     res.status(500).json({ message: "Failed to update calendar" });

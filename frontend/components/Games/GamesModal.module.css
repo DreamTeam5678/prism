@@ -1,0 +1,521 @@
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000001;
+  backdrop-filter: blur(5px);
+}
+
+.modal {
+  background: linear-gradient(135deg, #fdf6e399, #c892475b);
+  backdrop-filter: blur(15px);
+  border-radius: 20px;
+  padding: 2rem;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  animation: modalSlideIn 0.3s ease;
+  z-index: 1000002;
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.modalHeader h2 {
+  margin: 0;
+  color: #4b2916cd;
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  color: #4b2916cd;
+  font-size: 2rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.closeButton:hover {
+  background: rgba(75, 41, 22, 0.1);
+  transform: scale(1.1);
+}
+
+.levelInfo {
+  text-align: center;
+  color: #4b2916cd;
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.gamesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.gameCard {
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.gameCard:hover {
+  background: rgba(255, 255, 255, 0.6);
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.gameIcon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.gameCard h3 {
+  color: #4b2916cd;
+  margin: 0 0 0.5rem 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.gameCard p {
+  color: #4b2916cd;
+  margin: 0 0 1rem 0;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.levelRequirement {
+  color: #4b2916cd;
+  font-size: 0.8rem;
+  font-style: italic;
+  opacity: 0.7;
+}
+
+.noGames {
+  text-align: center;
+  color: #4b2916cd;
+  font-size: 1.1rem;
+  padding: 2rem;
+}
+
+.backButton {
+  background: rgba(255, 255, 255, 0.4);
+  color: #4b2916cd;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.backButton:hover {
+  background: rgba(255, 255, 255, 0.6);
+  transform: translateX(-5px);
+}
+
+.gameContainer {
+  text-align: center;
+  color: #4b2916cd;
+}
+
+.gameContainer h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.gameContainer p {
+  margin: 0 0 1rem 0;
+  color: #4b2916cd;
+  opacity: 0.8;
+}
+
+.gameStats {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 1.5rem;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.gameButton {
+  background: linear-gradient(135deg, #c89247, #a67c3a);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(200, 146, 71, 0.4);
+}
+
+.gameButton:hover:not(:disabled) {
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(200, 146, 71, 0.6);
+}
+
+.gameButton.active {
+  background: linear-gradient(135deg, #8b7355, #6b5b47);
+  animation: pulse 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes pulse {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.1);
+  }
+}
+
+.gameButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.gameResult {
+  margin-top: 1rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #00b894;
+}
+
+/* Memory Game Styles */
+.memoryGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+  margin: 1rem 0;
+  max-width: 300px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.memoryCard {
+  aspect-ratio: 1;
+  background: linear-gradient(135deg, #c89247, #a67c3a);
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.memoryCard:hover:not(:disabled) {
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.memoryCard.flipped {
+  background: linear-gradient(135deg, #8b7355, #6b5b47);
+  transform: rotateY(180deg);
+}
+
+.memoryCard:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Color Game Styles */
+.colorGame {
+  margin: 1rem 0;
+}
+
+.colorWord {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.colorOptions {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  max-width: 200px;
+  margin: 0 auto;
+}
+
+.colorOption {
+  aspect-ratio: 1;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.colorOption:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .modal {
+    padding: 1.5rem;
+    max-width: 95%;
+  }
+
+  .modalHeader h2 {
+    font-size: 1.5rem;
+  }
+
+  .gamesGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .gameCard {
+    padding: 1rem;
+  }
+
+  .gameIcon {
+    font-size: 2rem;
+  }
+
+  .memoryGrid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.3rem;
+  }
+
+  .memoryCard {
+    font-size: 1rem;
+  }
+
+  .colorWord {
+    font-size: 2rem;
+  }
+
+  .colorOptions {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+}
+
+/* Speed Typing Game Styles */
+.typingGame {
+  margin: 1rem 0;
+}
+
+.wordDisplay {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.typingInput {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #333;
+  text-align: center;
+}
+
+/* Math Game Styles */
+.mathGame {
+  margin: 1rem 0;
+  text-align: center;
+}
+
+.problemDisplay {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.mathInput {
+  width: 150px;
+  padding: 1rem;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #333;
+  text-align: center;
+  margin-right: 1rem;
+}
+
+.submitButton {
+  background: linear-gradient(135deg, #00b894, #00a085);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.submitButton:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 184, 148, 0.4);
+}
+
+/* Pattern Game Styles */
+.patternGame {
+  margin: 1rem 0;
+}
+
+.patternDisplay {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.patternColor {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 3px solid white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.patternGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  max-width: 200px;
+  margin: 0 auto;
+}
+
+.patternButton {
+  aspect-ratio: 1;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.patternButton:hover:not(:disabled) {
+  transform: scale(1.1);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.patternButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.color0 { background: linear-gradient(135deg, #c89247, #a67c3a); }
+.color1 { background: linear-gradient(135deg, #e6d7c3, #d4c4a8); }
+.color2 { background: linear-gradient(135deg, #b8c5d1, #9ba8b4); }
+.color3 { background: linear-gradient(135deg, #8b7355, #6b5b47); }
+
+/* Reaction Game Styles */
+.reactionGame {
+  margin: 1rem 0;
+  text-align: center;
+}
+
+.reactionButton {
+  width: 200px;
+  height: 200px;
+  border: none;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, #c89247, #a67c3a);
+  color: white;
+}
+
+.reactionButton.waiting {
+  background: linear-gradient(135deg, #8b7355, #6b5b47);
+  color: white;
+}
+
+.reactionButton.ready {
+  background: linear-gradient(135deg, #e6d7c3, #d4c4a8);
+  color: #4b2916cd;
+  animation: pulse 0.5s ease-in-out infinite alternate;
+}
+
+/* Puzzle Game Styles */
+.puzzleGame {
+  margin: 1rem 0;
+  text-align: center;
+}
+
+.scrambledWord {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #4b2916cd;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  letter-spacing: 0.2em;
+}
+
+.puzzleInput {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #333;
+  text-align: center;
+  margin-bottom: 1rem;
+} 

@@ -9,12 +9,18 @@ export default function ProfilePage() {
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [surveyData, setSurveyData] = useState({
-    currentMode: [],
-    idealSelf: [],
-    blockers: [],
-    dislikes: [],
-    behaviorTags: [],
+  const [surveyData, setSurveyData] = useState<{
+    currentMode: string[];
+    idealSelf: string[];
+    blockers: string[];
+    dislikes: string[];
+    behaviorTags: string[]; 
+  }>({
+      currentMode: [],
+      idealSelf: [],
+      blockers: [],
+      dislikes: [],
+      behaviorTags: [],
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -65,7 +71,7 @@ export default function ProfilePage() {
   };
 
   const tagGroups = {
-    currentMode: ["student", "professional", "everyday_mode"],
+    currentMode: ["student", "professional", "personal"],
     idealSelf: [
       "structured_planner",
       "calm_builder",
@@ -279,11 +285,12 @@ export default function ProfilePage() {
         }
 
         h1 {
-          font-size: 3.2rem;
+          font-size: 3.4rem;
           color: #333;
           text-align: center;
-          margin: -1.5rem;
-          margin-top: -5rem;
+          margin: -1.2rem;
+          margin-top: 0.5rem;
+          padding-top: 30px;
           font-weight: 700;
           letter-spacing: -0.05em;
           text-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15);
@@ -291,6 +298,7 @@ export default function ProfilePage() {
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           animation: slideInBounce 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.1s forwards;
+
         }
 
         .error-message {

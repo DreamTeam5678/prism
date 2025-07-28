@@ -10,6 +10,7 @@ import { getToken } from "next-auth/jwt";
 
 
 
+type CalendarEvent = Awaited<ReturnType<typeof prisma.calendarEvent.findMany>>[number];
 
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -30,7 +31,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         orderBy: { start: "asc" },
     });
 
-    const localEvents = rawLocalEvents.flatMap((event) => {
+
+    const localEvents = rawLocalEvents.flatMap((event: CalendarEvent) => {
   // Check if title contains multiple time blocks (heuristic: contains "AM" or "PM" more than once)
         const timeBlockPattern = /(\d{1,2}:\d{2} [AP]M) ?– ?(\d{1,2}:\d{2} [AP]M)/g;
         const matches = [...(event.title?.matchAll(timeBlockPattern) || [])];

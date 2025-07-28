@@ -1,7 +1,7 @@
 //import { useSession } from "next-auth/react";
 //import { useRouter } from "next/router";
 
-
+/*
 interface User {
     email: string;
     name: string;
@@ -25,4 +25,4 @@ export default function Avatars({users = []}: AvatarsProps) {
         </div>
     );
 }
-            
+            */

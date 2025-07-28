@@ -1,7 +1,7 @@
-// frontend/components/CalendarPage/Optimize/OptimizeAnalytics.tsx
 "use client";
 import { useState, useEffect } from "react";
 import styles from './OptimizeAnalytics.module.css';
+import WeeklySummaryChart from "@/components/TasksPage/weekly-summary";
 
 interface Analytics {
   totalOptimizations: number;
@@ -246,6 +246,11 @@ export default function OptimizeAnalytics() {
           ))}
         </div>
       </div>
+
+      {/* ✅ Weekly Summary Bar Chart */}
+      <div className={styles.chartSection}>
+        <WeeklySummaryChart />
+      </div>
     </div>
   );
-} 
+}

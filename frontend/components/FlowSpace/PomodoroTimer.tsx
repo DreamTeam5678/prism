@@ -1,5 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import styles from "./PomodoroTimer.module.css";
+import { CirclePlay } from "lucide-react";
+import { RefreshCcw } from "lucide-react";
+import { SkipForward } from "lucide-react";
 
 interface TimerState {
   isRunning: boolean;
@@ -45,6 +48,9 @@ export default function PomodoroTimer() {
                 totalSessions: prev.totalSessions + 1
               };
             } else {
+              // Work session completed - trigger XP event
+              document.dispatchEvent(new CustomEvent("pomodoroComplete"));
+              
               const isLongBreak = prev.session % settings.sessionsUntilLongBreak === 0;
               const breakDuration = isLongBreak ? settings.longBreakDuration : settings.shortBreakDuration;
               return {
@@ -123,44 +129,47 @@ export default function PomodoroTimer() {
   };
 
   return (
-    <div className={styles.pomodoroTimerContainer}>
-      <div className={styles.timerDisplay}>
-        <div className={styles.timerCircle}>
+    <div className={styles['pomodoro-container']}>
+      <div className={styles['timer-display']}>
+        <div className={`${styles['timer-circle']} ${timerState.isRunning ? styles.active : ''}`}>
           <div
-            className={styles.timerProgress}
+            className={styles['timer-progress']}
             style={{
               background: `conic-gradient(#4CAF50 ${getProgressPercentage()}%, #e0e0e0 0%)`
             }}
           />
-          <div className={styles.timerTime}>
-            <div className={styles.timeDisplay}>{formatTime(timerState.timeLeft)}</div>
-            <div className={styles.sessionType}>{getSessionType()}</div>
+          <div className={styles['timer-time']}>
+            <div className={styles['time-display']}>{formatTime(timerState.timeLeft)}</div>
+            <div className={styles['session-type']}>{getSessionType()}</div>
           </div>
         </div>
       </div>
 
-      <div className={styles.timerControls}>
-        {timerState.isRunning ? (
-          <button onClick={pauseTimer} className={`${styles.timerButton} ${styles.pause}`}>
-            ⏸️ Pause
+        <div className={styles['timer-controls']}>
+          {timerState.isRunning ? (
+            <button onClick={pauseTimer} className={`${styles['timer-button']} ${styles.pause}`}>
+              <CirclePlay />
+            </button>
+          ) : (
+            <button onClick={startTimer} className={`${styles['timer-button']} ${styles.start}`}>
+              <CirclePlay />
+            </button>
+          )}
+          
+          <button onClick={resetTimer} className={`${styles['timer-button']} ${styles.reset}`}>
+            <RefreshCcw />
           </button>
-        ) : (
-          <button onClick={startTimer} className={`${styles.timerButton} ${styles.start}`}>
-            ▶️ Start
+          <button onClick={skipTimer} className={`${styles['timer-button']} ${styles.skip}`}>
+            <SkipForward />
           </button>
-        )}
-        <button onClick={resetTimer} className={`${styles.timerButton} ${styles.reset}`}>
-          🔄 Reset
-        </button>
-        <button onClick={skipTimer} className={`${styles.timerButton} ${styles.skip}`}>
-          ⏭️ Skip
-        </button>
-      </div>
+        </div>
 
-      <div className={styles.timerSettings}>
+
+
+      <div className={styles['timer-settings']}>
         <h4>Settings</h4>
-        <div className={styles.settingsGrid}>
-          <div className={styles.settingItem}>
+        <div className={styles['settings-grid']}>
+          <div className={styles['setting-item']}>
             <label>Work Duration (min)</label>
             <input
               type="number"
@@ -175,7 +184,7 @@ export default function PomodoroTimer() {
               max="60"
             />
           </div>
-          <div className={styles.settingItem}>
+          <div className={styles['setting-item']}>
             <label>Short Break (min)</label>
             <input
               type="number"
@@ -190,7 +199,7 @@ export default function PomodoroTimer() {
               max="30"
             />
           </div>
-          <div className={styles.settingItem}>
+          <div className={styles['setting-item']}>
             <label>Long Break (min)</label>
             <input
               type="number"
@@ -205,7 +214,7 @@ export default function PomodoroTimer() {
               max="60"
             />
           </div>
-          <div className={styles.settingItem}>
+          <div className={styles['setting-item']}>
             <label>Sessions until Long Break</label>
             <input
               type="number"
@@ -221,16 +230,6 @@ export default function PomodoroTimer() {
             />
           </div>
         </div>
-      </div>
-
-      <div className={styles.timerTips}>
-        <h4>💡 Tips</h4>
-        <ul>
-          <li>Work for 25 minutes, then take a 5-minute break</li>
-          <li>After 4 sessions, take a longer 15-minute break</li>
-          <li>Use breaks to stretch, hydrate, or step away from your screen</li>
-          <li>Don't skip breaks - they're essential for maintaining focus</li>
-        </ul>
       </div>
     </div>
   );

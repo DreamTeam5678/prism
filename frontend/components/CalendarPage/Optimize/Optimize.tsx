@@ -9,6 +9,7 @@ export default function Optimize() {
   const { data: session } = useSession();
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isNavCollapsed, setIsNavCollapsed] = useState(false);
   const fillRef = useRef<HTMLDivElement>(null);
 
   // Fill animation triggered by custom event
@@ -33,8 +34,21 @@ export default function Optimize() {
     return () => document.removeEventListener("optimizeComplete", handleComplete);
   }, []);
 
+  // Listen for NavBar toggle events
+  useEffect(() => {
+    const handleNavToggle = (event: CustomEvent) => {
+      console.log('🔄 NavBar toggle event received:', event.detail.isCollapsed);
+      setIsNavCollapsed(event.detail.isCollapsed);
+    };
+
+    document.addEventListener("navbarToggle", handleNavToggle as EventListener);
+    return () => document.removeEventListener("navbarToggle", handleNavToggle as EventListener);
+  }, []);
+
   return (
-    <div className={styles.optimizeContainer}>
+    <div 
+      className={`${styles.optimizeContainer} ${isNavCollapsed ? styles.navCollapsed : ""}`}
+    >
       <button
         className={`${styles.optimizeButton} ${loading ? styles.loading : ""}`}
         onClick={() => setShowModal(true)}

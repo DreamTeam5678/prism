@@ -28,29 +28,45 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (req.method === "PUT" || req.method === "PATCH") {
     const { title, completed, priority, completedAt } = req.body;
+    console.log(`${req.method} request for task:`, taskId, { title, completed, priority });
 
-    const task = await prisma.task.findUnique({ where: { id: taskId } });
-    if (!task || task.userId !== user.id) {
-      return res.status(404).json({ error: "Task not found or not authorized" });
+    try {
+      const task = await prisma.task.findUnique({ where: { id: taskId } });
+      if (!task) {
+        console.error("❌ Task not found");
+        return res.status(404).json({ error: "Task not found" });
+      }
+
+      if (task.userId !== user.id) {
+        console.error("❌ User ID mismatch:", task.userId, user.id);
+        return res.status(403).json({ error: "Forbidden" });
+      }
+
+      const safeTask = task; // TypeScript-safe reference
+
+      const updated = await prisma.task.update({
+        where: { id: taskId },
+        data: {
+          title: title ?? safeTask.title,
+          completed: typeof completed === "boolean" ? completed : safeTask.completed,
+          priority: priority ?? safeTask.priority,
+          completedAt:
+            typeof completed === "boolean"
+              ? completed
+                ? completedAt
+                  ? new Date(completedAt)
+                  : new Date()
+                : null
+              : safeTask.completedAt,
+        },
+      });
+
+      console.log("✅ Task updated successfully:", updated);
+      return res.status(200).json(updated);
+    } catch (error) {
+      console.error("❌ Database error:", error);
+      return res.status(500).json({ error: "Database error" });
     }
-
-    const updated = await prisma.task.update({
-      where: { id: taskId },
-      data: {
-        title: title ?? task.title,
-        completed: typeof completed === "boolean" ? completed : task.completed,
-        priority: priority ?? task.priority,
-        completedAt: typeof completed === "boolean"
-          ? completed
-            ? completedAt
-              ? new Date(completedAt)
-              : new Date()
-            : null
-          : task.completedAt,
-      },
-    });
-
-    return res.status(200).json(updated);
   }
 
   if (req.method === "DELETE") {

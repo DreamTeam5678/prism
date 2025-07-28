@@ -91,20 +91,21 @@ body::before {
 
 
 
-
 .welcome-title {
-    font-size: 9rem;
-    margin-bottom: 0rem;
-    font-family: 'Sacramento', cursive;
+    font-size: 5rem !important;
+    margin-bottom: 0;
+    font-family: Trebuchet MS, Lucida Sans Unicode, Lucida Grande, Lucida Sans, Arial, sans-serif !important;
     font-style: oblique;
-    font-weight: 400;
+    font-weight: 300;
     background: -webkit-linear-gradient(#494949, #8b9d84, #073a43);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     text-align: center;
-    text-shadow: 2px 2px 7px rgba(0, 0, 0, 0.096);
+    text-shadow: 2px 2px 7px rgba(0, 0, 0, .096);
     animation: fadeIn 1s ease-in;
-    opacity: 0.8;
+    opacity: .8;
+    margin-bottom: 30px;
+    margin-left: -15px;
 }
 
 .welcome-container img {
