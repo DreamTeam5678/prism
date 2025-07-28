@@ -48,6 +48,9 @@ export default function PomodoroTimer() {
                 totalSessions: prev.totalSessions + 1
               };
             } else {
+              // Work session completed - trigger XP event
+              document.dispatchEvent(new CustomEvent("pomodoroComplete"));
+              
               const isLongBreak = prev.session % settings.sessionsUntilLongBreak === 0;
               const breakDuration = isLongBreak ? settings.longBreakDuration : settings.shortBreakDuration;
               return {

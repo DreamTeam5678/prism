@@ -1,52 +1,369 @@
-.container {
-  position: absolute;
-  top: 20px;
-  right: 30px;
-  width: 250px;
-  text-align: right;
-  z-index: 1000;
-}
-
-.label {
-  font-size: 14px;
-  font-weight: bold;
-  margin-bottom: 4px;
-  color: #333;
-}
-
-.bar {
-  height: 10px;
-  background: #e0e0e0;
-  border-radius: 20px;
+/* Full-width gamification banner */
+.gamificationBanner {
+  width: 100%;
+  background: linear-gradient(135deg, #75906b 0%, #5a7a4f 100%);
+  border-radius: 0 0 20px 20px;
+  padding: 15px 30px;
+  margin-bottom: 15px;
+  position: relative;
   overflow: hidden;
-  box-shadow: 0 0 8px rgba(0, 255, 200, 0.5);
+  box-shadow: 0 8px 32px rgba(117, 144, 107, 0.3);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.fill {
-  height: 100%;
-  background: linear-gradient(to right, #7df9ff, #bbf7d0);
-  width: 0%;
-  transition: width 0.4s ease;
-  box-shadow: 0 0 6px #7df9ff;
+.bannerContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
 }
 
-.barWrapper {
+/* Left section - Level and XP */
+.levelSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 200px;
+}
+
+.levelDisplay {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   transition: all 0.3s ease;
 }
 
-.levelUp {
-  animation: glow 1s ease-in-out;
+.levelIcon {
+  font-size: 1.5rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }
 
-@keyframes glow {
-  0% { box-shadow: 0 0 5px gold; }
-  50% { box-shadow: 0 0 20px gold; }
-  100% { box-shadow: 0 0 5px gold; }
+.levelInfo {
+  display: flex;
+  flex-direction: column;
 }
 
-.streak {
+.levelText {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.xpText {
   font-size: 0.9rem;
-  margin-top: 6px;
-  color: #ff9800;
-  font-weight: bold;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+}
+
+.xpBar {
+  height: 12px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.xpFill {
+  height: 100%;
+  background: linear-gradient(90deg, #ffd700, #ffed4e);
+  border-radius: 20px;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.xpGain {
+  animation: xpGainPulse 1s ease-in-out;
+}
+
+@keyframes xpGainPulse {
+  0%, 100% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+  50% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.8), 0 0 30px rgba(255, 215, 0, 0.6); }
+}
+
+.xpParticles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: #ffd700;
+  border-radius: 50%;
+  animation: particleFloat 3s infinite;
+}
+
+.particle:nth-child(1) { left: 10%; animation-delay: 0s; }
+.particle:nth-child(2) { left: 30%; animation-delay: 0.5s; }
+.particle:nth-child(3) { left: 50%; animation-delay: 1s; }
+.particle:nth-child(4) { left: 70%; animation-delay: 1.5s; }
+.particle:nth-child(5) { left: 90%; animation-delay: 2s; }
+
+@keyframes particleFloat {
+  0%, 100% { transform: translateY(0px); opacity: 0; }
+  50% { transform: translateY(-10px); opacity: 1; }
+}
+
+/* Center section - Motivation */
+.motivationSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  max-width: 300px;
+}
+
+.motivationText {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: white;
+  text-align: center;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  animation: motivationGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes motivationGlow {
+  0% { text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); }
+  100% { text-shadow: 0 2px 8px rgba(255, 255, 255, 0.3); }
+}
+
+.achievementBadge {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.badge {
+  font-size: 1.2rem;
+  animation: badgeBounce 2s ease-in-out infinite;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.badge:nth-child(1) { animation-delay: 0s; }
+.badge:nth-child(2) { animation-delay: 0.5s; }
+.badge:nth-child(3) { animation-delay: 1s; }
+.badge:nth-child(4) { animation-delay: 1.5s; }
+
+@keyframes badgeBounce {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+}
+
+/* Right section - Stats */
+.statsSection {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  min-width: 200px;
+}
+
+.streakDisplay {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 12px 16px;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.streakIcon {
+  font-size: 1.2rem;
+  animation: flameFlicker 1.5s ease-in-out infinite;
+}
+
+@keyframes flameFlicker {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.streakInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.streakText {
+  font-size: 1rem;
+  font-weight: 700;
+  color: white;
+}
+
+.streakLabel {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.8);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.totalXp {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 12px 16px;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.xpTotal {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #ffd700;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.xpLabel {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.8);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Floating particles background */
+.floatingParticles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.floatingParticle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  animation: float 6s infinite linear;
+}
+
+.floatingParticle:nth-child(1) { left: 10%; animation-delay: 0s; }
+.floatingParticle:nth-child(2) { left: 20%; animation-delay: 1s; }
+.floatingParticle:nth-child(3) { left: 30%; animation-delay: 2s; }
+.floatingParticle:nth-child(4) { left: 40%; animation-delay: 3s; }
+.floatingParticle:nth-child(5) { left: 50%; animation-delay: 4s; }
+.floatingParticle:nth-child(6) { left: 60%; animation-delay: 5s; }
+.floatingParticle:nth-child(7) { left: 70%; animation-delay: 0.5s; }
+.floatingParticle:nth-child(8) { left: 80%; animation-delay: 1.5s; }
+
+@keyframes float {
+  0% { transform: translateY(100px); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(-100px); opacity: 0; }
+}
+
+/* Level up effect */
+.levelUp {
+  animation: levelUpCelebration 2s ease-in-out;
+}
+
+@keyframes levelUpCelebration {
+  0% { transform: scale(1); }
+  25% { transform: scale(1.1); }
+  50% { transform: scale(1.05); }
+  75% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .gamificationBanner {
+    padding: 15px 20px;
+    margin-bottom: 15px;
+  }
+
+  .bannerContent {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .levelSection,
+  .motivationSection,
+  .statsSection {
+    min-width: auto;
+    width: 100%;
+  }
+
+  .statsSection {
+    justify-content: center;
+  }
+
+  .levelText {
+    font-size: 1.3rem;
+  }
+
+  .motivationText {
+    font-size: 1.1rem;
+  }
+
+  .streakText,
+  .xpTotal {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .gamificationBanner {
+    padding: 12px 15px;
+  }
+
+  .levelIcon {
+    font-size: 1.5rem;
+  }
+
+  .levelText {
+    font-size: 1.1rem;
+  }
+
+  .motivationText {
+    font-size: 1rem;
+  }
+
+  .statsSection {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+.gamesButton {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 0;
+  box-shadow: none;
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.gamesButton:hover {
+  background: rgba(90, 122, 79, 0.12);
+  color: #3d4e2f;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(90, 122, 79, 0.12);
 }

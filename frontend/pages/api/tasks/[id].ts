@@ -28,17 +28,31 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (req.method === "PUT") {
     const { title, completed, priority } = req.body;
+    console.log('🔄 PUT request for task:', taskId, { title, completed, priority });
+    
     if (!title) {
+      console.error('❌ Missing title in request');
       return res.status(400).json({ error: "Missing title" });
     }
-    const updated = await prisma.task.update({
-      where: { id: taskId },
-      data: { title, completed, priority },
-    });
-    if (updated.userId !== user.id) {
-      return res.status(403).json({ error: "Forbidden" });
+    
+    try {
+      const updated = await prisma.task.update({
+        where: { id: taskId },
+        data: { title, completed, priority },
+      });
+      
+      console.log('✅ Task updated successfully:', updated);
+      
+      if (updated.userId !== user.id) {
+        console.error('❌ User ID mismatch:', updated.userId, user.id);
+        return res.status(403).json({ error: "Forbidden" });
+      }
+      
+      return res.status(200).json(updated);
+    } catch (error) {
+      console.error('❌ Database error:', error);
+      return res.status(500).json({ error: "Database error" });
     }
-    return res.status(200).json(updated);
   }
 
   if (req.method === "DELETE") {

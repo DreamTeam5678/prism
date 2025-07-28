@@ -95,7 +95,7 @@
 
 .timer-circle.active .time-display {
   animation: gentleGlow 2s ease-in-out infinite alternate;
-  color: #4CAF50;
+  color: lightgreen;
 }
 
 .session-type {

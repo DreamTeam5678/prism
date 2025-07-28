@@ -1,11 +1,32 @@
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { useState } from "react";
 
 export default function NavBar() {
   const { data: session } = useSession();
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  const handleToggle = () => {
+    const newCollapsedState = !isCollapsed;
+    setIsCollapsed(newCollapsedState);
+    
+    // Emit custom event for other components to listen to
+    const event = new CustomEvent('navbarToggle', { 
+      detail: { isCollapsed: newCollapsedState } 
+    });
+    document.dispatchEvent(event);
+  };
 
   return (
     <div>
+      {/* Collapse/Expand Button */}
+      <button 
+        className="nav-toggle-button"
+        onClick={handleToggle}
+        title={isCollapsed ? "Expand Navigation" : "Collapse Navigation"}
+      >
+        {isCollapsed ? "→" : "←"}
+      </button>
       
        
     

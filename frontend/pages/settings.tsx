@@ -288,8 +288,8 @@ export default function ProfilePage() {
           font-size: 3.4rem;
           color: #333;
           text-align: center;
-          margin: -1.5rem;
-          margin-top: -5rem;
+          margin: -1.2rem;
+          margin-top: 0.5rem;
           padding-top: 30px;
           font-weight: 700;
           letter-spacing: -0.05em;

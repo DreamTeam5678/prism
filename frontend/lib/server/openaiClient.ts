@@ -60,87 +60,11 @@ export async function getTaskSchedule({
   console.log(`🌙 Is late today (after 10 PM): ${isLateToday}`);
   
   if (isLateToday) {
-    console.log(`🌙 Scheduling for tomorrow (too late today)`);
-    // Use dynamic slot calculation for tomorrow instead of fixed times
-    const tomorrowStartOfDay = tomorrow.clone().hour(8); // 8:00 AM tomorrow
-    const tomorrowEndOfDay = tomorrow.clone().hour(21); // 9:00 PM tomorrow
-    
-    // Calculate available slots for tomorrow
-    const availableSlots = [];
-    const currentTime = tomorrowStartOfDay.clone();
-    
-    console.log(`🔍 Calculating tomorrow slots for "${taskTitle}" (${durationMinutes}min) from ${currentTime.format('HH:mm')} to ${tomorrowEndOfDay.format('HH:mm')}`);
-    
-    while (currentTime.isBefore(tomorrowEndOfDay)) {
-      const slotEnd = currentTime.clone().add(durationMinutes, 'minutes');
-      
-      if (slotEnd.isAfter(tomorrowEndOfDay)) break;
-      
-      // Check for lunch break conflict
-      const lunchStart = tomorrow.clone().hour(12).minute(0);
-      const lunchEnd = tomorrow.clone().hour(13).minute(0);
-      const overlapsLunch = currentTime.isBefore(lunchEnd) && slotEnd.isAfter(lunchStart);
-      
-      if (!overlapsLunch) {
-        // Check for conflicts with existing events
-        let hasConflict = false;
-        for (const event of events) {
-          const eventStart = moment.tz(event.start, validatedTimeZone);
-          const eventEnd = moment.tz(event.end, validatedTimeZone);
-          const bufferMs = 15 * 60 * 1000;
-          
-          if (
-            currentTime.isBefore(eventEnd.clone().add(bufferMs, 'milliseconds')) &&
-            slotEnd.isAfter(eventStart.clone().subtract(bufferMs, 'milliseconds'))
-          ) {
-            hasConflict = true;
-            break;
-          }
-        }
-        
-        if (!hasConflict) {
-          availableSlots.push({
-            start: currentTime.clone(),
-            end: slotEnd.clone()
-          });
-        }
-      }
-      
-      currentTime.add(30, 'minutes'); // Move to next 30-minute slot
-    }
-    
-    // Select slot based on priority
-    let selectedSlot;
-    if (availableSlots.length > 0) {
-      if (priority === 'High') {
-        selectedSlot = availableSlots[0]; // Earlier slot
-      } else if (priority === 'Medium') {
-        selectedSlot = availableSlots[Math.floor(availableSlots.length / 2)]; // Middle slot
-      } else {
-        selectedSlot = availableSlots[availableSlots.length - 1]; // Later slot
-      }
-      
-      return {
-        recommendedStart: selectedSlot.start.toDate(),
-        recommendedEnd: selectedSlot.end.toDate(),
-        reason: `Scheduled for tomorrow with dynamic timing`,
-      };
-    }
-    
-    // Fallback to fixed times if no dynamic slots available
-    let tomorrowStart;
-    if (priority === 'High') {
-      tomorrowStart = tomorrow.clone().hour(8).minute(0); // 8:00 AM
-    } else if (priority === 'Medium') {
-      tomorrowStart = tomorrow.clone().hour(13).minute(0); // 1:00 PM (after lunch)
-    } else {
-      tomorrowStart = tomorrow.clone().hour(16).minute(0); // 4:00 PM
-    }
-    
+    console.log(`🌙 Too late today (after 10 PM) - no scheduling for today`);
     return {
-      recommendedStart: tomorrowStart.toDate(),
-      recommendedEnd: tomorrowStart.clone().add(durationMinutes, 'minutes').toDate(),
-      reason: `Scheduled for tomorrow (too late today)`,
+      recommendedStart: null,
+      recommendedEnd: null,
+      reason: "Too late today (after 10 PM) - no available slots",
     };
   }
   
@@ -230,59 +154,13 @@ export async function getTaskSchedule({
     };
   }
 
-  // If no available slots, try with even more flexible timing
+  // If still no available slots, return null instead of scheduling for tomorrow
   if (availableSlots.length === 0) {
-    // Try extending the day window
-    const extendedEndOfDay = today.clone().hour(22); // Extend to 10 PM
-    currentTime = earliestPossibleStartTime.clone();
-    
-    while (currentTime.isBefore(extendedEndOfDay)) {
-      const slotEnd = currentTime.clone().add(durationMinutes, 'minutes');
-      
-      if (slotEnd.isAfter(extendedEndOfDay)) break;
-      
-      // Skip lunch break check for extended hours
-      let hasConflict = false;
-      for (const event of timezoneEvents) {
-        const eventStart = moment.tz(event.start, validatedTimeZone);
-        const eventEnd = moment.tz(event.end, validatedTimeZone);
-        const bufferMs = 10 * 60 * 1000; // Even smaller buffer
-        
-        if (
-          currentTime.isBefore(eventEnd.clone().add(bufferMs, 'milliseconds')) &&
-          slotEnd.isAfter(eventStart.clone().subtract(bufferMs, 'milliseconds'))
-        ) {
-          hasConflict = true;
-          break;
-        }
-      }
-      
-      if (!hasConflict) {
-        availableSlots.push({
-          start: currentTime.clone(),
-          end: slotEnd.clone()
-        });
-      }
-      
-      currentTime.add(30, 'minutes'); // Better spacing
-    }
-  }
-
-  // If still no available slots, schedule for tomorrow with time distribution
-  if (availableSlots.length === 0) {
-    let tomorrowStart;
-    if (priority === 'High') {
-      tomorrowStart = tomorrow.clone().hour(8).minute(0); // 8:00 AM
-    } else if (priority === 'Medium') {
-      tomorrowStart = tomorrow.clone().hour(13).minute(0); // 1:00 PM (after lunch)
-    } else {
-      tomorrowStart = tomorrow.clone().hour(16).minute(0); // 4:00 PM
-    }
-    
+    console.log(`❌ No available slots for "${taskTitle}" today`);
     return {
-      recommendedStart: tomorrowStart.toDate(),
-      recommendedEnd: tomorrowStart.clone().add(durationMinutes, 'minutes').toDate(),
-      reason: "No available time slots today. Scheduled for tomorrow.",
+      recommendedStart: null,
+      recommendedEnd: null,
+      reason: "No available time slots today",
     };
   }
 

@@ -3,6 +3,7 @@ import BackgroundPicker from "../components/FlowSpace/BackgroundPicker";
 import { useState } from "react";
 import YoutubePlayer from "../components/FlowSpace/YoutubePlayer";
 import PomodoroTimer from "../components/FlowSpace/PomodoroTimer";
+import VirtualCoworking from "../components/VirtualCoworking/VirtualCoworking";
 
 const backgrounds = [
     'https://i.pinimg.com/originals/1b/45/63/1b456377a9dce67a7dc3630260aa7572.gif',
@@ -23,6 +24,7 @@ export default function FlowSpace() {
   const [selected, setSelected] = useState<number>(0);
   const [navOn, setNavOn] = useState<boolean>(true);
   const [isVideoPlaying, setIsVideoPlaying] = useState<boolean>(false);
+  const [showCoworking, setShowCoworking] = useState<boolean>(false);
 
   return (
     <div
@@ -67,6 +69,37 @@ export default function FlowSpace() {
 
       {navOn && <NavBar />}
       <BackgroundPicker current={selected} onChange={setSelected} />
+
+      {/* Virtual Coworking Button */}
+      <button
+        onClick={() => setShowCoworking(true)}
+        style={{
+          position: "absolute",
+          top: "3px",
+          right: "25px",
+          zIndex: 100000,
+          backgroundColor: "rgba(255,255,255,0.1)",
+          color: "rgba(198, 194, 194, 0.98)",
+          border: "1px solid rgba(255,255,255,0.2)",
+          padding: "8px 16px",
+          borderRadius: "20px",
+          cursor: "pointer",
+          fontSize: "1rem",
+          boxShadow: "0 4px 8px rgba(0,0,0,0.3)",
+          backdropFilter: "blur(6px)",
+          transition: "all 0.2s ease"
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = "scale(1.05)";
+          e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.2)";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = "scale(1)";
+          e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.1)";
+        }}
+      >
+        Virtual Coworking
+      </button>
 
       <div
         className="page-wrapper"
@@ -221,6 +254,12 @@ export default function FlowSpace() {
           }
         }
       `}</style>
+      
+      {/* Virtual Coworking Component */}
+      <VirtualCoworking 
+        isVisible={showCoworking} 
+        onClose={() => setShowCoworking(false)} 
+      />
     </div>
   );
 }

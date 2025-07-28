@@ -1,17 +1,29 @@
 "use client";
 import { useXP } from "@/context/XPContext";
+import { useState } from "react";
 import CalendarPage from "../components/CalendarPage/Calendar/CalendarPage";
 import XPBar from "@/components/XPBar";
+import GamesModal from "@/components/Games/GamesModal";
 
 export default function Calendar() {
   const { xp } = useXP();
+  const [showGames, setShowGames] = useState(false);
+  const level = Math.floor(xp / 100);
 
   return (
-    <div style={{ position: "relative" }}>
-      <div style={{ position: "absolute", top: "1rem", right: "1rem", zIndex: 10 }}>
-        <XPBar xp={xp} />
-      </div>
+    <div>
+      <XPBar xp={xp} onShowGames={() => setShowGames(true)} />
       <CalendarPage />
+      
+      {/* Games Modal - rendered at page level */}
+      {showGames && (
+        <GamesModal
+          isVisible={showGames}
+          onClose={() => setShowGames(false)}
+          userLevel={level}
+          userXP={xp}
+        />
+      )}
     </div>
   );
 }
