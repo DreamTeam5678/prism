@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from "react";
 import styles from "./GamesModal.module.css";
 
+
+//props for games modal
 interface GamesModalProps {
   isVisible: boolean;
   onClose: () => void;
@@ -10,6 +12,7 @@ interface GamesModalProps {
   userXP: number;
 }
 
+//props for each game
 interface Game {
   id: string;
   name: string;
@@ -20,15 +23,22 @@ interface Game {
 }
 
 // Simple Click Game Component
+
+//functionality for click frenzy game
 const ClickGame: React.FC<{ onScore: (score: number) => void }> = ({ onScore }) => {
+
+  //states to keep track fo score count, seconds remaining, and if the game is active
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(10);
   const [isActive, setIsActive] = useState(false);
 
+//hook to update the time left and score when the game is active
   useEffect(() => {
     if (isActive && timeLeft > 0) {
+      //sets a timer to decrement the time left and update the score
       const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
       return () => clearTimeout(timer);
+      //
     } else if (timeLeft === 0) {
       setIsActive(false);
       onScore(score);
@@ -63,7 +73,7 @@ const ClickGame: React.FC<{ onScore: (score: number) => void }> = ({ onScore }) 
     </div>
   );
 };
-
+/*
 // Memory Game Component
 const MemoryGame: React.FC<{ onScore: (score: number) => void }> = ({ onScore }) => {
   const [cards, setCards] = useState<number[]>([]);
@@ -135,7 +145,7 @@ const MemoryGame: React.FC<{ onScore: (score: number) => void }> = ({ onScore })
     </div>
   );
 };
-
+/*
 // Color Match Game Component
 const ColorGame: React.FC<{ onScore: (score: number) => void }> = ({ onScore }) => {
   const [currentColor, setCurrentColor] = useState('');
@@ -211,7 +221,7 @@ const ColorGame: React.FC<{ onScore: (score: number) => void }> = ({ onScore }) 
       )}
     </div>
   );
-};
+};*/
 
 // Speed Typing Game Component
 const SpeedTypingGame: React.FC<{ onScore: (score: number) => void }> = ({ onScore }) => {
@@ -285,7 +295,7 @@ const SpeedTypingGame: React.FC<{ onScore: (score: number) => void }> = ({ onSco
     </div>
   );
 };
-
+/*
 // Math Challenge Game Component
 const MathGame: React.FC<{ onScore: (score: number) => void }> = ({ onScore }) => {
   const [currentProblem, setCurrentProblem] = useState('');
@@ -374,7 +384,7 @@ const MathGame: React.FC<{ onScore: (score: number) => void }> = ({ onScore }) =
       )}
     </div>
   );
-};
+};*/
 
 // Pattern Memory Game Component
 const PatternGame: React.FC<{ onScore: (score: number) => void }> = ({ onScore }) => {
@@ -453,7 +463,7 @@ const PatternGame: React.FC<{ onScore: (score: number) => void }> = ({ onScore }
     </div>
   );
 };
-
+/*
 // Reaction Time Game Component
 const ReactionGame: React.FC<{ onScore: (score: number) => void }> = ({ onScore }) => {
   const [isWaiting, setIsWaiting] = useState(false);
@@ -596,7 +606,7 @@ const PuzzleGame: React.FC<{ onScore: (score: number) => void }> = ({ onScore })
       )}
     </div>
   );
-};
+};*/
 
 const games: Game[] = [
   {
