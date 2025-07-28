@@ -1,6 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
 import styles from "./XPBar.module.css";
+import { ChartColumnIncreasing } from "lucide-react";
+import { Sparkles } from "lucide-react";
+import { Flame } from "lucide-react";
+import { Gamepad2 } from "lucide-react";
+
 
 interface XPBarProps {
   xp: number;
@@ -64,7 +69,7 @@ export default function XPBar({ xp, onShowGames }: XPBarProps) {
         {/* Left side - Level and XP */}
         <div className={styles.levelSection}>
           <div className={`${styles.levelDisplay} ${levelUpEffect ? styles.levelUp : ""}`}>
-            <div className={styles.levelIcon}>🧬</div>
+            <div className={styles.levelIcon}><ChartColumnIncreasing /></div>
             <div className={styles.levelInfo}>
               <div className={styles.levelText}>Level {level}</div>
               <div className={styles.xpText}>{xpPerLevel - xpIntoLevel} XP to next level</div>
@@ -93,17 +98,17 @@ export default function XPBar({ xp, onShowGames }: XPBarProps) {
             {level >= 30 && "Legendary"}
           </div>
           <div className={styles.achievementBadge}>
-            {level >= 5 && <span className={styles.badge}>⭐</span>}
-            {level >= 10 && <span className={styles.badge}>⭐</span>}
-            {level >= 20 && <span className={styles.badge}>⭐</span>}
-            {level >= 30 && <span className={styles.badge}>⭐</span>}
+            {level >= 5 && <span className={styles.badge}><Sparkles /></span>}
+            {level >= 10 && <span className={styles.badge}><Sparkles /></span>}
+            {level >= 20 && <span className={styles.badge}><Sparkles /></span>}
+            {level >= 30 && <span className={styles.badge}><Sparkles /></span>}
           </div>
         </div>
 
         {/* Right side - Streak and stats */}
         <div className={styles.statsSection}>
           <div className={styles.streakDisplay}>
-            <div className={styles.streakIcon}>🔥</div>
+            <div className={styles.streakIcon}><Flame /></div>
             <div className={styles.streakInfo}>
               <div className={styles.streakText}>{streak} day{streak !== 1 ? 's' : ''}</div>
               <div className={styles.streakLabel}>streak</div>
@@ -119,7 +124,8 @@ export default function XPBar({ xp, onShowGames }: XPBarProps) {
               onClick={onShowGames}
               title="Play Mini Games"
             >
-              🎮 Games
+              <div className={styles.gamesButtonIcon}><Gamepad2/> </div>
+              Games
             </button>
           )}
         </div>
