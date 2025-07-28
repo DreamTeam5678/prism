@@ -83,7 +83,7 @@ export async function getTaskSchedule({
   
   // Calculate available time slots more precisely
   const availableSlots = [];
-  let currentTime = earliestPossibleStartTime.clone();
+  const currentTime = earliestPossibleStartTime.clone();
   
   // Convert all events to the correct timezone for proper comparison
   const timezoneEvents = events.map(event => ({

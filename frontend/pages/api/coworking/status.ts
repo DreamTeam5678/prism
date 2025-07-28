@@ -29,9 +29,9 @@ interface CoworkingUser {
 }
 
 // In-memory storage for demo (in production, use Redis or database)
-let coworkingUsers: CoworkingUser[] = [];
-let chatMessages: ChatMessage[] = [];
-let roomStats = {
+const coworkingUsers: CoworkingUser[] = [];
+const chatMessages: ChatMessage[] = [];
+const roomStats = {
   totalUsers: 0,
   focusUsers: 0,
   avgProductivity: 0,
