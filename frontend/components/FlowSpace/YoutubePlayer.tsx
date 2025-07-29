@@ -206,7 +206,7 @@ export default function YoutubePlayer({ onVideoStateChange }: YoutubePlayerProps
             {selectedVideo && (
                 <div className="youtube-monitor-scene">
                     <img
-                        src="https://cdn.creazilla.com/cliparts/3152058/monitor-clipart-md.png"
+                        src="https://pngimg.com/d/monitor_PNG101663.png"
                         alt="Monitor"
                         className="youtube-monitor-image"
                     />
@@ -246,7 +246,7 @@ export default function YoutubePlayer({ onVideoStateChange }: YoutubePlayerProps
                     <div className="youtube-player-on-monitor">
                         <iframe
                             className="youtube-player-video"
-                            src={`https://www.youtube.com/embed/${selectedVideo}?autoplay=1&volume=${volume}`}
+                            src={`https://www.youtube.com/embed/${selectedVideo}?autoplay=1`}
                             title="YouTube video player"
                             frameBorder="0"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

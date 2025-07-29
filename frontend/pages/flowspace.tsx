@@ -37,35 +37,7 @@ export default function FlowSpace() {
         transition: "background-image 1s cubic-bezier(0.4, 0, 0.2, 1)"
       }}
     >
-      <button
-        onClick={() => setNavOn((prev) => !prev)}
-        style={{
-          position: "absolute",
-          top: "3px",
-          left: "25px",
-          zIndex: 100000,
-          backgroundColor: "rgba(255,255,255,0.1)",
-          color: "rgba(198, 194, 194, 0.98)",
-          border: "1px solid rgba(255,255,255,0.2)",
-          padding: "2px 8px",
-          borderRadius: "50%",
-          cursor: "pointer",
-          fontSize: "1.2rem",
-          boxShadow: "0 4px 8px rgba(0,0,0,0.3)",
-          backdropFilter: "blur(6px)",
-          transition: "all 0.2s ease"
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.transform = "scale(1.1)";
-          e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.2)";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.transform = "scale(1)";
-          e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.1)";
-        }}
-      >
-        {navOn ? "∧" : "∨"}
-      </button>
+      
 
       {navOn && <NavBar />}
       <BackgroundPicker current={selected} onChange={setSelected} />

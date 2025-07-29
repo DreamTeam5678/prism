@@ -7,6 +7,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import NavBar from "../../NavBar/NavBar";
 import Upcoming from "../Upcoming/Upcoming";
 import Optimize from "../Optimize/Optimize";
+import CalendarPrompt from "../CalendarPrompt"; 
 
 
 
@@ -21,6 +22,7 @@ export default function CalendarPage() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [currentMessage, setCurrentMessage] = useState<string>("");
   const [messageIndex, setMessageIndex] = useState<number>(0);
+  const [showPrompt, setShowPrompt] = useState(false);
 
   // Random encouraging messages for the sliding banner
   const encouragingMessages = [
@@ -109,7 +111,35 @@ export default function CalendarPage() {
       document.addEventListener("optimizeComplete", listener);
       return () => document.removeEventListener("optimizeComplete", listener);
     }
-  }, [status]);
+    }, [status]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const lastPrompt = localStorage.getItem("lastPromptDate");
+      const today = new Date().toISOString().split("T")[0];
+
+      console.log("📆 Today:", today, "🕓 Last Prompt:", lastPrompt);
+
+      if (lastPrompt !== today) {
+        console.log("🟢 Showing prompt! No match for today's date:", lastPrompt);
+        setShowPrompt(true);
+        localStorage.setItem("lastPromptDate", today);
+      }
+    }
+  }, []);
+
+    useEffect(() => {
+    const lastPrompt = localStorage.getItem("lastPromptDate");
+    const today = new Date().toISOString().split("T")[0];
+
+    if (lastPrompt !== today) {
+      console.log("🟢 Showing prompt! No match for today's date:", lastPrompt);
+      setShowPrompt(true);
+      localStorage.setItem("lastPromptDate", today);
+    }
+  }, []);
+
+  console.log("Show Prompt?", showPrompt);
 
   if (status === "loading" || loading) return <p>Loading your calendar…</p>;
 
@@ -131,6 +161,10 @@ export default function CalendarPage() {
       <NavBar />
       <div className="page-wrapper">
        <Optimize />
+
+       {showPrompt && (
+         <CalendarPrompt onClose={() => setShowPrompt(false)} />
+       )}
 
         <div className="calendar-container">
           <div className="calendar-hooks">
@@ -216,6 +250,8 @@ export default function CalendarPage() {
         </div>
         
         <Upcoming events={events} isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
+
+        {showPrompt && <CalendarPrompt onClose={() => setShowPrompt(false)} />}
         
         {/* Prism Logo - Bottom Right */}
         <div className="prism-logo">
