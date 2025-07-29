@@ -206,7 +206,7 @@ export default function YoutubePlayer({ onVideoStateChange }: YoutubePlayerProps
             {selectedVideo && (
                 <div className="youtube-monitor-scene">
                     <img
-                        src="https://cdn.creazilla.com/cliparts/3152058/monitor-clipart-md.png"
+                        src="https://pngimg.com/d/monitor_PNG101663.png"
                         alt="Monitor"
                         className="youtube-monitor-image"
                     />
