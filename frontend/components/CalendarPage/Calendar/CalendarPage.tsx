@@ -305,7 +305,17 @@ export default function CalendarPage() {
             background-color: rgba(76, 175, 80, 0.05);
             cursor: pointer;
           }
+            .rbc-toolbar-label {
+              font-size: 1.2rem;
+              font-weight: 500;
+              margin-bottom: 12px; 
+              margin-top: 12px;
+              color:rgb(109, 92, 70);
+              font-family: lucida sans, lucida sans unicode, lucida grande, lucida sans, tahoma, arial, sans-serif;
+              letter-spacing: 0.5px;
+            }
 
+         
           .prism-logo {
             position: fixed;
             top: -3px;
@@ -325,8 +335,7 @@ export default function CalendarPage() {
             width: 150px;
             height: auto;
             filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.64));
-          
-            
+      
           }
 
           .calendar-hooks {
@@ -379,16 +388,7 @@ export default function CalendarPage() {
           
 
 
-          .calendar-top-line {
-            height: 1px;
-            background-color: #999;
-            width: 940px;
-            margin:0px;
-            margin-top: -10px;
-            opacity: 0.4;
-            box-shadow: 0 1px 1px rgba(208, 73, 28, 0.61);
-          }
-
+         
           /* Mobile responsive */
           @media (max-width: 768px) {
             .prism-logo {
