@@ -1,14 +1,23 @@
 "use client";
 import { useState, useEffect, useRef } from 'react';
 import styles from './SmartTaskInput.module.css';
+import VoiceCommandToggle from '../VoiceCommands/VoiceCommandToggle';
 
 interface SmartTaskInputProps {
   onTaskCreate: (task: { title: string; priority: string; scheduled: boolean; completed: boolean }) => void;
   placeholder?: string;
   className?: string;
+  isVoiceListening?: boolean;
+  onVoiceListeningChange?: (isListening: boolean) => void;
 }
 
-export default function SmartTaskInput({ onTaskCreate, placeholder = "Type a task or use voice commands", className }: SmartTaskInputProps) {
+export default function SmartTaskInput({ 
+  onTaskCreate, 
+  placeholder = "Type a task or use voice commands", 
+  className,
+  isVoiceListening = false,
+  onVoiceListeningChange
+}: SmartTaskInputProps) {
   const [input, setInput] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const [isListening, setIsListening] = useState(false);
@@ -137,6 +146,15 @@ export default function SmartTaskInput({ onTaskCreate, placeholder = "Type a tas
           >
             ✨
           </button>
+          
+          {onVoiceListeningChange && (
+            <div className={styles.voiceButtonWrapper}>
+              <VoiceCommandToggle
+                onToggle={onVoiceListeningChange}
+                isListening={isVoiceListening}
+              />
+            </div>
+          )}
         </div>
       </form>
 

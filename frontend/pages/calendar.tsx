@@ -6,13 +6,13 @@ import XPBar from "@/components/XPBar";
 import GamesModal from "@/components/Games/GamesModal";
 
 export default function Calendar() {
-  const { xp } = useXP();
+  const { xp, streak } = useXP();
   const [showGames, setShowGames] = useState(false);
   const level = Math.floor(xp / 100);
 
   return (
     <div>
-      <XPBar xp={xp} onShowGames={() => setShowGames(true)} />
+      <XPBar xp={xp} streak={streak} onShowGames={() => setShowGames(true)} />
       <CalendarPage />
       
       {/* Games Modal - rendered at page level */}

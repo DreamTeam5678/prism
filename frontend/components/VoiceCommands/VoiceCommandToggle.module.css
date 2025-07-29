@@ -1,133 +1,179 @@
 .voiceToggleContainer {
-  position: fixed;
-  bottom: 30px;
-  right: 500px;
-  z-index: 1001;
+  position: relative;
+  display: inline-block;
+  background: #9fab89;
+  padding: 8px;
+  border-radius: 35px;
+  backdrop-filter: blur(10px);
+  border: 3px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 20px rgba(147, 112, 219, 0.4);
 }
 
 .voiceToggleButton {
+  background: #9fab89;
+  color: white;
+  border: none;
+  border-radius: 50%;
   width: 60px;
   height: 60px;
-  border-radius: 50%;
-  border: none;
-  background: linear-gradient(135deg, #c89247, #a67c3a);
-  color: white;
-  font-size: 1.5rem;
   cursor: pointer;
-  box-shadow: 0 4px 20px rgba(200, 146, 71, 0.4);
-  transition: all 0.3s ease;
-  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 24px;
+  transition: all 0.3s ease;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 1001;
 }
 
 .voiceToggleButton:hover {
-  transform: scale(1.1);
-  box-shadow: 0 6px 25px rgba(200, 146, 71, 0.6);
+  background: #9fab89;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .voiceToggleButton.listening {
-  background: linear-gradient(135deg, #8b7355, #6b5b47);
-  animation: listeningPulse 2s ease-in-out infinite;
+  background: #dc3545;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.voiceToggleButton.listening:hover {
+  background: #c82333;
 }
 
 .toggleIcon {
   transition: all 0.3s ease;
 }
 
-.voiceToggleButton.listening .toggleIcon {
-  animation: pulse 1s ease-in-out infinite;
-}
-
 .tooltip {
   position: absolute;
-  bottom: 70px;
-  right: 0;
+  bottom: 60px;
+  left: 50%;
+  transform: translateX(-50%);
   background: rgba(0, 0, 0, 0.8);
   color: white;
-  padding: 8px 12px;
-  border-radius: 8px;
-  font-size: 0.8rem;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
   white-space: nowrap;
-  animation: fadeIn 0.2s ease;
+  opacity: 0;
+  animation: fadeIn 0.3s ease forwards;
+  pointer-events: none;
+}
+
+.tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: rgba(0, 0, 0, 0.8);
 }
 
 .helpPanel {
-  position: absolute;
-  bottom: 80px;
-  right: 0;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(15px);
-  border-radius: 15px;
-  padding: 20px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  width: 300px;
-  max-width: 90vw;
-  animation: slideInFromBottom 0.3s ease;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  max-width: 300px;
+  animation: slideIn 0.3s ease;
 }
 
 .helpPanel h4 {
-  margin: 0 0 15px 0;
-  color: #4b2916cd;
-  font-size: 1.1rem;
+  margin: 0 0 12px 0;
+  color: #333;
+  font-size: 16px;
   font-weight: 600;
 }
 
-.helpPanel ul {
+.commandCategories {
+  margin-bottom: 12px;
+}
+
+.category {
+  margin-bottom: 12px;
+}
+
+.category h5 {
+  margin: 0 0 6px 0;
+  color: #555;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.category ul {
   margin: 0;
-  padding: 0;
+  padding-left: 16px;
   list-style: none;
 }
 
-.helpPanel li {
-  margin-bottom: 8px;
-  font-size: 0.85rem;
-  color: #4b2916cd;
+.category li {
+  margin-bottom: 4px;
+  font-size: 13px;
+  color: #666;
   line-height: 1.4;
 }
 
-.helpPanel strong {
-  color: #c89247;
+.category strong {
+  color: #333;
   font-weight: 600;
 }
 
-@keyframes listeningPulse {
-  0%, 100% {
-    box-shadow: 0 4px 20px rgba(139, 115, 85, 0.4);
-  }
-  50% {
-    box-shadow: 0 6px 25px rgba(139, 115, 85, 0.6);
-  }
+.smartFeatures {
+  border-top: 1px solid #eee;
+  padding-top: 12px;
+}
+
+.smartFeatures h5 {
+  margin: 0 0 8px 0;
+  color: #555;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.smartFeatures ul {
+  margin: 0;
+  padding-left: 16px;
+  list-style: none;
+}
+
+.smartFeatures li {
+  margin-bottom: 4px;
+  font-size: 12px;
+  color: #666;
+  line-height: 1.4;
+}
+
+.smartFeatures strong {
+  color: #333;
+  font-weight: 600;
 }
 
 @keyframes pulse {
   0%, 100% {
-    opacity: 1;
     transform: scale(1);
   }
   50% {
-    opacity: 0.7;
-    transform: scale(1.1);
+    transform: scale(1.05);
   }
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(5px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
   }
 }
 
-@keyframes slideInFromBottom {
+@keyframes slideIn {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
@@ -137,27 +183,22 @@
 
 /* Mobile responsive */
 @media (max-width: 768px) {
-  .voiceToggleContainer {
-    bottom: 20px;
-    right: 20px;
-  }
-
-  .voiceToggleButton {
-    width: 50px;
-    height: 50px;
-    font-size: 1.3rem;
-  }
-
   .helpPanel {
-    width: 280px;
-    right: -10px;
+    max-width: 250px;
+    padding: 12px;
   }
-
+  
   .helpPanel h4 {
-    font-size: 1rem;
+    font-size: 15px;
   }
-
-  .helpPanel li {
-    font-size: 0.8rem;
+  
+  .category h5,
+  .smartFeatures h5 {
+    font-size: 13px;
+  }
+  
+  .category li,
+  .smartFeatures li {
+    font-size: 12px;
   }
 } 

@@ -28,7 +28,7 @@ const MoodSelector: React.FC<MoodSelectorProps> = ({ onSelectMood, onClose, disa
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
   return (
     <div className={styles.moodSelector}>
-      <h2>How are you feeling today?</h2>
+      <h2> Step 1: How are you feeling today?</h2>
 
       <div className={styles.moodOptions}>
         {moods.map((mood) => (

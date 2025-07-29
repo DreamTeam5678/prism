@@ -96,11 +96,42 @@ export default function PomodoroTimer() {
   };
 
   const skipTimer = () => {
-    setTimerState(prev => ({
-      ...prev,
-      isRunning: false,
-      timeLeft: 0
-    }));
+    // Simulate natural timer completion
+    const audio = new Audio('/notification.mp3');
+    audio.play().catch(() => {});
+
+    setTimerState(prev => {
+      if (prev.isBreak) {
+        // Skip break - go to next work session
+        return {
+          ...prev,
+          isRunning: false,
+          isBreak: false,
+          timeLeft: settings.workDuration * 60,
+          session: prev.session + 1,
+          totalSessions: prev.totalSessions + 1
+        };
+      } else {
+        // Skip work session - only award XP if timer was running for at least 50% of the duration
+        const totalWorkTime = settings.workDuration * 60;
+        const timeSpent = totalWorkTime - prev.timeLeft;
+        const minimumTimeForXP = totalWorkTime * 0.5; // 50% of work duration
+        
+        if (timeSpent >= minimumTimeForXP) {
+          // Award XP only if they spent significant time on the task
+          document.dispatchEvent(new CustomEvent("pomodoroComplete"));
+        }
+        
+        const isLongBreak = prev.session % settings.sessionsUntilLongBreak === 0;
+        const breakDuration = isLongBreak ? settings.longBreakDuration : settings.shortBreakDuration;
+        return {
+          ...prev,
+          isRunning: false,
+          isBreak: true,
+          timeLeft: breakDuration * 60
+        };
+      }
+    });
   };
 
   const formatTime = (seconds: number): string => {

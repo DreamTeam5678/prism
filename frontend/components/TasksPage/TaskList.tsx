@@ -10,7 +10,7 @@ import { useState, KeyboardEvent, useEffect } from "react";
 import { useXP } from "@/context/XPContext";
 
 export default function TaskList() {
-  const { xp, tasks, refreshTasks } = useXP();
+  const { xp, streak, tasks, refreshTasks, updateStreak } = useXP();
   const [editId, setEditId] = useState<string | null>(null);
   const [editText, setEditText] = useState("");
   const [completingTaskId, setCompletingTaskId] = useState<string | null>(null);
@@ -21,6 +21,15 @@ export default function TaskList() {
 
   const completedTasks = tasks.filter((t) => t.completed).length;
   const totalTasks = tasks.length;
+
+  // Debug tasks state
+  console.log('📋 TaskList tasks state:', {
+    tasksLength: tasks?.length || 0,
+    tasks: tasks?.map(t => ({ id: t.id, title: t.title, completed: t.completed })) || [],
+    isVoiceListening,
+    xp,
+    streak
+  });
 
   // Confetti animation effect
   useEffect(() => {
@@ -79,6 +88,14 @@ export default function TaskList() {
         // Show confetti if task was completed
         if (!t.completed) {
           setShowConfetti(true);
+          
+          // Update streak when task is completed
+          const today = new Date();
+          today.setHours(0, 0, 0, 0); // Start of today
+          
+          // Simple streak logic: increment if completing a task today
+          const newStreak = streak + 1;
+          updateStreak(newStreak);
         }
         
         // Clear completing state after animation
@@ -98,8 +115,24 @@ export default function TaskList() {
   };
 
   const del = async (id: string) => {
-    await fetch(`/api/tasks/${id}`, { method: "DELETE" });
-    refreshTasks();
+    console.log('🗑️ Deleting task with ID:', id);
+    try {
+      const response = await fetch(`/api/tasks/${id}`, { method: "DELETE" });
+      console.log('🗑️ Delete response status:', response.status);
+      
+      if (response.ok) {
+        console.log('✅ Task deleted successfully');
+        // Add a small delay to ensure the database operation completes
+        await new Promise(resolve => setTimeout(resolve, 100));
+        refreshTasks();
+      } else {
+        console.error('❌ Failed to delete task:', response.status, response.statusText);
+        const errorText = await response.text();
+        console.error('❌ Error details:', errorText);
+      }
+    } catch (error) {
+      console.error('❌ Error deleting task:', error);
+    }
   };
 
   const saveEdit = async () => {
@@ -186,7 +219,7 @@ export default function TaskList() {
 
   return (
     <div className="task-page">
-              <XPBar xp={xp} onShowGames={() => setShowGames(true)} />
+              <XPBar xp={xp} streak={streak} onShowGames={() => setShowGames(true)} />
       <NavBar />
       <div className="task-container">
         <div className="task-header">
@@ -373,7 +406,11 @@ export default function TaskList() {
 
         {/* Smart Task Input */}
         <div className="smart-input-container">
-          <SmartTaskInput onTaskCreate={handleTaskCreate} />
+          <SmartTaskInput 
+          onTaskCreate={handleTaskCreate} 
+          isVoiceListening={isVoiceListening}
+          onVoiceListeningChange={setIsVoiceListening}
+        />
         </div>
 
         {/* Confetti Animation */}
@@ -836,8 +873,8 @@ export default function TaskList() {
         /* Prism Logo Styles */
         .prism-logo {
             position: fixed;
-            top: -3px;
-            right: 10px;
+            bottom: 30px;
+            right: 30px;
             z-index: 1000;
             opacity: 0.8;
             transition: all 0.3s ease;
@@ -850,10 +887,12 @@ export default function TaskList() {
         }
 
         .prism-logo img {
-          width: 150px;
+          width: 120px;
           height: auto;
           filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
         }
+
+
 
         /* Mobile responsive */
         @media (max-width: 768px) {
@@ -863,8 +902,10 @@ export default function TaskList() {
           }
           
           .prism-logo img {
-            width: 100px;
+            width: 80px;
           }
+
+
         }
 
         /* Responsive Design */
@@ -915,10 +956,7 @@ export default function TaskList() {
         onListeningChange={setIsVoiceListening}
       />
 
-      <VoiceCommandToggle
-        onToggle={setIsVoiceListening}
-        isListening={isVoiceListening}
-      />
+
 
       {/* Prism Logo - Bottom Right */}
       <div className="prism-logo">

@@ -15,21 +15,27 @@ interface Task {
 
 interface XPContextType {
   xp: number;
+  streak: number;
   tasks: Task[];
   refreshTasks: () => void;
   addXP: (amount: number) => void;
+  updateStreak: (newStreak: number) => void;
 }
 
 const XPContext = createContext<XPContextType>({
   xp: 0,
+  streak: 0,
   tasks: [],
   refreshTasks: () => {},
   addXP: () => {},
+  updateStreak: () => {},
 });
 
 export function XPProvider({ children }: { children: React.ReactNode }) {
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [bonusXP, setBonusXP] = useState(1000); // Set to level 10 (1000 XP needed)
+  const [userXP, setUserXP] = useState(0);
+  const [userStreak, setUserStreak] = useState(0);
+  const [lastCompletionDate, setLastCompletionDate] = useState<Date | null>(null);
 
   const fetchTasks = () => {
     console.log('🔄 Fetching tasks...');
@@ -47,13 +53,59 @@ export function XPProvider({ children }: { children: React.ReactNode }) {
       });
   };
 
-  const addXP = (amount: number) => {
-    setBonusXP(prev => prev + amount);
-    console.log(`🎉 Added ${amount} XP! Total bonus XP: ${bonusXP + amount}`);
+  const fetchUserXP = async () => {
+    try {
+      const response = await fetch('/api/user/xp');
+      if (response.ok) {
+        const data = await response.json();
+        setUserXP(data.xp);
+        setUserStreak(data.streak);
+        setLastCompletionDate(data.lastCompletionDate ? new Date(data.lastCompletionDate) : null);
+        console.log('✅ User XP data loaded:', data);
+      }
+    } catch (error) {
+      console.error('❌ Error fetching user XP:', error);
+    }
+  };
+
+  const saveUserXP = async (xp: number, streak: number, completionDate?: Date) => {
+    try {
+      const response = await fetch('/api/user/xp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          xp,
+          streak,
+          lastCompletionDate: completionDate?.toISOString()
+        })
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setUserXP(data.xp);
+        setUserStreak(data.streak);
+        setLastCompletionDate(data.lastCompletionDate ? new Date(data.lastCompletionDate) : null);
+        console.log('✅ User XP data saved:', data);
+      }
+    } catch (error) {
+      console.error('❌ Error saving user XP:', error);
+    }
+  };
+
+  const addXP = async (amount: number) => {
+    const newXP = userXP + amount;
+    await saveUserXP(newXP, userStreak);
+    console.log(`🎉 Added ${amount} XP! Total XP: ${newXP}`);
+  };
+
+  const updateStreak = async (newStreak: number) => {
+    await saveUserXP(userXP, newStreak);
+    console.log(`🔥 Updated streak to: ${newStreak}`);
   };
 
   useEffect(() => {
     fetchTasks();
+    fetchUserXP();
   }, []);
 
   // Listen for optimization and Pomodoro events
@@ -77,14 +129,22 @@ export function XPProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
+  // Calculate total XP from tasks + user XP
   const xpPerTask = 10;
   const xpBonusHighPriority = 10;
   const completed = tasks.filter((t) => t.completed);
   const taskBonusXP = completed.filter((t) => t.priority === "high").length * xpBonusHighPriority;
-  const xp = completed.length * xpPerTask + taskBonusXP + bonusXP;
+  const totalXP = completed.length * xpPerTask + taskBonusXP + userXP;
 
   return (
-    <XPContext.Provider value={{ xp, tasks, refreshTasks: fetchTasks, addXP }}>
+    <XPContext.Provider value={{ 
+      xp: totalXP, 
+      streak: userStreak, 
+      tasks, 
+      refreshTasks: fetchTasks, 
+      addXP, 
+      updateStreak 
+    }}>
       {children}
     </XPContext.Provider>
   );

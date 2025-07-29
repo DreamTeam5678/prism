@@ -21,9 +21,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const { suggestions, tasks } = req.body;
 
-  if (!Array.isArray(suggestions) || !Array.isArray(tasks)) {
-    return res.status(400).json({ message: "Suggestions and tasks must be arrays" });
+  if (!Array.isArray(suggestions)) {
+    return res.status(400).json({ message: "Suggestions must be an array" });
   }
+  
+  // tasks array is optional - task bank tasks are handled in suggestions/generate.ts
+  const taskBankTasks = Array.isArray(tasks) ? tasks : [];
 
   try {
     // Retrieve all existing calendar events for the user (local database)
@@ -243,7 +246,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     // Prepare arrays for scheduling - sort by priority (High first, then Medium, then Low)
-    const tasksToSchedule = [...tasks].sort((a: any, b: any) => {
+    const tasksToSchedule = [...taskBankTasks].sort((a: any, b: any) => {
       const priorityA = getPriorityValue(capitalizePriority(a.priority));
       const priorityB = getPriorityValue(capitalizePriority(b.priority));
       console.log(`🔍 Sorting: ${a.title} (${a.priority} = ${priorityA}) vs ${b.title} (${b.priority} = ${priorityB})`);
@@ -263,11 +266,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const newScheduledEntries: any[] = []; // To store newly scheduled tasks and suggestions
 
-    // STEP 1: Schedule Task Bank Items (prioritized)
-    console.log(`📋 Scheduling ${tasksToSchedule.length} task bank tasks:`, tasksToSchedule.map(t => `${t.title} (${t.priority})`));
+    // STEP 1: Schedule Task Bank Items (if any were passed from frontend)
+    console.log(`📋 Processing ${tasksToSchedule.length} task bank tasks from calendar/add:`, tasksToSchedule.map(t => `${t.title} (${t.priority})`));
     const unscheduledTasks = [];
-    for (const task of tasksToSchedule) {
-      console.log(`🔍 Processing task: ${task.title} (${task.priority})`);
+    
+    // Skip task bank processing if no tasks were passed (they were already handled in suggestions/generate)
+    if (tasksToSchedule.length === 0) {
+      console.log(`📋 No task bank tasks to process in calendar/add - they were already handled in suggestions/generate`);
+    } else {
+      for (const task of tasksToSchedule) {
+      console.log(`🔍 Processing task bank task: ${task.title} (${task.priority})`);
       
       // Check if task is already scheduled (but allow duplicates with different priorities)
       const existingTask = await prisma.task.findFirst({
@@ -279,7 +287,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
       });
       
-      // Also check if there's already a calendar event for this task
+      // Also check if there's already a calendar event for this task with the same priority
       const existingCalendarEvent = await prisma.calendarEvent.findFirst({
         where: {
           userId: user.id,
@@ -288,8 +296,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
       });
       
-      if (existingTask || existingCalendarEvent) {
+      if (existingTask) {
         console.warn(`Task "${task.title}" with priority "${task.priority}" is already scheduled, skipping.`);
+        continue;
+      }
+      
+      // Only skip if there's an existing calendar event with the same title (regardless of priority)
+      // This prevents duplicate task bank items with the same title
+      if (existingCalendarEvent) {
+        console.warn(`Task "${task.title}" already has a calendar event, skipping.`);
         continue;
       }
 
@@ -330,59 +345,63 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         unscheduledTasks.push(task.title);
       }
     }
+    }
 
-    // STEP 2: Integrate GPT Suggestions (already have specific times from GPT)
-    // We need to validate GPT suggestions against all occupied slots (existing + new tasks)
-    for (const suggestion of suggestions) {
-      const suggestionStart = new Date(suggestion.start);
-      const suggestionEnd = new Date(suggestion.end);
-      const bufferMs = 20 * 60 * 1000;
+          // STEP 2: Integrate GPT Suggestions (already have specific times from GPT)
+      // We need to validate GPT suggestions against all occupied slots (existing + new tasks)
+      for (const suggestion of suggestions) {
+        const suggestionStart = new Date(suggestion.start);
+        const suggestionEnd = new Date(suggestion.end);
+        const bufferMs = 20 * 60 * 1000;
 
-      let isValidSuggestion = true;
-      for (const occupied of occupiedSlots) {
-        const occupiedStart = occupied.start;
-        const occupiedEnd = occupied.end;
+        // Handle both suggestionText (from generate) and title (from retry) fields
+        const suggestionTitle = suggestion.title || suggestion.suggestionText || "Untitled Suggestion";
 
-        // Check for overlap with buffer
-        if (
-          suggestionEnd.getTime() + bufferMs > occupiedStart.getTime() &&
-          suggestionStart.getTime() < occupiedEnd.getTime() + bufferMs
-        ) {
-          console.warn(`GPT suggestion conflict: "${suggestion.suggestionText}" overlaps with an existing event or scheduled task.`);
-          isValidSuggestion = false;
-          break;
-        }
+        let isValidSuggestion = true;
+        for (const occupied of occupiedSlots) {
+          const occupiedStart = occupied.start;
+          const occupiedEnd = occupied.end;
 
-        // Also check for the 12-1 PM lunch break explicitely for GPT suggestions
-        const lunchStart = new Date(suggestionStart.getFullYear(), suggestionStart.getMonth(), suggestionStart.getDate(), 12, 0, 0);
-        const lunchEnd = new Date(suggestionStart.getFullYear(), suggestionStart.getMonth(), suggestionStart.getDate(), 13, 0, 0);
-
-        if (
-            (suggestionEnd.getTime() > lunchStart.getTime() && suggestionStart.getTime() < lunchEnd.getTime())
-        ) {
-            console.warn(`GPT suggestion conflict: "${suggestion.suggestionText}" overlaps with the lunch break.`);
+          // Check for overlap with buffer
+          if (
+            suggestionEnd.getTime() + bufferMs > occupiedStart.getTime() &&
+            suggestionStart.getTime() < occupiedEnd.getTime() + bufferMs
+          ) {
+            console.warn(`GPT suggestion conflict: "${suggestionTitle}" overlaps with an existing event or scheduled task.`);
             isValidSuggestion = false;
             break;
+          }
+
+          // Also check for the 12-1 PM lunch break explicitely for GPT suggestions
+          const lunchStart = new Date(suggestionStart.getFullYear(), suggestionStart.getMonth(), suggestionStart.getDate(), 12, 0, 0);
+          const lunchEnd = new Date(suggestionStart.getFullYear(), suggestionStart.getMonth(), suggestionStart.getDate(), 13, 0, 0);
+
+          if (
+              (suggestionEnd.getTime() > lunchStart.getTime() && suggestionStart.getTime() < lunchEnd.getTime())
+          ) {
+              console.warn(`GPT suggestion conflict: "${suggestionTitle}" overlaps with the lunch break.`);
+              isValidSuggestion = false;
+              break;
+          }
+        }
+
+        if (isValidSuggestion) {
+          newScheduledEntries.push({
+            userId: user.id,
+            title: suggestionTitle,
+            start: suggestionStart,
+            end: suggestionEnd,
+            source: "gpt",
+            color: "#9b87a6",
+            createdAt: new Date(),
+          });
+          occupiedSlots.push({ start: suggestionStart, end: suggestionEnd }); // Add to occupied slots
+          occupiedSlots.sort((a, b) => a.start.getTime() - b.start.getTime());
+        } else {
+          // Optionally, you might want to send a different message to the client
+          // if a suggestion couldn't be scheduled.
         }
       }
-
-      if (isValidSuggestion) {
-        newScheduledEntries.push({
-          userId: user.id,
-          title: suggestion.suggestionText,
-          start: suggestionStart,
-          end: suggestionEnd,
-          source: "gpt",
-          color: "#9b87a6",
-          createdAt: new Date(),
-        });
-        occupiedSlots.push({ start: suggestionStart, end: suggestionEnd }); // Add to occupied slots
-        occupiedSlots.sort((a, b) => a.start.getTime() - b.start.getTime());
-      } else {
-        // Optionally, you might want to send a different message to the client
-        // if a suggestion couldn't be scheduled.
-      }
-    }
 
     // Finally, save all newly scheduled entries to the database
     if (newScheduledEntries.length > 0) {

@@ -203,6 +203,13 @@ export default function OptimizeModal({ onClose, setLoading }: OptimizeModalProp
       setSuggestions(data.suggestions);
       setTaskBankTasks(data.taskBankTasks || []); // Store task bank tasks from API
       console.log("📋 Task bank tasks from API:", data.taskBankTasks);
+      
+      // If task bank tasks were scheduled, refresh the calendar immediately
+      if (data.taskBankTasks && data.taskBankTasks.length > 0) {
+        console.log("🔄 Task bank tasks scheduled, refreshing calendar");
+        document.dispatchEvent(new CustomEvent("optimizeComplete"));
+      }
+      
       if (data.suggestions.length === 0){
         // Check if there are task bank tasks that couldn't be scheduled
         if (data.taskBankTasks && data.taskBankTasks.length > 0) {
@@ -279,37 +286,9 @@ export default function OptimizeModal({ onClose, setLoading }: OptimizeModalProp
           changed: timeChanged
         });
         
-        // Only update calendar if the time actually changed
-        if (timeChanged) {
-          try {
-            const response = await fetch("/api/calendar/add", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                suggestions: [newSuggestion], // Add the retry suggestion
-                tasks: [], // No task bank tasks for retry
-              }),
-            });
-            
-            if (!response.ok) {
-              console.error("❌ Failed to add retry suggestion to calendar");
-              setError("Failed to update calendar with retry suggestion");
-              return;
-            }
-            
-            console.log("✅ Retry suggestion added to calendar:", newSuggestion);
-            
-            // Refresh the calendar
-            document.dispatchEvent(new CustomEvent("optimizeComplete"));
-            
-          } catch (error) {
-            console.error("❌ Error adding retry suggestion to calendar:", error);
-            setError("Failed to update calendar");
-            return;
-          }
-        } else {
-          console.log("🔄 Retry suggestion time unchanged, skipping calendar update");
-        }
+        // Don't immediately add to calendar - let the normal acceptance flow handle it
+        // This prevents duplicate calendar entries when the user accepts the retry suggestion
+        console.log("🔄 Retry suggestion updated in list, waiting for user acceptance");
         
         // Remove the original suggestion from responded state
         setResponded(prev => {
@@ -386,15 +365,15 @@ export default function OptimizeModal({ onClose, setLoading }: OptimizeModalProp
         // Task bank tasks are already saved in generate.ts, so we don't need to send them to calendar/add
         console.log("✅ Task bank tasks already saved in generate.ts - no need to send to calendar/add");
         
-        // Only send GPT suggestions to calendar/add if there are any
-        if (suggestions.length > 0) {
-          console.log("📤 Sending GPT suggestions to calendar:", { suggestions });
+        // Only send accepted GPT suggestions to calendar/add if there are any
+        if (accepted.length > 0) {
+          console.log("📤 Sending accepted GPT suggestions to calendar:", { accepted });
           
           const response = await fetch("/api/calendar/add", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              suggestions: suggestions, // GPT suggestions to be scheduled
+              suggestions: accepted, // Send accepted suggestions (including retried ones)
               tasks: [], // Task bank tasks already saved
             }),
           });
@@ -453,6 +432,7 @@ export default function OptimizeModal({ onClose, setLoading }: OptimizeModalProp
           </div>
         ) : (
           <>
+            {/* Analytics button moved to top */}
             <div className={styles.optimizeSection}>
               <button 
                 onClick={() => setShowAnalytics(true)}
@@ -460,6 +440,38 @@ export default function OptimizeModal({ onClose, setLoading }: OptimizeModalProp
               >
                 📊 View Analytics
               </button>
+            </div>
+
+            {/* Progress indicator - only show before suggestions are generated */}
+            {!hasAttemptedOptimization && (
+              <div className={styles.progressSection}>
+                <h2>Complete all 3 steps to optimize your day:</h2>
+                <div className={styles.progressSteps}>
+                  <div className={`${styles.step} ${mood ? styles.completed : styles.pending}`}>
+                    <span className={styles.stepNumber}>1</span>
+                    <span className={styles.stepText}>Select your mood</span>
+                    {mood && <span className={styles.checkmark}>✓</span>}
+                  </div>
+                  <div className={`${styles.step} ${location ? styles.completed : styles.pending}`}>
+                    <span className={styles.stepNumber}>2</span>
+                    <span className={styles.stepText}>Choose your location</span>
+                    {location && <span className={styles.checkmark}>✓</span>}
+                  </div>
+                  <div className={`${styles.step} ${weather ? styles.completed : styles.pending}`}>
+                    <span className={styles.stepNumber}>3</span>
+                    <span className={styles.stepText}>Set the weather</span>
+                    {weather && <span className={styles.checkmark}>✓</span>}
+                  </div>
+                </div>
+                {isReady && (
+                  <div className={styles.readyMessage}>
+                    🎉 All steps completed! Generating smart suggestions...
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div className={styles.optimizeSection}>
               <h2>Uncompleted Tasks</h2>
               {tasks.length > 0 ? (
                 tasks.map((task) => (
@@ -479,7 +491,7 @@ export default function OptimizeModal({ onClose, setLoading }: OptimizeModalProp
             </div>
 
             <div className={styles.optimizeSection}>
-              <h2>Where are you today?</h2>
+              <h2>Step 2: Where are you today?</h2>
               <select
                 className={styles.inputField}
                 value={location}
@@ -494,7 +506,7 @@ export default function OptimizeModal({ onClose, setLoading }: OptimizeModalProp
                 <option value="traveling">✈️ Traveling</option>
               </select>
 
-              <h2>What is the weather today?</h2>
+              <h2>Step 3: What is the weather today?</h2>
               <input
                 className={styles.inputField}
                 type="text"
@@ -547,13 +559,15 @@ export default function OptimizeModal({ onClose, setLoading }: OptimizeModalProp
               </div>
             )}
 
+            {/* Day is full message - moved to bottom with bigger, bolder styling */}
             {!isGeneratingSuggestions && hasAttemptedOptimization && dayIsFull && suggestions.length === 0 && (
               <div className={styles.optimizeSection}>
-                <h2>Your day is already fully optimized! All tasks are scheduled and there's no room for additional suggestions</h2>
+                <div className={styles.dayFullMessage}>
+                  <h2>🎯 Your day is already fully optimized!</h2>
+                  <p>All tasks are scheduled and there's no room for additional suggestions.</p>
+                </div>
               </div>
             )}
-
-
 
             {/* Celebration Modal */}
             {showCelebration && (

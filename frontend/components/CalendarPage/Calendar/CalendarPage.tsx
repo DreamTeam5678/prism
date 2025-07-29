@@ -318,8 +318,8 @@ export default function CalendarPage() {
          
           .prism-logo {
             position: fixed;
-            top: -3px;
-            right: 10px;
+            bottom: 30px;
+            right: 30px;
             z-index: 1000;
             opacity: 0.8;
             transition: all 0.3s ease;
@@ -332,9 +332,9 @@ export default function CalendarPage() {
           }
 
           .prism-logo img {
-            width: 150px;
+            width: 120px;
             height: auto;
-            filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.64));
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
       
           }
 
@@ -392,12 +392,12 @@ export default function CalendarPage() {
           /* Mobile responsive */
           @media (max-width: 768px) {
             .prism-logo {
-              bottom: 90px;
+              bottom: 20px;
               right: 20px;
             }
             
             .prism-logo img {
-              width: 100px;
+              width: 80px;
             }
           }
 
