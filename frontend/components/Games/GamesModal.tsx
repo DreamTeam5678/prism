@@ -76,7 +76,7 @@ const ClickGame: React.FC<{ onScore: (score: number) => void }> = ({ onScore }) 
     </div>
   );
 };
-/*
+
 // Memory Game Component
 const MemoryGame: React.FC<{ onScore: (score: number) => void }> = ({ onScore }) => {
   const [cards, setCards] = useState<number[]>([]);
@@ -90,23 +90,26 @@ const MemoryGame: React.FC<{ onScore: (score: number) => void }> = ({ onScore })
       const numbers = [1, 2, 3, 4, 5, 6, 7, 8];
       const gameCards = [...numbers, ...numbers].sort(() => Math.random() - 0.5);
       setCards(gameCards);
+      setFlipped([]);
+      setMatched([]);
+      setMoves(0);
       setIsActive(true);
     }
   }, [isActive]);
 
-  useEffect(() => {
-    if (flipped.length === 2) {
-      setMoves(moves + 1);
-      const [first, second] = flipped;
-      
-      if (cards[first] === cards[second]) {
-        setMatched([...matched, first, second]);
-        setFlipped([]);
-      } else {
-        setTimeout(() => setFlipped([]), 1000);
+    useEffect(() => {
+      if (flipped.length === 2) {
+        setMoves((prev) => prev + 1); 
+        const [first, second] = flipped;
+
+        if (cards[first] === cards[second]) {
+          setMatched((prev) => [...prev, first, second]);
+          setFlipped([]);
+        } else {
+          setTimeout(() => setFlipped([]), 1000);
+        }
       }
-    }
-  }, [flipped, cards, matched, moves]);
+    }, [flipped, cards]);
 
   useEffect(() => {
     if (matched.length === cards.length && cards.length > 0) {
@@ -635,15 +638,15 @@ const PuzzleGame: React.FC<{ onScore: (score: number) => void }> = ({ onScore })
 };*/
 
 const games: Game[] = [
-  {
+  /*{
     id: 'click',
     name: 'Click Frenzy',
     description: 'Click as fast as you can!',
     minLevel: 1,
     icon: '🎯',
     component: ClickGame
-  },
-  /*{
+  },*/
+  {
     id: 'memory',
     name: 'Memory Match',
     description: 'Find matching pairs',
@@ -651,7 +654,8 @@ const games: Game[] = [
     icon: '🧠',
     component: MemoryGame
   },
-  {
+ 
+  /*{
     id: 'color',
     name: 'Color Match',
     description: 'Match colors with words',
