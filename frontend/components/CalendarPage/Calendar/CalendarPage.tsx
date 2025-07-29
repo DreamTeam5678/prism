@@ -287,7 +287,7 @@ export default function CalendarPage() {
 
           .prism-logo {
             position: fixed;
-            bottom: 30px;
+            bottom: 100px;
             right: 30px;
             z-index: 1000;
             opacity: 0.8;
@@ -308,7 +308,7 @@ export default function CalendarPage() {
           /* Mobile responsive */
           @media (max-width: 768px) {
             .prism-logo {
-              bottom: 20px;
+              bottom: 90px;
               right: 20px;
             }
             

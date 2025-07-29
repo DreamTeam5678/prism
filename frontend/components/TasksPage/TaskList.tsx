@@ -166,12 +166,22 @@ export default function TaskList() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    return date.toLocaleDateString();
+  };
+
+  const clearCompletedTasks = async () => {
+    try {
+      const completedTaskIds = tasks.filter(t => t.completed).map(t => t.id);
+      
+      // Delete all completed tasks
+      for (const taskId of completedTaskIds) {
+        await del(taskId);
+      }
+      
+      console.log('🧹 Cleared all completed tasks');
+    } catch (error) {
+      console.error('❌ Error clearing completed tasks:', error);
+    }
   };
 
   return (
@@ -303,6 +313,7 @@ export default function TaskList() {
               <h2 className="section-title">
                 <span className="section-icon">✅</span>
                 Completed ({tasks.filter(t => t.completed).length})
+                <button className="refresh-btn" onClick={clearCompletedTasks} title="Clear completed tasks"></button>
               </h2>
               <div className="task-grid completed-grid">
                 {tasks
@@ -414,9 +425,9 @@ export default function TaskList() {
         .task-title {
           font-size: 2.5rem;
           font-weight: 700;
-          color: white;
+          color: #1a1a1a;
           margin-bottom: 20px;
-          text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+          text-shadow: 0 2px 4px rgba(255,255,255,0.8), 0 0 10px rgba(255,255,255,0.5);
         }
 
         .task-stats {
@@ -430,23 +441,27 @@ export default function TaskList() {
           display: flex;
           flex-direction: column;
           align-items: center;
-          background: rgba(255, 255, 255, 0.1);
+          background: rgba(255, 255, 255, 0.15);
           backdrop-filter: blur(10px);
           padding: 15px 25px;
           border-radius: 15px;
-          border: 1px solid rgba(255, 255, 255, 0.2);
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
         }
 
         .stat-number {
           font-size: 1.8rem;
           font-weight: 700;
-          color: white;
+          color: #1a1a1a;
+          text-shadow: 0 1px 3px rgba(255,255,255,0.8);
         }
 
         .stat-label {
           font-size: 0.9rem;
-          color: rgba(255, 255, 255, 0.8);
+          color: #2d2d2d;
           margin-top: 5px;
+          font-weight: 600;
+          text-shadow: 0 1px 2px rgba(255,255,255,0.6);
         }
 
         .task-sections {
@@ -456,11 +471,11 @@ export default function TaskList() {
         }
 
         .task-section {
-          background: rgba(255, 255, 255, 0.1);
+          background: rgba(255, 255, 255, 0.15);
           backdrop-filter: blur(15px);
           border-radius: 20px;
           padding: 25px;
-          border: 1px solid rgba(255, 255, 255, 0.2);
+          border: 1px solid rgba(255, 255, 255, 0.3);
           box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
 
@@ -470,10 +485,42 @@ export default function TaskList() {
           gap: 10px;
           font-size: 1.3rem;
           font-weight: 600;
-          color: white;
+          color: #1a1a1a;
           margin-bottom: 20px;
           padding-bottom: 10px;
-          border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+          border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+          text-shadow: 0 1px 3px rgba(255,255,255,0.8);
+        }
+
+        .refresh-btn {
+          background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+          border: 2px solid #ff4757;
+          border-radius: 12px;
+          padding: 12px 18px;
+          color: white;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          font-size: 1.2rem;
+          margin-left: auto;
+          font-weight: 700;
+          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+          box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
+          min-width: 50px;
+          text-align: center;
+        }
+
+        .refresh-btn:hover {
+          background: linear-gradient(135deg, #ff5252, #d63031);
+          border-color: #ff3838;
+          transform: scale(1.15);
+          box-shadow: 0 6px 16px rgba(255, 107, 107, 0.6);
+        }
+
+        .refresh-btn::before {
+          content: "🧹";
+          font-size: 1.8rem;
+          display: block;
+          line-height: 1;
         }
 
         .section-icon {
@@ -764,6 +811,50 @@ export default function TaskList() {
           }
         }
 
+        /* Voice Command Styles */
+        .voice-command-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          pointer-events: none;
+          z-index: 2000;
+        }
+
+        /* Prism Logo Styles */
+        .prism-logo {
+          position: fixed;
+          bottom: 30px;
+          right: 30px;
+          z-index: 1000;
+          opacity: 0.8;
+          transition: all 0.3s ease;
+        }
+
+        .prism-logo:hover {
+          opacity: 1;
+          transform: scale(1.1);
+        }
+
+        .prism-logo img {
+          width: 120px;
+          height: auto;
+          filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+          .prism-logo {
+            bottom: 20px;
+            right: 20px;
+          }
+          
+          .prism-logo img {
+            width: 100px;
+          }
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
           .task-container {
@@ -795,17 +886,6 @@ export default function TaskList() {
             padding: 20px;
           }
         }
-
-        /* Voice Command Styles */
-        .voice-command-overlay {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          pointer-events: none;
-          z-index: 2000;
-        }
       `}</style>
 
       {/* Voice Command System */}
@@ -827,6 +907,11 @@ export default function TaskList() {
         onToggle={setIsVoiceListening}
         isListening={isVoiceListening}
       />
+
+      {/* Prism Logo - Bottom Right */}
+      <div className="prism-logo">
+        <img src="/logo.png" alt="Prism" />
+      </div>
     </div>
   );
 }

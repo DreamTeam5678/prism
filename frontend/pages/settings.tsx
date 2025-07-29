@@ -798,7 +798,45 @@ export default function ProfilePage() {
             padding: 0.8rem 1.8rem;
           }
         }
+
+        /* Prism Logo Styles */
+        .prism-logo {
+          position: fixed;
+          bottom: 30px;
+          right: 30px;
+          z-index: 1000;
+          opacity: 0.8;
+          transition: all 0.3s ease;
+        }
+
+        .prism-logo:hover {
+          opacity: 1;
+          transform: scale(1.1);
+        }
+
+        .prism-logo img {
+          width: 120px;
+          height: auto;
+          filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+          .prism-logo {
+            bottom: 20px;
+            right: 20px;
+          }
+          
+          .prism-logo img {
+            width: 100px;
+          }
+        }
       `}</style>
+
+      {/* Prism Logo - Bottom Right */}
+      <div className="prism-logo">
+        <img src="/logo.png" alt="Prism" />
+      </div>
     </div>
   );
 }
