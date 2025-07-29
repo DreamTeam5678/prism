@@ -246,7 +246,7 @@ export default function YoutubePlayer({ onVideoStateChange }: YoutubePlayerProps
                     <div className="youtube-player-on-monitor">
                         <iframe
                             className="youtube-player-video"
-                            src={`https://www.youtube.com/embed/${selectedVideo}?autoplay=1&volume=${volume}`}
+                            src={`https://www.youtube.com/embed/${selectedVideo}?autoplay=1`}
                             title="YouTube video player"
                             frameBorder="0"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
