@@ -7,8 +7,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import NavBar from "../../NavBar/NavBar";
 import Upcoming from "../Upcoming/Upcoming";
 import Optimize from "../Optimize/Optimize";
-import VoiceCommandManager from "../../VoiceCommands/VoiceCommandManager";
-import VoiceCommandToggle from "../../VoiceCommands/VoiceCommandToggle";
+
 
 
 const localizer = momentLocalizer(moment);
@@ -22,7 +21,6 @@ export default function CalendarPage() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [currentMessage, setCurrentMessage] = useState<string>("");
   const [messageIndex, setMessageIndex] = useState<number>(0);
-  const [isVoiceListening, setIsVoiceListening] = useState(false);
 
   // Random encouraging messages for the sliding banner
   const encouragingMessages = [
@@ -322,62 +320,7 @@ export default function CalendarPage() {
 
         `}</style>
 
-        {/* Voice Command System */}
-        <VoiceCommandManager
-          onCalendarEventCreate={async (event: any) => {
-            try {
-              const response = await fetch('/api/calendar/create', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  title: event.title,
-                  start: event.start.toISOString(),
-                  end: event.end.toISOString(),
-                  description: event.description || '',
-                  color: event.color || '#3174ad'
-                })
-              });
 
-              if (response.ok) {
-                const savedEvent = await response.json();
-                setEvents(prev => [...prev, {
-                  id: savedEvent.id,
-                  title: savedEvent.title,
-                  start: new Date(savedEvent.start),
-                  end: new Date(savedEvent.end),
-                  description: savedEvent.description,
-                  color: savedEvent.color,
-                  source: 'Voice Command'
-                }]);
-              }
-            } catch (error) {
-              console.error('Failed to create calendar event:', error);
-            }
-          }}
-          onCalendarEventDelete={async (eventId: string) => {
-            try {
-              const response = await fetch(`/api/calendar/delete`, {
-                method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ eventId })
-              });
-
-              if (response.ok) {
-                setEvents(prev => prev.filter(e => e.id !== eventId));
-              }
-            } catch (error) {
-              console.error('Failed to delete calendar event:', error);
-            }
-          }}
-          events={events}
-          isListening={isVoiceListening}
-          onListeningChange={setIsVoiceListening}
-        />
-
-        <VoiceCommandToggle
-          onToggle={setIsVoiceListening}
-          isListening={isVoiceListening}
-        />
         
       </div>
       

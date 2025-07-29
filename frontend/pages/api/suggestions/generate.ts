@@ -22,6 +22,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const session = await getServerSession(req, res, authOptions);
   if (!session?.user?.email) return res.status(401).json({ message: 'Unauthorized' });
 
+  // Track scheduled times to avoid conflicts - include ALL existing calendar events
+  const scheduledTimes: { start: Date; end: Date }[] = [];
+
   const user = await prisma.user.findUnique({
     where: { email: session.user.email },
     include: { userProfile: true },
@@ -92,7 +95,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     environment: location,
     weather,
     calendarConflicts: safeEvents,
-    timeWindow: '8AM–10PM',
+    timeWindow: '8AM–12PM',
     timeZone: validatedTimeZone,
     avoidTitles: allScheduledTasksToday, // Avoid ALL scheduled tasks, not just GPT ones
     userHistory,
@@ -131,8 +134,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return total + duration;
   }, 0);
 
-  // Calculate available time today (8AM-10PM = 14 hours = 840 minutes)
-  const totalAvailableTime = 14 * 60; // 840 minutes
+  // Calculate available time today (8AM-12PM = 16 hours = 960 minutes)
+  const totalAvailableTime = 16 * 60; // 960 minutes
   const todayEvents = allEvents.filter((e: any) => {
     const eventDate = moment(e.start).tz(validatedTimeZone);
     const today = moment.tz(validatedTimeZone).startOf('day');
@@ -189,193 +192,166 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   console.log(`🎯 Limiting GPT suggestions to ${maxGptSuggestions} due to ${taskBankTasks.length} task bank tasks and ${remainingTime}min remaining`);
 
-  // Check if task bank tasks can be scheduled before generating GPT suggestions
-  if (taskBankTasks.length > 0) {
-    console.log(`🔍 Checking if task bank tasks can be scheduled before generating GPT suggestions...`);
-    
-    // Get ALL existing calendar events for today
-    const todayEvents = allEvents.filter((e: any) => {
-      const eventDate = moment(e.start).tz(validatedTimeZone);
-      const today = moment.tz(validatedTimeZone).startOf('day');
-      return eventDate.isSame(today, 'day');
-    });
-    
-    // Convert calendarEvents to the correct type
-    const safeEventsForSchedule = todayEvents.map((e: any) => ({
-      start: e.start instanceof Date ? e.start.toISOString() : e.start,
-      end: e.end instanceof Date ? e.end.toISOString() : e.end,
-      title: e.title,
-    }));
-    
-    // Check if each task bank task can be scheduled
-    let canScheduleTaskBank = true;
-    for (const task of taskBankTasks) {
-      const duration = inferDuration(task.title, task.priority);
-      
-      const schedule = await getTaskSchedule({
-        taskTitle: task.title,
-        priority: task.priority as 'High' | 'Medium' | 'Low',
-        durationMinutes: duration,
-        mood,
-        events: safeEventsForSchedule,
-        timeZone: validatedTimeZone,
-      });
-      
-      if (!schedule.recommendedStart || !schedule.recommendedEnd) {
-        console.log(`❌ Task bank task "${task.title}" cannot be scheduled - no available slots`);
-        canScheduleTaskBank = false;
-        break;
-      }
+  // TRUE PRIORITY-BASED SCHEDULING: Combine all tasks and schedule by priority
+  console.log(`🎯 Implementing true priority-based scheduling...`);
+  
+  // Get ALL existing calendar events for today (for scheduling)
+  const todayEventsForScheduling = allEvents.filter((e: any) => {
+    const eventDate = moment(e.start).tz(validatedTimeZone);
+    const today = moment.tz(validatedTimeZone).startOf('day');
+    return eventDate.isSame(today, 'day');
+  });
+  
+  // Convert calendarEvents to the correct type
+  const safeEventsForSchedule = todayEvents.map((e: any) => ({
+    start: e.start instanceof Date ? e.start.toISOString() : e.start,
+    end: e.end instanceof Date ? e.end.toISOString() : e.end,
+    title: e.title,
+  }));
+  
+  // Combine all tasks (task bank + GPT) into a single list
+  const allTasks = [
+    // Task bank tasks
+    ...taskBankTasks.map(task => ({
+      ...task,
+      source: 'task_bank' as const,
+      duration: inferDuration(task.title, task.priority)
+    })),
+    // GPT suggestions (limited by maxGptSuggestions)
+    ...suggestions.slice(0, maxGptSuggestions).map(suggestion => ({
+      title: suggestion.task,
+      priority: suggestion.priority,
+      source: 'gpt' as const,
+      duration: inferDuration(suggestion.task, suggestion.priority),
+      reason: suggestion.reason
+    }))
+  ];
+  
+  // Sort by source first (task_bank over gpt), then by priority: High (3) → Medium (2) → Low (1)
+  const priorityOrder = { 'High': 3, 'Medium': 2, 'Low': 1 };
+  allTasks.sort((a, b) => {
+    // First, prioritize task_bank over gpt
+    if (a.source !== b.source) {
+      return a.source === 'task_bank' ? -1 : 1; // task_bank comes first
     }
-    
-    if (!canScheduleTaskBank) {
-      console.log(`🛑 Task bank tasks cannot be scheduled - skipping GPT suggestions to prioritize task bank`);
-      maxGptSuggestions = 0;
-    } else {
-      console.log(`✅ Task bank tasks can be scheduled - proceeding with GPT suggestions`);
-    }
-  }
-
-  // Only schedule GPT suggestions here
+    // Then sort by priority within each source
+    const priorityA = priorityOrder[a.priority as keyof typeof priorityOrder] || 1;
+    const priorityB = priorityOrder[b.priority as keyof typeof priorityOrder] || 1;
+    return priorityB - priorityA; // High priority first
+  });
+  
+  console.log(`📋 All tasks sorted by source (task_bank first) then priority:`, allTasks.map(t => `${t.title} (${t.priority} - ${t.source})`));
+  
+  // Schedule all tasks by priority
   const scheduled = [];
   const skipped = [];
-
-  // Track scheduled times to avoid conflicts - include ALL existing calendar events
-  const scheduledTimes: { start: Date; end: Date }[] = [];
-
-  // Schedule only GPT suggestions
-  let scheduledCount = 0;
-  for (const suggestion of suggestions) {
-    // Stop if we've reached the maximum GPT suggestions
-    if (scheduledCount >= maxGptSuggestions) {
-      console.log(`🛑 Reached maximum GPT suggestions (${maxGptSuggestions}), skipping remaining suggestions`);
-      break;
-    }
-
-    const duration = inferDuration(suggestion.task, suggestion.priority);
+  
+  for (const task of allTasks) {
+    console.log(`\n🔍 Processing task: ${task.title} (${task.priority} - ${task.source})`);
     
-    // Get ALL existing calendar events for today (including GPT, task bank, and Google Calendar)
-    const todayEvents = allEvents.filter((e: any) => {
-      const eventDate = moment(e.start).tz(validatedTimeZone);
-      const today = moment.tz(validatedTimeZone).startOf('day');
-      return eventDate.isSame(today, 'day');
-    });
-    
-    console.log(`📅 Today's events (${todayEvents.length}):`, todayEvents.map((e: any) => `${e.title} (${moment(e.start).tz(validatedTimeZone).format('HH:mm')}-${moment(e.end).tz(validatedTimeZone).format('HH:mm')}) [${e.source}]`));
-    
-    // Convert calendarEvents to the correct type (start/end as strings)
-    const safeEventsForSchedule = todayEvents.map((e: any) => ({
-      start: e.start instanceof Date ? e.start.toISOString() : e.start,
-      end: e.end instanceof Date ? e.end.toISOString() : e.end,
-      title: e.title,
-    }));
-    
-    // Add already scheduled times from this session to avoid conflicts
-    const allEventsForSchedule = [...safeEventsForSchedule, ...scheduledTimes.map(st => ({
-      start: st.start.toISOString(),
-      end: st.end.toISOString(),
-      title: 'Scheduled in this session'
-    }))];
-    
-    // Only include unscheduled task bank tasks in conflict detection
-    // Scheduled task bank tasks are already included in allEventsForSchedule
-    const unscheduledTaskBankTasks = taskBankTasks.filter(task => !task.scheduled);
-    
-    const taskBankEvents = unscheduledTaskBankTasks.map(task => {
-      // Estimate a default time for unscheduled task bank tasks
-      let estimatedStart;
-      if (task.priority === 'high') {
-        estimatedStart = moment.tz(validatedTimeZone).startOf('day').hour(8).minute(0); // 8:00 AM
-      } else if (task.priority === 'medium') {
-        estimatedStart = moment.tz(validatedTimeZone).startOf('day').hour(13).minute(0); // 1:00 PM
-      } else {
-        estimatedStart = moment.tz(validatedTimeZone).startOf('day').hour(16).minute(0); // 4:00 PM
-      }
-      
-      const estimatedDuration = inferDuration(task.title, task.priority);
-      const estimatedEnd = estimatedStart.clone().add(estimatedDuration, 'minutes');
-      
-      return {
-        start: estimatedStart.toISOString(),
-        end: estimatedEnd.toISOString(),
-        title: `Task Bank: ${task.title}`,
-      };
-    });
-    
-    // Include only unscheduled task bank events in conflict detection
-    const allEventsWithTaskBank = [...allEventsForSchedule, ...taskBankEvents];
-    
-    console.log(`🔍 Scheduling "${suggestion.task}" with ${allEventsWithTaskBank.length} existing events (including ${taskBankEvents.length} unscheduled task bank tasks)`);
-    console.log(`📅 Existing events:`, allEventsWithTaskBank.map((e: any) => `${e.title} (${new Date(e.start).toLocaleTimeString()}-${new Date(e.end).toLocaleTimeString()})`));
-    console.log(`📊 Scheduled times in this session:`, scheduledTimes.map(st => `${st.start.toLocaleTimeString()}-${st.end.toLocaleTimeString()}`));
-    console.log(`📋 Unscheduled task bank tasks to avoid:`, taskBankEvents.map((e: any) => `${e.title} (${new Date(e.start).toLocaleTimeString()}-${new Date(e.end).toLocaleTimeString()})`));
+    // Include already scheduled slots from this session in the events list
+    const eventsWithSessionSlots = [
+      ...safeEventsForSchedule,
+      ...scheduledTimes.map(slot => ({
+        start: slot.start.toISOString(),
+        end: slot.end.toISOString(),
+        title: 'Scheduled in this session'
+      }))
+    ];
     
     const schedule = await getTaskSchedule({
-      taskTitle: suggestion.task,
-      priority: suggestion.priority as 'High' | 'Medium' | 'Low',
-      durationMinutes: duration,
+      taskTitle: task.title,
+      priority: task.priority as 'High' | 'Medium' | 'Low',
+      durationMinutes: task.duration,
       mood,
-      events: allEventsWithTaskBank, // Include task bank tasks in conflict detection
+      events: eventsWithSessionSlots,
       timeZone: validatedTimeZone,
     });
-
+    
     if (!schedule.recommendedStart || !schedule.recommendedEnd) {
-      skipped.push({ title: suggestion.task, reason: schedule.reason });
+      console.log(`❌ Task "${task.title}" cannot be scheduled - no available slots`);
+      skipped.push({ title: task.title, reason: schedule.reason, source: task.source });
       continue;
     }
-
-    console.log(`✅ Scheduled "${suggestion.task}" at ${schedule.recommendedStart.toLocaleTimeString()}`);
-
-    // Track this scheduled time to avoid conflicts with subsequent tasks
+    
+    console.log(`✅ Scheduled "${task.title}" at ${schedule.recommendedStart.toLocaleTimeString()}-${schedule.recommendedEnd.toLocaleTimeString()}`);
+    
+    // Add to scheduled times to avoid conflicts with subsequent tasks
     scheduledTimes.push({
-      start: schedule.recommendedStart,
-      end: schedule.recommendedEnd
+      start: new Date(schedule.recommendedStart),
+      end: new Date(schedule.recommendedEnd)
     });
     
+    // Save to database based on source
+    if (task.source === 'task_bank') {
+      // Save task bank task
+      await prisma.task.updateMany({
+        where: {
+          userId: user.id,
+          title: task.title,
+          priority: task.priority,
+          scheduled: false
+        },
+        data: {
+          scheduled: true,
+          timestamp: new Date(schedule.recommendedStart)
+        }
+      });
+      
+      await prisma.calendarEvent.create({
+        data: {
+          userId: user.id,
+          title: task.title,
+          start: new Date(schedule.recommendedStart),
+          end: new Date(schedule.recommendedEnd),
+          source: "task_bank",
+          color: "#ebdbb4",
+        }
+      });
+      
+      console.log(`💾 Saved task bank task "${task.title}" to database`);
+    } else {
+      // Save GPT suggestion
+      await prisma.calendarEvent.create({
+        data: {
+          userId: user.id,
+          title: task.title,
+          start: new Date(schedule.recommendedStart),
+          end: new Date(schedule.recommendedEnd),
+          source: 'gpt',
+          color: '#9b87a6',
+        },
+      });
+      
+      scheduled.push({
+        id: crypto.randomUUID(),
+        title: task.title,
+        start: schedule.recommendedStart.toISOString(),
+        end: schedule.recommendedEnd.toISOString(),
+        priority: task.priority,
+        reason: task.reason || '',
+      });
+      
+      console.log(`💾 Saved GPT suggestion "${task.title}" to database`);
+    }
+    
     console.log(`📈 Updated scheduled times:`, scheduledTimes.map(st => `${st.start.toLocaleTimeString()}-${st.end.toLocaleTimeString()}`));
-
-    // Save GPT suggestion to calendar
-    await prisma.calendarEvent.create({
-      data: {
-        userId: user.id,
-        title: suggestion.task,
-        start: schedule.recommendedStart,
-        end: schedule.recommendedEnd,
-        source: 'gpt',
-        color: '#9b87a6',
-      },
-    });
-
-    scheduled.push({
-      id: crypto.randomUUID(),
-      title: suggestion.task,
-      start: schedule.recommendedStart.toISOString(),
-      end: schedule.recommendedEnd.toISOString(),
-      priority: suggestion.priority,
-      reason: suggestion.reason || '',
-    });
-    scheduledCount++; // Increment the counter after successful scheduling
   }
 
-  // Return task bank tasks separately for add.ts to handle
-  const taskBankForAdd = taskBankTasks.map(task => ({
-    id: task.id,
-    title: task.title,
-    priority: task.priority,
-    source: 'taskbank' as const,
-  }));
+  // The old GPT-only scheduling code has been replaced by the unified priority-based scheduling above
 
+  // Task bank tasks are already saved to database above, so we don't need to send them to calendar/add
   console.log(`📋 Task bank tasks found: ${taskBankTasks.length}`, taskBankTasks.map(t => t.title));
-  console.log(`📤 Task bank tasks for add API: ${taskBankForAdd.length}`, taskBankForAdd.map(t => t.title));
+  console.log(`✅ Task bank tasks already saved to database - no need to send to calendar/add`);
 
   return res.status(200).json({
     message: scheduled.length ? 
-      (scheduledCount >= maxGptSuggestions ? 
+      (scheduled.length >= maxGptSuggestions ? 
         `Limited to ${maxGptSuggestions} GPT suggestions due to space constraints` : 
         'Suggestions scheduled') : 
       'Your day is already fully optimized - no room for additional suggestions',
     suggestions: scheduled,
-    taskBankTasks: taskBankForAdd,
+    taskBankTasks: [], // Don't send task bank tasks to calendar/add since they're already saved
     skippedSuggestions: skipped,
   });
 }
@@ -409,7 +385,11 @@ async function fetchGoogleCalendarEvents(accessToken?: string) {
       end: new Date(event.end?.dateTime || event.end?.date || ""),
       source: "google",
     }));
-  } catch (err) {
+  } catch (err: any) {
+    if (err.code === 401) {
+      console.warn("⚠️ Google Calendar authentication failed for conflict detection - token may be expired.");
+      return []; // Graceful fallback to local events only
+    }
     console.error("❌ Error fetching Google events for conflict detection:", err);
     return []; // Don't crash everything — fallback to DB events only
   }
