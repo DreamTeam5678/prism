@@ -437,7 +437,7 @@ export default function TaskList() {
           justify-content: center;
           gap: 40px;
           margin-top: 20px;
-          color:rgb(37, 23, 15);
+          color:rgb(59, 39, 28);
         }
 
         .stat-item {
@@ -455,8 +455,7 @@ export default function TaskList() {
         .stat-number {
           font-size: 1.8rem;
           font-weight: 700;
-          color: rgb(109, 80, 61);
-          color: #1a1a1a;
+          color: hsl(23, 25.40%, 26.30%);
           text-shadow: 0 1px 3px rgba(255,255,255,0.8);
         }
 
@@ -489,11 +488,11 @@ export default function TaskList() {
           gap: 10px;
           font-size: 1.3rem;
           font-weight: 600;
-          color: rgb(88, 63, 48);
+          color: rgb(62, 43, 31);
           margin-bottom: 20px;
           padding-bottom: 10px;
           border-bottom: 2px solid rgba(113, 101, 96, 0.22);
-          color: #1a1a1a;
+          color:rgb(95, 74, 57);
           margin-bottom: 20px;
           padding-bottom: 10px;
           border-bottom: 2px solid rgba(255, 255, 255, 0.3);
@@ -501,8 +500,8 @@ export default function TaskList() {
         }
 
         .refresh-btn {
-          background: linear-gradient(135deg, #ff6b6b, #ee5a52);
-          border: 2px solid #ff4757;
+          background: linear-gradient(135deg,rgb(217, 132, 113),rgb(238, 111, 88));
+          border: 1.5px solid rgb(255, 233, 230);
           border-radius: 12px;
           padding: 12px 18px;
           color: white;
@@ -519,7 +518,7 @@ export default function TaskList() {
 
         .refresh-btn:hover {
           background: linear-gradient(135deg, #ff5252, #d63031);
-          border-color: #ff3838;
+          border-color:rgb(253, 253, 253);
           transform: scale(1.15);
           box-shadow: 0 6px 16px rgba(255, 107, 107, 0.6);
         }
@@ -836,13 +835,14 @@ export default function TaskList() {
 
         /* Prism Logo Styles */
         .prism-logo {
-          position: fixed;
-          bottom: 30px;
-          right: 30px;
-          z-index: 1000;
-          opacity: 0.8;
-          transition: all 0.3s ease;
-        }
+            position: fixed;
+            top: -3px;
+            right: 10px;
+            z-index: 1000;
+            opacity: 0.8;
+            transition: all 0.3s ease;
+
+          }
 
         .prism-logo:hover {
           opacity: 1;
@@ -850,7 +850,7 @@ export default function TaskList() {
         }
 
         .prism-logo img {
-          width: 120px;
+          width: 150px;
           height: auto;
           filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
         }

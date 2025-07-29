@@ -117,7 +117,7 @@ body::before {
 }
 @keyframes slideIn {
     from {
-        transform: translateY(-25%);
+        transform: translateY(-40%);
         opacity: 0;
     }
     to {
