@@ -1,15 +1,23 @@
-/* Full-width gamification banner */
+
 .gamificationBanner {
   width: 100%;
-  background: linear-gradient(135deg, #75906b 0%, #5a7a4f 100%);
-  border-radius: 0 0 20px 20px;
+  background: linear-gradient(135deg,#bba7c8c8, #9b86aa, #bba7c8c6, #9b86aa );
   padding: 15px 30px;
   margin-bottom: 15px;
   position: relative;
   overflow: hidden;
   box-shadow: 0 8px 32px rgba(117, 144, 107, 0.3);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px inset rgba(255, 255, 255, 0.2);
+  box-shadow: inset 0 0 20px rgba(240, 240, 240, 0.63);
+  margin-top: -10px;
+  height: 50px;
+  border-bottom: ridge 3px #f1f1f18c;
+  font-family: 'Lucida Sans', 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
+  font-weight: lighter;
+  color: whitesmoke;
+  text-shadow: #c8d6c3 0px 0px 10px;
+  font-variant: small-caps;
 }
 
 .bannerContent {
@@ -20,6 +28,8 @@
   margin: 0 auto;
   position: relative;
   z-index: 2;
+  transform: translateX(14px);
+  margin-top: -5px;
 }
 
 /* Left section - Level and XP */
@@ -28,6 +38,7 @@
   flex-direction: column;
   gap: 12px;
   min-width: 200px;
+  color: whitesmoke;
 }
 
 .levelDisplay {
@@ -40,6 +51,7 @@
 .levelIcon {
   font-size: 1.5rem;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  color: #ffea71;
 }
 
 .levelInfo {
@@ -49,15 +61,19 @@
 
 .levelText {
   font-size: 1.2rem;
-  font-weight: 700;
-  color: white;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  
+  color: rgb(253, 250, 245);
+  text-shadow: 0 2px 4px rgba(255, 255, 255, 0.528);
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .xpText {
   font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(76, 61, 44, 0.688);
   font-weight: 500;
+  text-shadow: 0 2px 4px rgba(255, 255, 255, 0.214);
+  color: rgb(253, 250, 245);
 }
 
 .xpBar {
@@ -66,7 +82,7 @@
   border-radius: 20px;
   overflow: hidden;
   position: relative;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0 2px 4px rgba(57, 54, 54, 0.354);
 }
 
 .xpFill {
@@ -75,7 +91,7 @@
   border-radius: 20px;
   transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
-  box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+  box-shadow: 0 0 10px rgba(255, 217, 0, 0.613);
 }
 
 .xpGain {
@@ -94,6 +110,7 @@
   width: 100%;
   height: 100%;
   pointer-events: none;
+  
 }
 
 .particle {
@@ -118,37 +135,46 @@
 
 /* Center section - Motivation */
 .motivationSection {
+  color: rgb(253, 250, 245);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 8px;
   flex: 1;
   max-width: 300px;
+  transform: translateX(53px);
 }
 
 .motivationText {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: white;
+  font-size: 0.9rem;
+  font-weight: 100;
+  color: rgba(76, 61, 44, 0.706);
   text-align: center;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  animation: motivationGlow 2s ease-in-out infinite alternate;
+  animation: motivationGlow 1.4s ease-in-out infinite alternate;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: rgb(253, 250, 245);
+  
 }
 
 @keyframes motivationGlow {
   0% { text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); }
-  100% { text-shadow: 0 2px 8px rgba(255, 255, 255, 0.3); }
+  100% { text-shadow: 0 2px 8px rgba(255, 253, 253, 0.959); }
 }
 
 .achievementBadge {
   display: flex;
   gap: 8px;
   align-items: center;
+  color:  #ffea71f5;
+  text-shadow: whitesmoke 0px 0px 10px;
+  
 }
 
 .badge {
-  font-size: 1.2rem;
-  animation: badgeBounce 2s ease-in-out infinite;
+  font-size: 1.5rem;
+  animation: badgeBounce 2.1s ease-in-out infinite;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }
 
@@ -168,6 +194,7 @@
   gap: 24px;
   align-items: center;
   min-width: 200px;
+  transform: translateX(40px);
 }
 
 .streakDisplay {
@@ -176,14 +203,17 @@
   gap: 12px;
   background: rgba(255, 255, 255, 0.1);
   padding: 12px 16px;
-  border-radius: 12px;
+  border-radius: 50px;
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: inset 0 0 10px rgba(240, 240, 240, 0.502);
+
 }
 
 .streakIcon {
   font-size: 1.2rem;
   animation: flameFlicker 1.5s ease-in-out infinite;
+  color:  #ffea71f5;
 }
 
 @keyframes flameFlicker {
@@ -194,19 +224,25 @@
 .streakInfo {
   display: flex;
   flex-direction: column;
+  color: rgb(253, 250, 245);
+  
 }
 
 .streakText {
   font-size: 1rem;
-  font-weight: 700;
-  color: white;
+  font-weight: 600;
+  color: rgb(253, 250, 245);
+  text-shadow: rgba(255, 255, 0, 0.265) 0px 0px 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .streakLabel {
   font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(253, 250, 245, 0.851);
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  
 }
 
 .totalXp {
@@ -215,16 +251,17 @@
   align-items: center;
   background: rgba(255, 255, 255, 0.1);
   padding: 12px 16px;
-  border-radius: 12px;
+  border-radius:50px;
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: inset 0 0 10px rgba(240, 240, 240, 0.502);
 }
 
 .xpTotal {
   font-size: 1.1rem;
   font-weight: 700;
-  color: #ffd700;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  color: rgb(253, 250, 245);
+  text-shadow: 0 2px 4px rgba(250, 243, 113, 0.49);
 }
 
 .xpLabel {
@@ -232,6 +269,7 @@
   color: rgba(255, 255, 255, 0.8);
   text-transform: uppercase;
   letter-spacing: 0.5px;
+
 }
 
 /* Floating particles background */
@@ -345,12 +383,11 @@
 
 .gamesButton {
   background: rgba(255, 255, 255, 0.1);
-  color: white;
+
   border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 12px 16px;
-  border-radius: 12px;
+  padding: 17px 16px;
+  border-radius: 50px;
   font-size: 1.1rem;
-  font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
   margin: 0;
@@ -359,6 +396,18 @@
   display: flex;
   align-items: center;
   height: 100%;
+  box-shadow: inset 0 0 10px rgba(240, 240, 240, 0.502);
+  gap: 0.5rem;
+  color: rgb(253, 250, 245);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  font-weight: 100;
+  text-shadow: rgba(255, 255, 0, 0.213) 0px 0px 10px;
+}
+
+.gamesButtonIcon {
+  color: #ffea71;
 }
 
 .gamesButton:hover {
