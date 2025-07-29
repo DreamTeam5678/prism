@@ -181,7 +181,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
       
       // If no gaps found, try incremental approach as fallback
-      while (candidate.getTime() + durationMinutes * 60 * 1000 <= dayEnd.getTime()) { // Ensure candidate + duration doesn't exceed 11 PM
+      while (candidate.getTime() + durationMinutes * 60 * 1000 <= dayEnd.getTime()) { // Ensure candidate + duration doesn't exceed 9 PM
         let hasConflict = false;
         const candidateEnd = new Date(candidate.getTime() + durationMinutes * 60 * 1000);
 

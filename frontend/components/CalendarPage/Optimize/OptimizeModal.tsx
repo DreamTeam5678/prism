@@ -360,6 +360,9 @@ export default function OptimizeModal({ onClose, setLoading }: OptimizeModalProp
     // Check if user has accepted at least one suggestion and there are no more suggestions to respond to
     const hasAcceptedSomeSuggestions = accepted.length > 0 && suggestions.length > 0;
     
+    // Check if user has accepted ALL suggestions (not just any suggestion)
+    const hasAcceptedAllSuggestions = accepted.length > 0 && accepted.length === suggestions.length && suggestions.length > 0;
+    
     // Only trigger if user has actually interacted with suggestions or if day is full
     const shouldProcess = (allSuggestionsResponded || hasAcceptedSuggestions || hasTaskBankTasks || userHasResponded || allSuggestionsAccepted || hasAcceptedSuggestionsAndNoTaskBank || hasAcceptedSuggestionsAndTaskBankProcessed) && hasAttemptedOptimization;
     
@@ -371,7 +374,6 @@ export default function OptimizeModal({ onClose, setLoading }: OptimizeModalProp
         allSuggestionsAccepted,
         hasAcceptedSuggestionsAndNoTaskBank,
         hasAcceptedSuggestionsAndTaskBankProcessed,
-        hasAcceptedAllSuggestions,
         suggestionsLength: suggestions.length,
         respondedLength: Object.keys(responded).length,
         acceptedLength: accepted.length,
