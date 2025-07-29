@@ -3,6 +3,7 @@
   width: 100%;
   max-width: 600px;
   margin: 0 auto;
+  color:rgb(37, 23, 15);
 }
 
 .form {
@@ -20,6 +21,7 @@
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
   overflow: hidden;
+  margin-bottom: -15px;
 }
 
 .inputWrapper:focus-within {

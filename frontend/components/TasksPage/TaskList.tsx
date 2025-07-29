@@ -408,13 +408,15 @@ export default function TaskList() {
                   .task-page {
             min-height: 100vh;
             padding: 20px;
-            padding-top: 0px; /* minimal top padding */
+            padding-top: 0px; 
+            color:rgb(37, 23, 15);
           }
 
         .task-container {
           max-width: 1200px;
           margin: 0 auto;
           padding: 20px;
+          color;rgb(37, 23, 15);
         }
 
         .task-header {
@@ -425,7 +427,7 @@ export default function TaskList() {
         .task-title {
           font-size: 2.5rem;
           font-weight: 700;
-          color: #1a1a1a;
+          color: rgb(88, 63, 48);
           margin-bottom: 20px;
           text-shadow: 0 2px 4px rgba(255,255,255,0.8), 0 0 10px rgba(255,255,255,0.5);
         }
@@ -435,6 +437,7 @@ export default function TaskList() {
           justify-content: center;
           gap: 40px;
           margin-top: 20px;
+          color:rgb(37, 23, 15);
         }
 
         .stat-item {
@@ -452,13 +455,14 @@ export default function TaskList() {
         .stat-number {
           font-size: 1.8rem;
           font-weight: 700;
+          color: rgb(109, 80, 61);
           color: #1a1a1a;
           text-shadow: 0 1px 3px rgba(255,255,255,0.8);
         }
 
         .stat-label {
           font-size: 0.9rem;
-          color: #2d2d2d;
+          color: rgba(86, 82, 82, 0.8);
           margin-top: 5px;
           font-weight: 600;
           text-shadow: 0 1px 2px rgba(255,255,255,0.6);
@@ -485,6 +489,10 @@ export default function TaskList() {
           gap: 10px;
           font-size: 1.3rem;
           font-weight: 600;
+          color: rgb(88, 63, 48);
+          margin-bottom: 20px;
+          padding-bottom: 10px;
+          border-bottom: 2px solid rgba(113, 101, 96, 0.22);
           color: #1a1a1a;
           margin-bottom: 20px;
           padding-bottom: 10px;
@@ -563,7 +571,7 @@ export default function TaskList() {
 
         .task-card.completed .task-title-text {
           text-decoration: line-through;
-          color: #888;
+          color: rgb(109, 80, 61);
         }
 
         .task-card-header {
@@ -585,6 +593,10 @@ export default function TaskList() {
         .task-checkbox:hover {
           background-color: rgba(0, 0, 0, 0.05);
         }
+
+        .task-checkbox:active {
+          text-decoration: line-through;
+      }
 
         .custom-checkbox {
           opacity: 0;

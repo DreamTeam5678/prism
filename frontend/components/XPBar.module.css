@@ -1,6 +1,6 @@
 
 .gamificationBanner {
-  width: 100%;
+  width: 96.5%;
   background: linear-gradient(135deg,#bba7c8c8, #9b86aa, #bba7c8c6, #9b86aa );
   padding: 15px 30px;
   margin-bottom: 15px;
@@ -17,7 +17,7 @@
   font-weight: lighter;
   color: whitesmoke;
   text-shadow: #c8d6c3 0px 0px 10px;
-  font-variant: small-caps;
+    
 }
 
 .bannerContent {

@@ -43,7 +43,14 @@ export default function CalendarPage() {
     "Your future self is cheering you on",
     "You're exactly where you need to be",
     "Make today count",
-    "Bloom where you're planted"
+    "Bloom where you're planted",
+    "You're a force to be reckoned with",
+    "Your dreams are coming true",
+    "Embrace the challenges ahead",
+    "You're unstoppable",
+    "The future is yours to shape",
+    "Be the change you want to see"
+  
   ];
 
   // Cycle through messages every 6 seconds
@@ -60,7 +67,7 @@ export default function CalendarPage() {
           const newIndex = (prev + 1) % encouragingMessages.length;
           const newMessage = encouragingMessages[newIndex];
           console.log("🔄 Changing message to:", newMessage, "at index:", newIndex);
-          setCurrentMessage(newMessage);
+          setCurrentMessage(newMessage + "!");
           return newIndex;
         });
       }, 10000); // Changed to 10 seconds
@@ -126,12 +133,20 @@ export default function CalendarPage() {
        <Optimize />
 
         <div className="calendar-container">
+          <div className="calendar-hooks">
+            <div className="calendar-hook" />
+            <div className="calendar-hook" />
+          </div>
+          <div className='calendar-hanging-line' />
           {/* Sliding Encouraging Message Banner - Only show on day view */}
           {view === "day" && currentMessage && (
-            <div className="sliding-message-banner">
-              <div className="message-content" key={messageIndex}>
-                {currentMessage}
+            <div className="calendar-header-wrapper">
+              <div className="sliding-message-banner">
+                <div className="message-content" key={messageIndex}>
+                  {currentMessage}
+                </div>
               </div>
+              <div className="calendar-top-line" />
             </div>
           )}
 
@@ -241,12 +256,18 @@ export default function CalendarPage() {
           .event-legend {
             display: flex;
             gap: 1.5rem;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             margin: 1rem auto;
             max-width: 900px;
             justify-content: flex-start;
             align-items: center;
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            font-weight: 100;
+            color:rgba(78, 70, 68, 0.61);
           }
+
 
           .event-legend span {
             display: inline-block;
@@ -287,11 +308,12 @@ export default function CalendarPage() {
 
           .prism-logo {
             position: fixed;
-            bottom: 100px;
-            right: 30px;
+            top: -3px;
+            right: 10px;
             z-index: 1000;
             opacity: 0.8;
             transition: all 0.3s ease;
+
           }
 
           .prism-logo:hover {
@@ -300,9 +322,71 @@ export default function CalendarPage() {
           }
 
           .prism-logo img {
-            width: 120px;
+            width: 150px;
             height: auto;
-            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+            filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.64));
+          
+            
+          }
+
+          .calendar-hooks {
+            display: flex;
+            justify-content: space-around;
+            gap: 500px;
+            margin-top: -30px;
+            margin-bottom: 10px;
+            z-index: 10;
+            position: relative;
+          
+          }
+
+          .calendar-hook {
+            width: 35px;
+            height: 35px;
+            
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #f5f5f5, #aaa 40%, #444 100%);
+            box-shadow:
+              inset 0 2px 4px rgba(255, 255, 255, 0.8),
+              inset 0 -2px 4px rgba(0, 0, 0, 0.5),
+              0 2px 6px rgba(0, 0, 0, 0.4),
+              0 0 3px rgba(255, 255, 255, 0.3);
+            position: relative;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            background-blend-mode: overlay;
+          }
+
+          .calendar-hook::after {
+            content: '';
+            position: absolute;
+            top: 10.5px;
+            left: 10.5px;
+            width: 14px;
+            height: 14px;
+            background: radial-gradient(circle at center, #f0f0f0 0%, #999 40%, #222 100%);
+            border-radius: 50%;
+            box-shadow:
+              inset 0 2px 3px rgba(0, 0, 0, 0.5),
+              0 1px 2px rgba(255, 255, 255, 0.2);
+
+          }
+
+          .calendar-hook:hover {
+            
+            transition: all 0.3s ease;
+          }
+          
+
+
+          .calendar-top-line {
+            height: 1px;
+            background-color: #999;
+            width: 940px;
+            margin:0px;
+            margin-top: -10px;
+            opacity: 0.4;
+            box-shadow: 0 1px 1px rgba(208, 73, 28, 0.61);
           }
 
           /* Mobile responsive */
