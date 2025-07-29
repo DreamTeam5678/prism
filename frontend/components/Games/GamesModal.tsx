@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from "react";
 import styles from "./GamesModal.module.css";
 import { set } from "date-fns";
-import { Repeat2 } from "lucide-react";
+import { Keyboard, Repeat2 } from "lucide-react";
+import { Brain, Blocks } from "lucide-react";
 
 
 //props for games modal
@@ -127,7 +128,7 @@ const MemoryGame: React.FC<{ onScore: (score: number) => void }> = ({ onScore })
 
   return (
     <div className={styles.gameContainer}>
-      <h3>🧠 Memory Match</h3>
+      <h3><Brain /> Memory Match</h3>
       <p>Find all matching pairs!</p>
       <div className={styles.gameStats}>
         <span>Moves: {moves}</span>
@@ -288,7 +289,7 @@ const SpeedTypingGame: React.FC<{ onScore: (score: number) => void }> = ({ onSco
 
   return (
     <div className={styles.gameContainer}>
-      <h3>⌨️ Speed Typing</h3>
+      <h3><Keyboard />Speed Typing</h3>
       <p>Type the word as fast as you can!</p>
       <div className={styles.gameStats}>
         <span style={{marginRight: '-25px'}}>Score: {score}</span>
@@ -468,7 +469,7 @@ const PatternGame: React.FC<{ onScore: (score: number) => void }> = ({ onScore }
 
   return (
     <div className={styles.gameContainer}>
-      <h3>🔮 Pattern Memory</h3>
+      <h3><Blocks /> Pattern Memory</h3>
       <p>Remember and repeat the pattern!</p>
       <div className={styles.gameStats}>
         <span style={{marginRight: '15px', marginLeft: '20px'}}>Score: {score}</span>
