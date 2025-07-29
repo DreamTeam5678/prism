@@ -6,10 +6,7 @@ interface VoiceCommandManagerProps {
   onTaskComplete?: (taskId: string) => void;
   onTaskDelete?: (taskId: string) => void;
   onTaskCreate?: (task: any) => void;
-  onCalendarEventCreate?: (event: any) => void;
-  onCalendarEventDelete?: (eventId: string) => void;
   tasks?: any[];
-  events?: any[];
   isListening: boolean;
   onListeningChange: (listening: boolean) => void;
 }
@@ -24,10 +21,7 @@ export default function VoiceCommandManager({
   onTaskComplete,
   onTaskDelete,
   onTaskCreate,
-  onCalendarEventCreate,
-  onCalendarEventDelete,
   tasks = [],
-  events = [],
   isListening,
   onListeningChange
 }: VoiceCommandManagerProps) {
@@ -99,11 +93,7 @@ export default function VoiceCommandManager({
     );
   };
 
-  const findEventByTitle = (title: string) => {
-    return events.find(event => 
-      event.title.toLowerCase().includes(title.toLowerCase())
-    );
-  };
+
 
   const processVoiceCommand = (command: string) => {
     console.log('Processing voice command:', command);
@@ -138,20 +128,7 @@ export default function VoiceCommandManager({
       }
     }
 
-    // Calendar event deletion commands
-    if (command.match(/delete event (.+)/)) {
-      const eventTitle = command.match(/delete event (.+)/)?.[1];
-      if (eventTitle) {
-        const event = findEventByTitle(eventTitle);
-        if (event) {
-          onCalendarEventDelete?.(event.id);
-          showCommandFeedback(`🗑️ Deleted event: ${event.title}`);
-        } else {
-          showCommandFeedback(`❌ Event not found: ${eventTitle}`, 'error');
-        }
-        return;
-      }
-    }
+
 
     // Task creation commands
     if (command.match(/create task (.+)/)) {
@@ -169,22 +146,7 @@ export default function VoiceCommandManager({
       }
     }
 
-    // Calendar event creation commands
-    if (command.match(/create event (.+)/)) {
-      const eventDescription = command.match(/create event (.+)/)?.[1];
-      if (eventDescription) {
-        const newEvent = {
-          title: eventDescription,
-          start: new Date(),
-          end: new Date(new Date().getTime() + 60 * 60 * 1000), // 1 hour later
-          description: '',
-          color: '#3174ad'
-        };
-        onCalendarEventCreate?.(newEvent);
-        showCommandFeedback(`✅ Created event: ${eventDescription}`);
-        return;
-      }
-    }
+
 
     // List tasks command
     if (command.match(/list tasks/)) {
@@ -197,20 +159,11 @@ export default function VoiceCommandManager({
       return;
     }
 
-    // List events command
-    if (command.match(/list events/)) {
-      if (events.length === 0) {
-        showCommandFeedback('📅 No events found');
-      } else {
-        const eventList = events.slice(0, 5).map(event => event.title).join(', ');
-        showCommandFeedback(`📅 Recent events: ${eventList}`);
-      }
-      return;
-    }
+
 
     // Help command
     if (command.match(/help|commands/)) {
-      showCommandFeedback('🎤 Available commands: complete task, delete task, create task, list tasks, list events, help');
+      showCommandFeedback('🎤 Available commands: complete task, delete task, create task, list tasks, help');
       return;
     }
 
@@ -238,15 +191,7 @@ export default function VoiceCommandManager({
         </div>
       )}
 
-      {/* Voice Status Indicator */}
-      <div className={`${styles.voiceStatus} ${isListening ? styles.listening : ''}`}>
-        <span className={styles.statusIcon}>
-          {isListening ? '🎤' : '🔇'}
-        </span>
-        <span className={styles.statusText}>
-          {isListening ? 'Listening for commands...' : 'Voice commands ready'}
-        </span>
-      </div>
+
     </div>
   );
 } 

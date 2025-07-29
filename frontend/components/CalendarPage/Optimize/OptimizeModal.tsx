@@ -354,8 +354,17 @@ export default function OptimizeModal({ onClose, setLoading }: OptimizeModalProp
     // Check if user has accepted suggestions and there are no task bank tasks to process
     const hasAcceptedSuggestionsAndNoTaskBank = accepted.length > 0 && taskBankTasks.length === 0;
     
+    // Check if user has accepted suggestions and task bank tasks have been processed
+    const hasAcceptedSuggestionsAndTaskBankProcessed = accepted.length > 0 && hasAttemptedOptimization;
+    
+    // Check if user has accepted at least one suggestion and there are no more suggestions to respond to
+    const hasAcceptedSomeSuggestions = accepted.length > 0 && suggestions.length > 0;
+    
+    // Check if user has accepted ALL suggestions (not just any suggestion)
+    const hasAcceptedAllSuggestions = accepted.length > 0 && accepted.length === suggestions.length && suggestions.length > 0;
+    
     // Only trigger if user has actually interacted with suggestions or if day is full
-    const shouldProcess = (allSuggestionsResponded || hasAcceptedSuggestions || hasTaskBankTasks || userHasResponded || allSuggestionsAccepted || hasAcceptedSuggestionsAndNoTaskBank) && hasAttemptedOptimization;
+    const shouldProcess = (allSuggestionsResponded || hasAcceptedSuggestions || hasTaskBankTasks || userHasResponded || allSuggestionsAccepted || hasAcceptedSuggestionsAndNoTaskBank || hasAcceptedSuggestionsAndTaskBankProcessed) && hasAttemptedOptimization;
     
           console.log("🔄 useEffect conditions:", {
         allSuggestionsResponded,
@@ -364,6 +373,7 @@ export default function OptimizeModal({ onClose, setLoading }: OptimizeModalProp
         userHasResponded,
         allSuggestionsAccepted,
         hasAcceptedSuggestionsAndNoTaskBank,
+        hasAcceptedSuggestionsAndTaskBankProcessed,
         suggestionsLength: suggestions.length,
         respondedLength: Object.keys(responded).length,
         acceptedLength: accepted.length,
@@ -373,48 +383,57 @@ export default function OptimizeModal({ onClose, setLoading }: OptimizeModalProp
     
     if (shouldProcess) {
       (async () => {
-        // Use task bank tasks from generate API response
-        console.log("📤 Sending task bank tasks to calendar:", { tasks: taskBankTasks });
+        // Task bank tasks are already saved in generate.ts, so we don't need to send them to calendar/add
+        console.log("✅ Task bank tasks already saved in generate.ts - no need to send to calendar/add");
         
-        const response = await fetch("/api/calendar/add", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            suggestions: [], // GPT suggestions already scheduled in generate.ts
-            tasks: taskBankTasks.map((t) => ({
-              ...t,
-              source: "task_bank",
-              color: "#ebdbb4",
-            })),
-          }),
-        });
-        
-        const responseData = await response.json();
-        console.log("📥 Calendar add API response:", responseData);
-        
-        if (!response.ok) {
-          console.error("❌ Calendar add API failed:", responseData);
-          setError(responseData.message || "Failed to schedule tasks");
-          return;
+        // Only send GPT suggestions to calendar/add if there are any
+        if (suggestions.length > 0) {
+          console.log("📤 Sending GPT suggestions to calendar:", { suggestions });
+          
+          const response = await fetch("/api/calendar/add", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              suggestions: suggestions, // GPT suggestions to be scheduled
+              tasks: [], // Task bank tasks already saved
+            }),
+          });
+          
+          const responseData = await response.json();
+          console.log("📥 Calendar add API response:", responseData);
+          
+          if (!response.ok) {
+            console.error("❌ Calendar add API failed:", responseData);
+            setError(responseData.message || "Failed to schedule suggestions");
+            return;
+          }
+        } else {
+          console.log("✅ No GPT suggestions to send to calendar/add");
         }
 
-        // Check if any tasks were actually scheduled
-        const scheduledTasks = responseData.scheduledTasks || [];
-        const failedTasks = responseData.failedTasks || [];
-        
-        if (failedTasks.length > 0) {
-          // Set day as full and show message at bottom
-          setDayIsFull(true);
-          // Don't close the modal automatically - let user decide
-          return;
-        }
-
-        // Only close if everything was scheduled successfully
-        document.dispatchEvent(new CustomEvent("optimizeComplete"));
-        onClose();
+        // Modal closure will be handled by separate useEffect
       })();
     }
-  }, [responded, suggestions.length, taskBankTasks.length, hasAttemptedOptimization]);
+  }, [responded, suggestions.length, taskBankTasks.length, hasAttemptedOptimization, accepted.length]);
+
+  // Check if user has accepted ALL suggestions (not just any suggestion)
+  const hasAcceptedAllSuggestions = accepted.length > 0 && accepted.length === suggestions.length && suggestions.length > 0;
+  
+  // Separate useEffect for modal closure when all suggestions are accepted
+  useEffect(() => {
+    console.log("🔍 Modal closure check:", {
+      hasAcceptedAllSuggestions,
+      hasAttemptedOptimization,
+      acceptedLength: accepted.length,
+      suggestionsLength: suggestions.length
+    });
+    
+    if (hasAcceptedAllSuggestions && hasAttemptedOptimization) {
+      console.log("🎯 All suggestions accepted, closing modal");
+      document.dispatchEvent(new CustomEvent("optimizeComplete"));
+      onClose();
+    }
+  }, [accepted.length, suggestions.length, hasAttemptedOptimization, hasAcceptedAllSuggestions, onClose]);
 
   return (
     <div className={styles.optimizeOverlay}>

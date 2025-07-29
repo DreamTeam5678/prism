@@ -69,8 +69,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const bufferMs = 15 * 60 * 1000; // Reduced buffer to 15 minutes
       const now = new Date(); // Current time
 
-      // Check if it's too late today (after 10 PM)
-      const isLateToday = now.getHours() >= 22;
+      // Check if it's too late today (after 12 PM/midnight)
+      const isLateToday = now.getHours() >= 24;
       
       if (isLateToday) {
         // Schedule for tomorrow with better time distribution
@@ -97,7 +97,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       dayStart.setHours(8, 0, 0, 0); // 8:00 AM today
 
       const dayEnd = new Date();
-      dayEnd.setHours(22, 0, 0, 0); // 10:00 PM today
+      dayEnd.setHours(21, 0, 0, 0); // 9:00 PM today (instead of 11 PM)
 
       // Adjust initial candidate start time based on priority and current time
       let candidate = new Date(Math.max(dayStart.getTime(), now.getTime() + bufferMs)); // Start no earlier than 8 AM or 15 mins from now
@@ -110,11 +110,78 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         candidate = new Date(Math.max(candidate.getTime(), earliestHighPriStart.getTime()));
       }
 
-      const latestStart = new Date(dayEnd.getTime() - durationMinutes * 60 * 1000); // latest possible start time to end by 10 PM
+      const latestStart = new Date(dayEnd.getTime() - durationMinutes * 60 * 1000); // latest possible start time to end by 9 PM
 
       const sortedEvents = [...currentOccupiedSlots].sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
 
-      while (candidate.getTime() + durationMinutes * 60 * 1000 <= dayEnd.getTime()) { // Ensure candidate + duration doesn't exceed 10 PM
+      // First, try to find a slot starting from the candidate time
+      const candidateEnd = new Date(candidate.getTime() + durationMinutes * 60 * 1000);
+      
+      // Check for lunch break
+      const lunchStart = new Date(candidate.getFullYear(), candidate.getMonth(), candidate.getDate(), 12, 0, 0);
+      const lunchEnd = new Date(candidate.getFullYear(), candidate.getMonth(), candidate.getDate(), 13, 0, 0);
+      
+      const overlapsLunch = (candidateEnd.getTime() > lunchStart.getTime() && candidate.getTime() < lunchEnd.getTime());
+      
+      if (!overlapsLunch) {
+        let hasConflict = false;
+        for (const event of sortedEvents) {
+          const eventStart = new Date(event.start).getTime();
+          const eventEnd = new Date(event.end).getTime();
+
+          // Conflict if candidate overlaps existing event AND buffer
+          if (
+            candidateEnd.getTime() + bufferMs > eventStart &&
+            candidate.getTime() < eventEnd + bufferMs
+          ) {
+            hasConflict = true;
+            break;
+          }
+        }
+        
+        if (!hasConflict && candidateEnd.getTime() <= dayEnd.getTime()) {
+          return {
+            start: candidate,
+            end: candidateEnd,
+          };
+        }
+      }
+      
+      // If initial slot doesn't work, try to find gaps between events
+      for (let i = 0; i < sortedEvents.length; i++) {
+        const currentEvent = sortedEvents[i];
+        const nextEvent = sortedEvents[i + 1];
+        
+        const currentEventEnd = new Date(currentEvent.end);
+        const nextEventStart = nextEvent ? new Date(nextEvent.start) : dayEnd;
+        
+        // Try to fit a slot in the gap
+        let gapStart = new Date(currentEventEnd.getTime() + bufferMs); // Add buffer after current event
+        let gapEnd = new Date(nextEventStart.getTime() - bufferMs); // Subtract buffer before next event
+        
+        // Ensure gap is after candidate time and before max allowed end
+        gapStart = new Date(Math.max(gapStart.getTime(), candidate.getTime()));
+        gapEnd = new Date(Math.min(gapEnd.getTime(), dayEnd.getTime()));
+        
+        if (gapStart.getTime() < gapEnd.getTime()) {
+          const slotEnd = new Date(gapStart.getTime() + durationMinutes * 60 * 1000);
+          
+          if (slotEnd.getTime() <= gapEnd.getTime()) {
+            // Check for lunch break conflict
+            const overlapsLunch = (slotEnd.getTime() > lunchStart.getTime() && gapStart.getTime() < lunchEnd.getTime());
+            
+            if (!overlapsLunch) {
+              return {
+                start: gapStart,
+                end: slotEnd,
+              };
+            }
+          }
+        }
+      }
+      
+      // If no gaps found, try incremental approach as fallback
+      while (candidate.getTime() + durationMinutes * 60 * 1000 <= dayEnd.getTime()) { // Ensure candidate + duration doesn't exceed 9 PM
         let hasConflict = false;
         const candidateEnd = new Date(candidate.getTime() + durationMinutes * 60 * 1000);
 
@@ -157,32 +224,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           candidate = new Date(candidate.getTime() + 30 * 60 * 1000); // Move to next 30-min slot for better spacing
         }
       }
-
-      // If no slots found today, try to find any available time, even if it's tight
-      console.log(`⚠️ No ideal slots found for ${durationMinutes}min task, trying to find any available time`);
-      
-      // Try to squeeze it in between existing events, but only before 10 PM
-      for (let i = 0; i < sortedEvents.length - 1; i++) {
-        const currentEvent = sortedEvents[i];
-        const nextEvent = sortedEvents[i + 1];
-        
-        const gapStart = new Date(currentEvent.end.getTime() + bufferMs);
-        const gapEnd = new Date(nextEvent.start.getTime() - bufferMs);
-        const gapDuration = gapEnd.getTime() - gapStart.getTime();
-        
-        // Only schedule if the slot ends before 10 PM
-        const slotEnd = new Date(gapStart.getTime() + durationMinutes * 60 * 1000);
-        if (gapDuration >= durationMinutes * 60 * 1000 && slotEnd.getTime() <= dayEnd.getTime()) {
-          console.log(`✅ Found tight slot: ${gapStart.toLocaleTimeString()}-${slotEnd.toLocaleTimeString()}`);
-          return {
-            start: gapStart,
-            end: slotEnd,
-          };
-        }
-      }
       
       // If still no slots, return null
-      console.log(`❌ No available slots found for ${durationMinutes}min task (must end before 10 PM)`);
+      console.log(`❌ No available slots found for ${durationMinutes}min task (must end before 11 PM)`);
       return null;
     };
 
@@ -225,17 +269,27 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     for (const task of tasksToSchedule) {
       console.log(`🔍 Processing task: ${task.title} (${task.priority})`);
       
-      // Check if task is already scheduled
+      // Check if task is already scheduled (but allow duplicates with different priorities)
       const existingTask = await prisma.task.findFirst({
         where: {
           userId: user.id,
           title: task.title,
+          priority: task.priority,
           scheduled: true
         }
       });
       
-      if (existingTask) {
-        console.warn(`Task "${task.title}" is already scheduled, skipping.`);
+      // Also check if there's already a calendar event for this task
+      const existingCalendarEvent = await prisma.calendarEvent.findFirst({
+        where: {
+          userId: user.id,
+          title: task.title,
+          source: "task_bank"
+        }
+      });
+      
+      if (existingTask || existingCalendarEvent) {
+        console.warn(`Task "${task.title}" with priority "${task.priority}" is already scheduled, skipping.`);
         continue;
       }
 
@@ -261,6 +315,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           where:{
             userId: user.id,
             title: task.title,
+            priority: task.priority,
             scheduled: false
           },
           data: {
@@ -352,7 +407,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       totalScheduled: newScheduledEntries.length,
       totalFailed: unscheduledTasks.length
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Failed to add calendar entries:", error);
     res.status(500).json({ message: "Failed to update calendar" });
   }
@@ -388,8 +443,18 @@ async function fetchGoogleCalendarEvents(accessToken?: string) {
       end: new Date(event.end?.dateTime || event.end?.date || ""),
       source: "google",
     }));
-  } catch (err) {
-    console.error("❌ Error fetching Google events for task bank conflict detection:", err);
-    return []; // Don't crash everything — fallback to DB events only
+  } catch (error: any) {
+    console.error("❌ Error fetching Google events for task bank conflict detection:", error);
+    
+    // Check if it's an authentication error
+    if (error.message && error.message.includes('invalid authentication credentials')) {
+      console.warn("🔐 Google Calendar authentication expired - user needs to re-authenticate");
+      // Return empty array but don't throw - let the app continue with local events
+      return [];
+    }
+    
+    // For other errors, still return empty array but log the error
+    console.error("❌ Unexpected error fetching Google Calendar events:", error);
+    return [];
   }
 }

@@ -55,23 +55,23 @@ export async function getTaskSchedule({
   
   console.log(`⏰ Current time: ${now.format('HH:mm')}, Hour: ${now.hour()}`);
   
-  // Check if it's too late today (after 10 PM)
-  const isLateToday = now.hour() >= 22;
-  console.log(`🌙 Is late today (after 10 PM): ${isLateToday}`);
+  // Check if it's too late today (after 12 PM/midnight)
+  const isLateToday = now.hour() >= 24;
+  console.log(`🌙 Is late today (after 12 PM/midnight): ${isLateToday}`);
   
   if (isLateToday) {
-    console.log(`🌙 Too late today (after 10 PM) - no scheduling for today`);
+    console.log(`🌙 Too late today (after 12 PM/midnight) - no scheduling for today`);
     return {
       recommendedStart: null,
       recommendedEnd: null,
-      reason: "Too late today (after 10 PM) - no available slots",
+      reason: "Too late today (after 12 PM/midnight) - no available slots",
     };
   }
   
   console.log(`✅ Proceeding with today's scheduling`);
   
   const minAllowedStartOfDay = today.clone().hour(8); // 8:00 AM today
-  const maxAllowedEndOfDay = today.clone().hour(21); // 9:00 PM today
+  const maxAllowedEndOfDay = today.clone().hour(21); // 9:00 PM today (instead of 11 PM)
   
   // More flexible start time - start from now if it's within allowed hours, otherwise from 8 AM
   const earliestPossibleStartTime = now.isBefore(minAllowedStartOfDay) 
@@ -85,65 +85,170 @@ export async function getTaskSchedule({
   const availableSlots = [];
   const currentTime = earliestPossibleStartTime.clone();
   
+  // Use smaller buffer for late-day scheduling to be more flexible
+  const isLateDay = now.hour() >= 18; // After 6 PM
+  
   // Convert all events to the correct timezone for proper comparison
   const timezoneEvents = events.map(event => ({
     ...event,
-    start: moment.tz(event.start, validatedTimeZone).format(),
-    end: moment.tz(event.end, validatedTimeZone).format()
+    start: event.start, // Keep original format, parse when needed
+    end: event.end
   }));
   
   try {
     console.log(`🔍 Calculating slots for "${taskTitle}" (${durationMinutes}min) from ${currentTime.format('HH:mm')} to ${maxAllowedEndOfDay.format('HH:mm')}`);
     console.log(`📅 Events to check against:`, events.map(e => `${e.title} (${moment(e.start).format('HH:mm')}-${moment(e.end).format('HH:mm')})`));
     console.log(`🌍 Timezone-adjusted events:`, timezoneEvents.map(e => `${e.title} (${moment(e.start).format('HH:mm')}-${moment(e.end).format('HH:mm')})`));
+    console.log(`⏰ Using ${isLateDay ? '5-minute' : '15-minute'} buffer (${isLateDay ? 'late day' : 'normal'})`);
     
-    while (currentTime.isBefore(maxAllowedEndOfDay)) {
-      const slotEnd = currentTime.clone().add(durationMinutes, 'minutes');
-      
-      // Check if this slot is within allowed hours
-      if (slotEnd.isAfter(maxAllowedEndOfDay)) break;
-      
-      // Check for lunch break conflict (only if it's not too late)
+    // Sort events by start time for better gap detection
+    const sortedEvents = [...timezoneEvents].sort((a, b) => 
+      moment.tz(a.start, validatedTimeZone).valueOf() - moment.tz(b.start, validatedTimeZone).valueOf()
+    );
+    
+    console.log(`📋 Sorted events for gap detection:`, sortedEvents.map(e => 
+      `${e.title} (${moment.tz(e.start, validatedTimeZone).format('HH:mm')}-${moment.tz(e.end, validatedTimeZone).format('HH:mm')})`
+    ));
+    
+    // Find potential slots by looking at gaps between events
+    const potentialSlots = [];
+    
+    // Check slot starting from current time
+    const slotStart = currentTime.clone();
+    const slotEnd = slotStart.clone().add(durationMinutes, 'minutes');
+    
+    // Check if initial slot works
+    if (slotEnd.isBefore(maxAllowedEndOfDay)) {
       const lunchStart = today.clone().hour(12).minute(0);
       const lunchEnd = today.clone().hour(13).minute(0);
-      const overlapsLunch = currentTime.isBefore(lunchEnd) && slotEnd.isAfter(lunchStart);
+      const overlapsLunch = slotStart.isBefore(lunchEnd) && slotEnd.isAfter(lunchStart);
       
       if (!overlapsLunch) {
-        // Check for conflicts with existing events
         let hasConflict = false;
-        for (const event of timezoneEvents) {
+        for (const event of sortedEvents) {
           const eventStart = moment.tz(event.start, validatedTimeZone);
           const eventEnd = moment.tz(event.end, validatedTimeZone);
-          const bufferMs = 15 * 60 * 1000; // Reduced buffer to 15 minutes
+          const bufferMs = isLateDay ? 5 * 60 * 1000 : 15 * 60 * 1000;
           
-          // Check if current slot overlaps with existing event
           const slotOverlapsEvent = (
-            currentTime.isBefore(eventEnd.clone().add(bufferMs, 'milliseconds')) &&
+            slotStart.isBefore(eventEnd.clone().add(bufferMs, 'milliseconds')) &&
             slotEnd.isAfter(eventStart.clone().subtract(bufferMs, 'milliseconds'))
           );
           
           if (slotOverlapsEvent) {
-            console.log(`⚠️ Conflict detected: "${taskTitle}" (${currentTime.format('HH:mm')}-${slotEnd.format('HH:mm')}) conflicts with "${event.title}" (${eventStart.format('HH:mm')}-${eventEnd.format('HH:mm')})`);
+            console.log(`⚠️ Initial slot conflict: "${taskTitle}" (${slotStart.format('HH:mm')}-${slotEnd.format('HH:mm')}) conflicts with "${event.title}" (${eventStart.format('HH:mm')}-${eventEnd.format('HH:mm')})`);
             hasConflict = true;
             break;
           }
         }
         
         if (!hasConflict) {
-          console.log(`✅ Available slot: ${currentTime.format('HH:mm')}-${slotEnd.format('HH:mm')}`);
-          availableSlots.push({
-            start: currentTime.clone(),
+          console.log(`✅ Initial slot available: ${slotStart.format('HH:mm')}-${slotEnd.format('HH:mm')}`);
+          potentialSlots.push({
+            start: slotStart.clone(),
             end: slotEnd.clone()
           });
+        }
+      }
+    }
+    
+    // Check gaps between events
+    for (let i = 0; i < sortedEvents.length; i++) {
+      const currentEvent = sortedEvents[i];
+      const nextEvent = sortedEvents[i + 1];
+      
+      const currentEventEnd = moment.tz(currentEvent.end, validatedTimeZone);
+      const nextEventStart = nextEvent ? moment.tz(nextEvent.start, validatedTimeZone) : maxAllowedEndOfDay;
+      
+      console.log(`🔍 Checking gap between "${currentEvent.title}" (ends ${currentEventEnd.format('HH:mm')}) and "${nextEvent?.title || 'end of day'}" (starts ${nextEventStart.format('HH:mm')})`);
+      
+      // Try to fit a slot in the gap
+      let gapStart = currentEventEnd.clone().add(isLateDay ? 5 : 15, 'minutes'); // Add buffer after current event
+      let gapEnd = nextEventStart.clone().subtract(isLateDay ? 5 : 15, 'minutes'); // Subtract buffer before next event
+      
+      // Ensure gap is after current time and before max allowed end
+      gapStart = moment.max(gapStart, currentTime);
+      gapEnd = moment.min(gapEnd, maxAllowedEndOfDay);
+      
+      console.log(`📏 Gap window: ${gapStart.format('HH:mm')} - ${gapEnd.format('HH:mm')} (${gapEnd.diff(gapStart, 'minutes')} minutes available)`);
+      
+      if (gapStart.isBefore(gapEnd)) {
+        const slotEnd = gapStart.clone().add(durationMinutes, 'minutes');
+        
+        console.log(`⏱️ Task needs ${durationMinutes} minutes, slot would end at ${slotEnd.format('HH:mm')}`);
+        
+        if (slotEnd.isBefore(gapEnd) || slotEnd.isSame(gapEnd)) {
+          // Check for lunch break conflict
+          const lunchStart = today.clone().hour(12).minute(0);
+          const lunchEnd = today.clone().hour(13).minute(0);
+          const overlapsLunch = gapStart.isBefore(lunchEnd) && slotEnd.isAfter(lunchStart);
+          
+          if (!overlapsLunch) {
+            console.log(`✅ Found gap slot: ${gapStart.format('HH:mm')}-${slotEnd.format('HH:mm')} between events`);
+            potentialSlots.push({
+              start: gapStart.clone(),
+              end: slotEnd.clone()
+            });
+          } else {
+            console.log(`🍽️ Gap slot overlaps lunch: ${gapStart.format('HH:mm')}-${slotEnd.format('HH:mm')}`);
+          }
         } else {
-          console.log(`❌ Slot ${currentTime.format('HH:mm')}-${slotEnd.format('HH:mm')} has conflict`);
+          console.log(`❌ Gap too small: need ${durationMinutes}min but only have ${gapEnd.diff(gapStart, 'minutes')}min`);
         }
       } else {
-        console.log(`🍽️ Slot ${currentTime.format('HH:mm')}-${slotEnd.format('HH:mm')} overlaps lunch`);
+        console.log(`❌ No valid gap: gapStart (${gapStart.format('HH:mm')}) >= gapEnd (${gapEnd.format('HH:mm')})`);
       }
-      
-      currentTime.add(30, 'minutes'); // Move to next 30-minute slot for better spacing
     }
+    
+    // If no gap slots found, try incremental approach as fallback
+    if (potentialSlots.length === 0) {
+      console.log(`🔍 No gap slots found, trying incremental approach`);
+      let incrementalTime = currentTime.clone();
+      
+      while (incrementalTime.isBefore(maxAllowedEndOfDay)) {
+        const slotEnd = incrementalTime.clone().add(durationMinutes, 'minutes');
+        
+        if (slotEnd.isAfter(maxAllowedEndOfDay)) break;
+        
+        // Check for lunch break conflict
+        const lunchStart = today.clone().hour(12).minute(0);
+        const lunchEnd = today.clone().hour(13).minute(0);
+        const overlapsLunch = incrementalTime.isBefore(lunchEnd) && slotEnd.isAfter(lunchStart);
+        
+        if (!overlapsLunch) {
+          let hasConflict = false;
+          for (const event of sortedEvents) {
+            const eventStart = moment.tz(event.start, validatedTimeZone);
+            const eventEnd = moment.tz(event.end, validatedTimeZone);
+            const bufferMs = isLateDay ? 5 * 60 * 1000 : 15 * 60 * 1000;
+            
+            const slotOverlapsEvent = (
+              incrementalTime.isBefore(eventEnd.clone().add(bufferMs, 'milliseconds')) &&
+              slotEnd.isAfter(eventStart.clone().subtract(bufferMs, 'milliseconds'))
+            );
+            
+            if (slotOverlapsEvent) {
+              console.log(`⚠️ Incremental conflict: "${taskTitle}" (${incrementalTime.format('HH:mm')}-${slotEnd.format('HH:mm')}) conflicts with "${event.title}" (${eventStart.format('HH:mm')}-${eventEnd.format('HH:mm')})`);
+              hasConflict = true;
+              break;
+            }
+          }
+          
+          if (!hasConflict) {
+            console.log(`✅ Incremental slot available: ${incrementalTime.format('HH:mm')}-${slotEnd.format('HH:mm')}`);
+            potentialSlots.push({
+              start: incrementalTime.clone(),
+              end: slotEnd.clone()
+            });
+          }
+        }
+        
+        incrementalTime = incrementalTime.add(30, 'minutes');
+      }
+    }
+    
+    availableSlots.push(...potentialSlots);
+    
   } catch (error) {
     console.error(`❌ Error in slot calculation for "${taskTitle}":`, error);
     // Return a fallback slot if there's an error
@@ -154,8 +259,150 @@ export async function getTaskSchedule({
     };
   }
 
-  // If still no available slots, return null instead of scheduling for tomorrow
+  // If still no available slots, try more aggressive approach for late-day scheduling
   if (availableSlots.length === 0) {
+    if (isLateDay) {
+      console.log(`🌙 Late day detected - trying aggressive slot finding with minimal buffer`);
+      
+      // Try to find any slot that fits, even with minimal buffer
+      const aggressiveSlots = [];
+      
+      // Use the same gap detection approach but with minimal buffer
+      const sortedEvents = [...timezoneEvents].sort((a, b) => 
+        moment.tz(a.start, validatedTimeZone).valueOf() - moment.tz(b.start, validatedTimeZone).valueOf()
+      );
+      
+      // Check initial slot with minimal buffer
+      const aggressiveSlotStart = earliestPossibleStartTime.clone();
+      const aggressiveSlotEnd = aggressiveSlotStart.clone().add(durationMinutes, 'minutes');
+      
+      if (aggressiveSlotEnd.isBefore(maxAllowedEndOfDay)) {
+        const lunchStart = today.clone().hour(12).minute(0);
+        const lunchEnd = today.clone().hour(13).minute(0);
+        const overlapsLunch = aggressiveSlotStart.isBefore(lunchEnd) && aggressiveSlotEnd.isAfter(lunchStart);
+        
+        if (!overlapsLunch) {
+          let hasConflict = false;
+          for (const event of sortedEvents) {
+            const eventStart = moment.tz(event.start, validatedTimeZone);
+            const eventEnd = moment.tz(event.end, validatedTimeZone);
+            const minimalBufferMs = 2 * 60 * 1000; // 2 minutes
+            
+            const slotOverlapsEvent = (
+              aggressiveSlotStart.isBefore(eventEnd.clone().add(minimalBufferMs, 'milliseconds')) &&
+              aggressiveSlotEnd.isAfter(eventStart.clone().subtract(minimalBufferMs, 'milliseconds'))
+            );
+            
+            if (slotOverlapsEvent) {
+              hasConflict = true;
+              break;
+            }
+          }
+          
+          if (!hasConflict) {
+            console.log(`✅ Found aggressive initial slot: ${aggressiveSlotStart.format('HH:mm')}-${aggressiveSlotEnd.format('HH:mm')}`);
+            aggressiveSlots.push({
+              start: aggressiveSlotStart.clone(),
+              end: aggressiveSlotEnd.clone()
+            });
+          }
+        }
+      }
+      
+      // Check gaps between events with minimal buffer
+      for (let i = 0; i < sortedEvents.length; i++) {
+        const currentEvent = sortedEvents[i];
+        const nextEvent = sortedEvents[i + 1];
+        
+        const currentEventEnd = moment.tz(currentEvent.end, validatedTimeZone);
+        const nextEventStart = nextEvent ? moment.tz(nextEvent.start, validatedTimeZone) : maxAllowedEndOfDay;
+        
+        // Try to fit a slot in the gap with minimal buffer
+        let gapStart = currentEventEnd.clone().add(2, 'minutes'); // Minimal buffer
+        let gapEnd = nextEventStart.clone().subtract(2, 'minutes'); // Minimal buffer
+        
+        // Ensure gap is after current time and before max allowed end
+        gapStart = moment.max(gapStart, earliestPossibleStartTime);
+        gapEnd = moment.min(gapEnd, maxAllowedEndOfDay);
+        
+        if (gapStart.isBefore(gapEnd)) {
+          const slotEnd = gapStart.clone().add(durationMinutes, 'minutes');
+          
+          if (slotEnd.isBefore(gapEnd) || slotEnd.isSame(gapEnd)) {
+            // Check for lunch break conflict
+            const lunchStart = today.clone().hour(12).minute(0);
+            const lunchEnd = today.clone().hour(13).minute(0);
+            const overlapsLunch = gapStart.isBefore(lunchEnd) && slotEnd.isAfter(lunchStart);
+            
+            if (!overlapsLunch) {
+              console.log(`✅ Found aggressive gap slot: ${gapStart.format('HH:mm')}-${slotEnd.format('HH:mm')} between events`);
+              aggressiveSlots.push({
+                start: gapStart.clone(),
+                end: slotEnd.clone()
+              });
+            }
+          }
+        }
+      }
+      
+      // If still no slots, try incremental approach with minimal buffer
+      if (aggressiveSlots.length === 0) {
+        console.log(`🔍 No aggressive gap slots found, trying incremental approach with minimal buffer`);
+        let incrementalTime = earliestPossibleStartTime.clone();
+        
+        while (incrementalTime.isBefore(maxAllowedEndOfDay)) {
+          const slotEnd = incrementalTime.clone().add(durationMinutes, 'minutes');
+          
+          if (slotEnd.isAfter(maxAllowedEndOfDay)) break;
+          
+          // Check for lunch break conflict
+          const lunchStart = today.clone().hour(12).minute(0);
+          const lunchEnd = today.clone().hour(13).minute(0);
+          const overlapsLunch = incrementalTime.isBefore(lunchEnd) && slotEnd.isAfter(lunchStart);
+          
+          if (!overlapsLunch) {
+            let hasConflict = false;
+            for (const event of sortedEvents) {
+              const eventStart = moment.tz(event.start, validatedTimeZone);
+              const eventEnd = moment.tz(event.end, validatedTimeZone);
+              const minimalBufferMs = 2 * 60 * 1000; // 2 minutes
+              
+              const slotOverlapsEvent = (
+                incrementalTime.isBefore(eventEnd.clone().add(minimalBufferMs, 'milliseconds')) &&
+                slotEnd.isAfter(eventStart.clone().subtract(minimalBufferMs, 'milliseconds'))
+              );
+              
+              if (slotOverlapsEvent) {
+                hasConflict = true;
+                break;
+              }
+            }
+            
+            if (!hasConflict) {
+              console.log(`✅ Found aggressive incremental slot: ${incrementalTime.format('HH:mm')}-${slotEnd.format('HH:mm')}`);
+              aggressiveSlots.push({
+                start: incrementalTime.clone(),
+                end: slotEnd.clone()
+              });
+            }
+          }
+          
+          incrementalTime = incrementalTime.add(15, 'minutes'); // Try every 15 minutes
+        }
+      }
+      
+      if (aggressiveSlots.length > 0) {
+        const selectedSlot = aggressiveSlots[0]; // Take the first available slot
+        console.log(`🎯 Selected aggressive slot for "${taskTitle}": ${selectedSlot.start.format('HH:mm')}-${selectedSlot.end.format('HH:mm')}`);
+        
+        return {
+          recommendedStart: selectedSlot.start.toDate(),
+          recommendedEnd: selectedSlot.end.toDate(),
+          reason: `Scheduled with minimal buffer due to late-day constraints`,
+        };
+      }
+    }
+    
     console.log(`❌ No available slots for "${taskTitle}" today`);
     return {
       recommendedStart: null,
@@ -172,7 +419,7 @@ export async function getTaskSchedule({
     for (const event of timezoneEvents) {
       const eventStart = moment.tz(event.start, validatedTimeZone);
       const eventEnd = moment.tz(event.end, validatedTimeZone);
-      const bufferMs = 15 * 60 * 1000;
+      const bufferMs = isLateDay ? 5 * 60 * 1000 : 15 * 60 * 1000; // 5 min buffer if late day, 15 min otherwise
       
       // Check if this slot conflicts with any existing event
       if (

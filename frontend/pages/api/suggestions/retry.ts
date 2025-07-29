@@ -89,7 +89,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       environment: originalSuggestion.environment || "home",
       weather: originalSuggestion.weather || "unknown",
       calendarConflicts: safeEvents,
-      timeWindow: '8AM–10PM',
+      timeWindow: '8AM–12PM',
       timeZone: originalSuggestion.timeZone || 'UTC',
       avoidTitles: allScheduledTasksToday,
       userHistory,

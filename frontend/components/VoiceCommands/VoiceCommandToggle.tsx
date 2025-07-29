@@ -42,9 +42,6 @@ export default function VoiceCommandToggle({ onToggle, isListening }: VoiceComma
             <li><strong>Delete task [name]</strong> - Remove task</li>
             <li><strong>Create task [description]</strong> - Add new task</li>
             <li><strong>List tasks</strong> - Show recent tasks</li>
-            <li><strong>Create event [description]</strong> - Add calendar event</li>
-            <li><strong>Delete event [name]</strong> - Remove calendar event</li>
-            <li><strong>List events</strong> - Show recent events</li>
             <li><strong>Help</strong> - Show this help</li>
           </ul>
         </div>
