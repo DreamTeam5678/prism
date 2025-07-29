@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import styles from "./GamesModal.module.css";
+import { set } from "date-fns";
+import { Repeat2 } from "lucide-react";
 
 
 //props for games modal
@@ -21,7 +23,7 @@ interface Game {
   icon: string;
   component: React.ComponentType<any>;
 }
-
+/*
 // Simple Click Game Component
 
 //functionality for click frenzy game
@@ -75,7 +77,7 @@ const ClickGame: React.FC<{ onScore: (score: number) => void }> = ({ onScore }) 
       {timeLeft === 0 && <p className={styles.gameResult}>Final Score: {score}</p>}
     </div>
   );
-};
+};*/
 
 // Memory Game Component
 const MemoryGame: React.FC<{ onScore: (score: number) => void }> = ({ onScore }) => {
@@ -129,6 +131,9 @@ const MemoryGame: React.FC<{ onScore: (score: number) => void }> = ({ onScore })
       <p>Find all matching pairs!</p>
       <div className={styles.gameStats}>
         <span>Moves: {moves}</span>
+       <button className={styles.retryButton} onClick={() => setIsActive(false)}>
+          <Repeat2 />
+        </button>
         <span>Matched: {matched.length / 2}/8</span>
       </div>
       <div className={styles.memoryGrid}>
@@ -286,7 +291,10 @@ const SpeedTypingGame: React.FC<{ onScore: (score: number) => void }> = ({ onSco
       <h3>⌨️ Speed Typing</h3>
       <p>Type the word as fast as you can!</p>
       <div className={styles.gameStats}>
-        <span>Score: {score}</span>
+        <span style={{marginRight: '-25px'}}>Score: {score}</span>
+        <button className={styles.retryButton} onClick={() => setIsActive(false)}>
+          <Repeat2 />
+        </button>
         <span>Time: {timeLeft}s</span>
       </div>
       {!isActive ? (
@@ -463,7 +471,10 @@ const PatternGame: React.FC<{ onScore: (score: number) => void }> = ({ onScore }
       <h3>🔮 Pattern Memory</h3>
       <p>Remember and repeat the pattern!</p>
       <div className={styles.gameStats}>
-        <span>Score: {score}</span>
+        <span style={{marginRight: '15px', marginLeft: '20px'}}>Score: {score}</span>
+        <button className={styles.retryButton} onClick={() => setIsActive(false)}>
+          <Repeat2 />
+        </button>
         <span>Pattern Length: {pattern.length}</span>
       </div>
       {!isActive ? (
