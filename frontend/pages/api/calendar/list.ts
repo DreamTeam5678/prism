@@ -112,12 +112,18 @@ async function fetchGoogleCalendarEvents(accessToken?: string) {
       end: event.end?.dateTime || event.end?.date || "",
       source: "google",
     }));
-  } catch (err: any) {
-    if (err.code === 401) {
-      console.warn("⚠️ Google Calendar authentication failed - token may be expired. User should re-authenticate.");
-      return []; // Graceful fallback to local events only
+  } catch (error: any) {
+    console.error("❌ Error fetching Google events:", error);
+    
+    // Check if it's an authentication error
+    if (error.message && error.message.includes('invalid authentication credentials')) {
+      console.warn("🔐 Google Calendar authentication expired - user needs to re-authenticate");
+      // Return empty array but don't throw - let the app continue with local events
+      return [];
     }
-    console.error("❌ Error fetching Google events:", err);
-    return []; // Don't crash everything — fallback to DB events only
+    
+    // For other errors, still return empty array but log the error
+    console.error("❌ Unexpected error fetching Google Calendar events:", error);
+    return [];
   }
 }

@@ -106,6 +106,10 @@ export async function getTaskSchedule({
       moment.tz(a.start, validatedTimeZone).valueOf() - moment.tz(b.start, validatedTimeZone).valueOf()
     );
     
+    console.log(`📋 Sorted events for gap detection:`, sortedEvents.map(e => 
+      `${e.title} (${moment.tz(e.start, validatedTimeZone).format('HH:mm')}-${moment.tz(e.end, validatedTimeZone).format('HH:mm')})`
+    ));
+    
     // Find potential slots by looking at gaps between events
     const potentialSlots = [];
     

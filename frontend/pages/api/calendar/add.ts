@@ -407,7 +407,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       totalScheduled: newScheduledEntries.length,
       totalFailed: unscheduledTasks.length
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Failed to add calendar entries:", error);
     res.status(500).json({ message: "Failed to update calendar" });
   }
@@ -443,12 +443,18 @@ async function fetchGoogleCalendarEvents(accessToken?: string) {
       end: new Date(event.end?.dateTime || event.end?.date || ""),
       source: "google",
     }));
-  } catch (err: any) {
-    if (err.code === 401) {
-      console.warn("⚠️ Google Calendar authentication failed for task bank conflict detection - token may be expired.");
-      return []; // Graceful fallback to local events only
+  } catch (error: any) {
+    console.error("❌ Error fetching Google events for task bank conflict detection:", error);
+    
+    // Check if it's an authentication error
+    if (error.message && error.message.includes('invalid authentication credentials')) {
+      console.warn("🔐 Google Calendar authentication expired - user needs to re-authenticate");
+      // Return empty array but don't throw - let the app continue with local events
+      return [];
     }
-    console.error("❌ Error fetching Google events for task bank conflict detection:", err);
-    return []; // Don't crash everything — fallback to DB events only
+    
+    // For other errors, still return empty array but log the error
+    console.error("❌ Unexpected error fetching Google Calendar events:", error);
+    return [];
   }
 }
