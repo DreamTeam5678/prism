@@ -8,7 +8,7 @@ import GamesModal from "@/components/Games/GamesModal";
 export default function Calendar() {
   const { xp, streak } = useXP();
   const [showGames, setShowGames] = useState(false);
-  const level = Math.floor(xp / 100);
+  const level = Math.floor(xp / 1000);
 
   return (
     <div>
