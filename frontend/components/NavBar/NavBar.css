@@ -1,7 +1,8 @@
 .nav-bar {
   width: 80px;       
   height: 100vh;         
-  background-color: #ffffffe6;
+  background: linear-gradient(140deg,#d3eace, #eadfca, #ece4d6, #acc8cbc6);
+
   box-shadow: 2px 0 12px rgba(0, 0, 0, 0.419);
   display: flex;
   flex-direction: column; 
@@ -68,7 +69,7 @@
   border-radius: 500px;
   font-size: 2rem;
   font-weight: 600;
-  color: #4b2916cd;
+  color: #3a5654cd;
   text-decoration: none;
   transition: background-color 0.2s ease;
   display: block;

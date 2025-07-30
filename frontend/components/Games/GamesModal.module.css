@@ -169,7 +169,7 @@
 
 .backButton {
   background: rgba(255, 255, 255, 0.4);
-  color: #4b2916cd;
+  color: #3b554cb9;
   border: 1px solid rgba(255, 255, 255, 0.3);
   padding: 0.75rem 1.5rem;
   border-radius: 10px;
@@ -194,12 +194,16 @@
   margin: 0 0 0.5rem 0;
   font-size: 1.5rem;
   font-weight: 600;
+  color: #fffbfb;
+  text-shadow: 0px 0px 10px #475e5deb;
+  
 }
 
 .gameContainer p {
   margin: 0 0 1rem 0;
-  color: #4b2916cd;
+  color: #ffffffb9;
   opacity: 0.8;
+
 }
 
 .gameStats {
@@ -208,10 +212,12 @@
   margin-bottom: 1.5rem;
   font-weight: bold;
   font-size: 1.1rem;
+  color: #475e5d;
+  text-shadow: #3333334d 0px 0px 10px;
 }
 
 .gameButton {
-  background: linear-gradient(135deg, #c89247, #a67c3a);
+  background: linear-gradient(135deg, #78bbb9, #a67c3a);
   color: white;
   border: none;
   padding: 1rem 2rem;
