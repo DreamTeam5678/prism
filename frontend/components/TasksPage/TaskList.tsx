@@ -446,7 +446,8 @@ export default function TaskList() {
             min-height: 100vh;
             padding: 20px;
             padding-top: 0px; 
-            color:rgb(37, 23, 15);
+            color:rgb(15, 37, 36);
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
           }
 
         .task-container {
@@ -463,10 +464,12 @@ export default function TaskList() {
 
         .task-title {
           font-size: 2.5rem;
-          font-weight: 700;
-          color: rgb(88, 63, 48);
+          font-weight: 500;
+          color: rgb(43, 77, 73);
           margin-bottom: 20px;
           text-shadow: 0 2px 4px rgba(255,255,255,0.8), 0 0 10px rgba(255,255,255,0.5);
+          font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+          letter-spacing: 2px;
         }
 
         .task-stats {
@@ -474,7 +477,7 @@ export default function TaskList() {
           justify-content: center;
           gap: 40px;
           margin-top: 20px;
-          color:rgb(59, 39, 28);
+          color:rgba(43, 77, 73, 0.75);
         }
 
         .stat-item {
@@ -485,20 +488,20 @@ export default function TaskList() {
           backdrop-filter: blur(10px);
           padding: 15px 25px;
           border-radius: 15px;
-          border: 1px solid rgba(255, 255, 255, 0.3);
+          border: 2px ridge rgba(212, 255, 243, 0.3);
           box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
         }
 
         .stat-number {
           font-size: 1.8rem;
           font-weight: 700;
-          color: hsl(23, 25.40%, 26.30%);
+          color: rgb(43, 77, 73);
           text-shadow: 0 1px 3px rgba(255,255,255,0.8);
         }
 
         .stat-label {
           font-size: 0.9rem;
-          color: rgba(86, 82, 82, 0.8);
+          color: rgba(43, 77, 73, 0.75);
           margin-top: 5px;
           font-weight: 600;
           text-shadow: 0 1px 2px rgba(255,255,255,0.6);
@@ -515,7 +518,7 @@ export default function TaskList() {
           backdrop-filter: blur(15px);
           border-radius: 20px;
           padding: 25px;
-          border: 1px solid rgba(255, 255, 255, 0.3);
+          border: 2px ridge rgba(214, 244, 235, 0.3);
           box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
 
@@ -525,15 +528,16 @@ export default function TaskList() {
           gap: 10px;
           font-size: 1.3rem;
           font-weight: 600;
-          color: rgb(62, 43, 31);
+          color: rgb(43, 77, 73);
           margin-bottom: 20px;
           padding-bottom: 10px;
           border-bottom: 2px solid rgba(113, 101, 96, 0.22);
-          color:rgb(95, 74, 57);
           margin-bottom: 20px;
           padding-bottom: 10px;
           border-bottom: 2px solid rgba(255, 255, 255, 0.3);
           text-shadow: 0 1px 3px rgba(255,255,255,0.8);
+          text-align: center;
+          justify-content: center;
         }
 
         .refresh-btn {

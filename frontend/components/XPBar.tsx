@@ -54,7 +54,7 @@ export default function XPBar({ xp, streak, onShowGames }: XPBarProps) {
           <div className={styles.xpBar}>
             <div
               className={`${styles.xpFill} ${xpGainEffect ? styles.xpGain : ""}`}
-              style={{ width: `${progressPercent}%` }}
+              style={{ width: ` ${progressPercent} %` }}
             ></div>
             <div className={styles.xpParticles}>
               {[...Array(5)].map((_, i) => (

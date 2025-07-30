@@ -7,7 +7,9 @@ export default function AchievementBar({ completed, total }) {
   return (
     <div className={styles["achievement-bar-container"]}>
       <div className={styles["achievement-bar-fill"]} style={{ width: `${percentage}%` }}>
+        <div className={styles["achievement-bar-fill-inner"]}>
         {Math.round(percentage)}%
+        </div>
       </div>
     </div>
   );
