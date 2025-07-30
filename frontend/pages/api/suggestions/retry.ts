@@ -5,8 +5,7 @@ import { authOptions } from "../auth/[...nextauth]";
 import prisma from "@/lib/prisma";
 import moment from "moment-timezone";
 import { mapTags } from '@/lib/tagEngine';
-import { getGPTSuggestion, getTaskSchedule } from "../../../lib/server/openaiClient";
-import { inferDuration } from '@/lib/utils/inferDuration';
+import { getGPTSuggestion } from "../../../lib/server/openaiClient";
 import { google } from 'googleapis';
 import { getToken } from 'next-auth/jwt';
 
@@ -43,8 +42,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const accessToken = token?.accessToken as string | undefined;
     const googleEvents = await fetchGoogleCalendarEvents(accessToken);
 
-    // Combine all events for conflict detection
-    const allEvents = [...localEvents, ...googleEvents];
+    // Filter out all-day events and 0-minute events from Google events
+    const validGoogleEvents = googleEvents.filter(event => {
+      const duration = event.end.getTime() - event.start.getTime();
+      const isZeroMinute = duration === 0;
+      const isAllDay = duration >= 24 * 60 * 60 * 1000; // 24 hours or more
+      return !isZeroMinute && !isAllDay;
+    });
+
+    // Filter out all-day events from local events
+    const validLocalEvents = localEvents.filter(event => {
+      const duration = event.end.getTime() - event.start.getTime();
+      const isZeroMinute = duration === 0;
+      const isAllDay = duration >= 24 * 60 * 60 * 1000; // 24 hours or more
+      return !isZeroMinute && !isAllDay;
+    });
+
+    // Combine all valid events for conflict detection
+    const allEvents = [...validLocalEvents, ...validGoogleEvents];
 
     console.log(`📊 Found ${localEvents.length} local events and ${googleEvents.length} Google events for retry`);
 
@@ -112,88 +127,30 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     const retry = filteredSuggestions[0];
-    const duration = inferDuration(retry.task, retry.priority);
-
-    // Get unscheduled task bank tasks for conflict detection
-    const taskBankTasks = await prisma.task.findMany({
-      where: { userId: user.id, scheduled: false, completed: false },
-    });
-
-    // Include task bank tasks in conflict detection
-    const taskBankEvents = taskBankTasks.map(task => {
-      let estimatedStart;
-      if (task.priority === 'high') {
-        estimatedStart = moment.tz(originalSuggestion.timeZone || 'America/Los_Angeles').startOf('day').hour(8).minute(0);
-      } else if (task.priority === 'medium') {
-        estimatedStart = moment.tz(originalSuggestion.timeZone || 'America/Los_Angeles').startOf('day').hour(13).minute(0);
-      } else {
-        estimatedStart = moment.tz(originalSuggestion.timeZone || 'America/Los_Angeles').startOf('day').hour(16).minute(0);
-      }
-      
-      const estimatedDuration = inferDuration(task.title, task.priority);
-      const estimatedEnd = estimatedStart.clone().add(estimatedDuration, 'minutes');
-      
-      return {
-        start: estimatedStart.toISOString(),
-        end: estimatedEnd.toISOString(),
-        title: `Task Bank: ${task.title}`,
-      };
-    });
-
-    const allEventsForSchedule = [...safeEvents, ...taskBankEvents];
     
-    console.log('🔄 Retry events for scheduling:', allEventsForSchedule.map(e => `${e.title} (${e.start}-${e.end})`));
-
-    const schedule = await getTaskSchedule({
-      taskTitle: retry.task,
-      priority: retry.priority as 'High' | 'Medium' | 'Low',
-      durationMinutes: duration,
-      mood: originalSuggestion.mood,
-      events: allEventsForSchedule,
-      timeZone: originalSuggestion.timeZone || 'America/Los_Angeles',
-    });
-
-    if (!schedule.recommendedStart || !schedule.recommendedEnd) {
-      // If no slots available today, keep the original time slot
-      console.log('🔄 No slots available today, keeping original time slot');
-      
-      const retrySuggestion = {
-        id: `retry_${Date.now()}`,
-        title: retry.task,
-        start: originalSuggestion.start,
-        end: originalSuggestion.end,
-        priority: retry.priority,
-        reason: retry.reason || '',
-        timestamp: originalSuggestion.timestamp || originalSuggestion.start,
-      };
-      
-      console.log('🔄 Retry suggestion keeping original time:', retrySuggestion);
-      return res.status(200).json(retrySuggestion);
+    // Use the original suggestion's time slot instead of finding a new one
+    const originalStart = new Date(originalSuggestion.start);
+    const originalEnd = new Date(originalSuggestion.end);
+    
+    // Validate that the original dates are valid
+    if (isNaN(originalStart.getTime()) || isNaN(originalEnd.getTime())) {
+      console.error('❌ Invalid original suggestion dates:', { start: originalSuggestion.start, end: originalSuggestion.end });
+      return res.status(500).json({ message: "Invalid date format in original suggestion" });
     }
 
-    // Validate that the dates are valid
-    const startDate = new Date(schedule.recommendedStart);
-    const endDate = new Date(schedule.recommendedEnd);
-    
-    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-      console.error('❌ Invalid dates from schedule:', { start: schedule.recommendedStart, end: schedule.recommendedEnd });
-      return res.status(500).json({ message: "Invalid date format from scheduling" });
-    }
-
-    // Return the new suggestion in the format expected by the frontend
-    // Don't create calendar event here - let it be processed normally
+    // Return the new suggestion using the original time slot
     const retrySuggestion = {
       id: `retry_${Date.now()}`, // Generate a unique ID for the retry
       title: retry.task,
-      start: startDate.toISOString(),
-      end: endDate.toISOString(),
+      start: originalStart.toISOString(),
+      end: originalEnd.toISOString(),
       priority: retry.priority,
       reason: retry.reason || '',
       // Add timestamp for compatibility with frontend expectations
-      timestamp: startDate.toISOString(),
+      timestamp: originalStart.toISOString(),
     };
     
-    console.log('🔄 Retry suggestion created:', retrySuggestion);
+    console.log('🔄 Retry suggestion created with original time slot:', retrySuggestion);
     return res.status(200).json(retrySuggestion);
 
   } catch (err: unknown) {

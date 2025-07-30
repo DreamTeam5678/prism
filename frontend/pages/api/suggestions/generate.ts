@@ -122,8 +122,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const suggestions = filterSimilarSuggestions(suggestionsRaw, gptScheduledTitlesToday);
 
   // Get unscheduled task bank tasks
-  const taskBankTasks = await prisma.task.findMany({
+  const taskBankTasksRaw = await prisma.task.findMany({
     where: { userId: user.id, scheduled: false, completed: false },
+  });
+
+  // Sort task bank tasks by priority: High (3) → Medium (2) → Low (1), then by creation time
+  const taskPriorityOrder = { 'high': 3, 'medium': 2, 'low': 1 };
+  const taskBankTasks = taskBankTasksRaw.sort((a, b) => {
+    const priorityA = taskPriorityOrder[a.priority.toLowerCase() as keyof typeof taskPriorityOrder] || 1;
+    const priorityB = taskPriorityOrder[b.priority.toLowerCase() as keyof typeof taskPriorityOrder] || 1;
+    
+    if (priorityA !== priorityB) {
+      return priorityB - priorityA; // High priority first
+    }
+    
+    // If same priority, sort by creation time (oldest first)
+    return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
   });
 
   console.log(`📋 Found ${taskBankTasks.length} unscheduled task bank tasks:`, taskBankTasks.map(t => `${t.title} (${t.priority})`));

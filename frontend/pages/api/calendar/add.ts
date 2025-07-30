@@ -58,10 +58,29 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
       return isValid;
     });
-    
-    const existingEvents = [...localEvents, ...validGoogleEvents];
 
-    console.log(`📊 Found ${localEvents.length} local events and ${validGoogleEvents.length} valid Google events for conflict detection (filtered out ${googleEvents.length - validGoogleEvents.length} 0-minute events)`);
+    // Also filter local events for all-day events
+    const validLocalEvents = localEvents.filter(event => {
+      const duration = event.end.getTime() - event.start.getTime();
+      const isZeroMinute = duration === 0;
+      const isAllDay = duration >= 24 * 60 * 60 * 1000; // 24 hours or more
+      const isValid = !isZeroMinute && !isAllDay; // Only include events that have real duration
+      
+      if (!isValid) {
+        if (isZeroMinute) {
+          console.log(`🚫 Filtering out 0-minute local event: ${event.title} (${event.start.toLocaleTimeString()}-${event.end.toLocaleTimeString()})`);
+        } else if (isAllDay) {
+          console.log(`🚫 Filtering out all-day local event: ${event.title} (${event.start.toLocaleTimeString()}-${event.end.toLocaleTimeString()}) duration: ${duration}ms`);
+        }
+      } else {
+        console.log(`✅ Keeping valid local event: ${event.title} (${event.start.toLocaleTimeString()}-${event.end.toLocaleTimeString()}) duration: ${duration}ms`);
+      }
+      return isValid;
+    });
+    
+    const existingEvents = [...validLocalEvents, ...validGoogleEvents];
+
+    console.log(`📊 Found ${validLocalEvents.length} local events and ${validGoogleEvents.length} valid Google events for conflict detection (filtered out ${localEvents.length - validLocalEvents.length} local events and ${googleEvents.length - validGoogleEvents.length} Google events)`);
 
     // This function will find the next available slot based on a set of existing events
     const getNextAvailableSlot = (
@@ -262,7 +281,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }));
     
     console.log(`📅 Occupied slots after filtering:`, occupiedSlots.map(s => `${s.start.toLocaleTimeString()}-${s.end.toLocaleTimeString()}`));
-    console.log(`🔍 Debug: existingEvents count: ${existingEvents.length}, validGoogleEvents count: ${validGoogleEvents.length}, localEvents count: ${localEvents.length}`);
+    console.log(`🔍 Debug: existingEvents count: ${existingEvents.length}, validGoogleEvents count: ${validGoogleEvents.length}, validLocalEvents count: ${validLocalEvents.length}`);
 
     const newScheduledEntries: any[] = []; // To store newly scheduled tasks and suggestions
 
@@ -357,32 +376,41 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         // Handle both suggestionText (from generate) and title (from retry) fields
         const suggestionTitle = suggestion.title || suggestion.suggestionText || "Untitled Suggestion";
 
+        // Check if this is a retry suggestion scheduled for tomorrow
+        const isRetryForTomorrow = suggestion.scheduledForTomorrow === true;
+        
         let isValidSuggestion = true;
-        for (const occupied of occupiedSlots) {
-          const occupiedStart = occupied.start;
-          const occupiedEnd = occupied.end;
+        
+        // Only check for conflicts if it's not a retry suggestion for tomorrow
+        if (!isRetryForTomorrow) {
+          for (const occupied of occupiedSlots) {
+            const occupiedStart = occupied.start;
+            const occupiedEnd = occupied.end;
 
-          // Check for overlap with buffer
-          if (
-            suggestionEnd.getTime() + bufferMs > occupiedStart.getTime() &&
-            suggestionStart.getTime() < occupiedEnd.getTime() + bufferMs
-          ) {
-            console.warn(`GPT suggestion conflict: "${suggestionTitle}" overlaps with an existing event or scheduled task.`);
-            isValidSuggestion = false;
-            break;
-          }
-
-          // Also check for the 12-1 PM lunch break explicitely for GPT suggestions
-          const lunchStart = new Date(suggestionStart.getFullYear(), suggestionStart.getMonth(), suggestionStart.getDate(), 12, 0, 0);
-          const lunchEnd = new Date(suggestionStart.getFullYear(), suggestionStart.getMonth(), suggestionStart.getDate(), 13, 0, 0);
-
-          if (
-              (suggestionEnd.getTime() > lunchStart.getTime() && suggestionStart.getTime() < lunchEnd.getTime())
-          ) {
-              console.warn(`GPT suggestion conflict: "${suggestionTitle}" overlaps with the lunch break.`);
+            // Check for overlap with buffer
+            if (
+              suggestionEnd.getTime() + bufferMs > occupiedStart.getTime() &&
+              suggestionStart.getTime() < occupiedEnd.getTime() + bufferMs
+            ) {
+              console.warn(`GPT suggestion conflict: "${suggestionTitle}" overlaps with an existing event or scheduled task.`);
               isValidSuggestion = false;
               break;
+            }
+
+            // Also check for the 12-1 PM lunch break explicitely for GPT suggestions
+            const lunchStart = new Date(suggestionStart.getFullYear(), suggestionStart.getMonth(), suggestionStart.getDate(), 12, 0, 0);
+            const lunchEnd = new Date(suggestionStart.getFullYear(), suggestionStart.getMonth(), suggestionStart.getDate(), 13, 0, 0);
+
+            if (
+                (suggestionEnd.getTime() > lunchStart.getTime() && suggestionStart.getTime() < lunchEnd.getTime())
+            ) {
+                console.warn(`GPT suggestion conflict: "${suggestionTitle}" overlaps with the lunch break.`);
+                isValidSuggestion = false;
+                break;
+            }
           }
+        } else {
+          console.log(`✅ Retry suggestion "${suggestionTitle}" scheduled for tomorrow - skipping conflict detection`);
         }
 
         if (isValidSuggestion) {

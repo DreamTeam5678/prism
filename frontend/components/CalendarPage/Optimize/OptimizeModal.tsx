@@ -230,6 +230,7 @@ export default function OptimizeModal({ onClose, setLoading }: OptimizeModalProp
   const handleAccept = (s: GPTSuggestion) => {
     setAccepted(prev => [...prev, s]);
     setResponded(prev => ({ ...prev, [s.id]: true }));
+    document.dispatchEvent(new Event("optimizeComplete"));
   };
 
   const handleReject = (s: GPTSuggestion) => {
@@ -296,8 +297,6 @@ export default function OptimizeModal({ onClose, setLoading }: OptimizeModalProp
           delete updated[s.id];
           return updated;
         });
-        
-        // Also remove the original suggestion from accepted state if it was accepted
         setAccepted(prev => prev.filter(item => item.id !== s.id));
       } else {
         setError("Failed to retry suggestion. Please try again.");
