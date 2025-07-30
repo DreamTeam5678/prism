@@ -5,6 +5,7 @@ import styles from "./GamesModal.module.css";
 import { set } from "date-fns";
 import { Keyboard, Repeat2 } from "lucide-react";
 import { Brain, Blocks } from "lucide-react";
+import { Puzzle } from "lucide-react";
 
 
 //props for games modal
@@ -425,6 +426,7 @@ const PatternGame: React.FC<{ onScore: (score: number) => void }> = ({ onScore }
   const [score, setScore] = useState(0);
   const [isActive, setIsActive] = useState(false);
   const [isShowingPattern, setIsShowingPattern] = useState(false);
+  const [patternLength, setPatternLength] = useState(3);
 
   
   useEffect(() => {
@@ -432,7 +434,8 @@ const PatternGame: React.FC<{ onScore: (score: number) => void }> = ({ onScore }
     if (isActive && !isShowingPattern && userPattern.length === pattern.length && pattern.length > 0) {
       //increases score count if user input matches current pattern
       if (JSON.stringify(userPattern) === JSON.stringify(pattern)) {
-        setScore(score + 10);
+        setScore(prev => prev + 10);
+        setPatternLength(prev => prev + 1);
         generateNewPattern();
         //resets active state
       } else {
@@ -453,7 +456,10 @@ const PatternGame: React.FC<{ onScore: (score: number) => void }> = ({ onScore }
   const generateNewPattern = () => {
     //selects pattern sequence by generating a random sequence of numbers 
     // and increasing difficulty as score increases
-    const newPattern = Array.from({ length: score + 3 }, () => Math.floor(Math.random() * 4));
+
+    const maxLength = 10;
+    const newLength = Math.min(maxLength, patternLength );
+    const newPattern = Array.from({ length: newLength }, () => Math.floor(Math.random() * 4));
     //sets pattern sequence and user input sequence to empty
     setPattern(newPattern);
     setUserPattern([]);
@@ -572,7 +578,7 @@ const ReactionGame: React.FC<{ onScore: (score: number) => void }> = ({ onScore 
     </div>
   );
 };
-
+*/
 // Word Puzzle Game Component
 const PuzzleGame: React.FC<{ onScore: (score: number) => void }> = ({ onScore }) => {
   const [scrambledWord, setScrambledWord] = useState('');
@@ -627,10 +633,16 @@ const PuzzleGame: React.FC<{ onScore: (score: number) => void }> = ({ onScore })
 
   return (
     <div className={styles.gameContainer}>
-      <h3>🧩 Word Puzzle</h3>
+      <div style = {{color: '#fffbfb'}}>
+        <Puzzle />
+      </div>
+      <h3> Word Puzzle</h3>
       <p>Unscramble the word!</p>
       <div className={styles.gameStats}>
-        <span>Score: {score}</span>
+        <span style= {{marginRight: '-25px'}}>Score: {score}</span>
+        <button className={styles.retryButton} onClick={() => setIsActive(false)}>
+          <Repeat2 />
+        </button>
         <span>Time: {timeLeft}s</span>
       </div>
       {!isActive ? (
@@ -656,7 +668,7 @@ const PuzzleGame: React.FC<{ onScore: (score: number) => void }> = ({ onScore })
       )}
     </div>
   );
-};*/
+};
 
 const games: Game[] = [
   /*{
@@ -708,7 +720,7 @@ const games: Game[] = [
     minLevel: 6,
     icon: '🔮',
     component: PatternGame
-  }
+  },
   /*
   {
     id: 'reaction',
@@ -717,7 +729,7 @@ const games: Game[] = [
     minLevel: 7,
     icon: '⚡',
     component: ReactionGame
-  },
+  },*/
   {
     id: 'puzzle',
     name: 'Word Puzzle',
@@ -725,7 +737,7 @@ const games: Game[] = [
     minLevel: 8,
     icon: '🧩',
     component: PuzzleGame
-  }*/
+  }
 ];
 
 export default function GamesModal({ isVisible, onClose, userLevel, userXP }: GamesModalProps) {
