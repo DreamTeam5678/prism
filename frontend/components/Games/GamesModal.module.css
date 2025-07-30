@@ -4,28 +4,39 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.154);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000001;
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(6px);
 }
 
 .modal {
-  background: linear-gradient(135deg, #fdf6e399, #c892475b);
-  backdrop-filter: blur(15px);
+   background: radial-gradient(circle at 20% 30%, rgba(255, 207, 192, 0.715), transparent 30%),
+                radial-gradient(circle at 80% 20%, rgba(135, 197, 192, 0.835), transparent 30%),
+                radial-gradient(circle at 50% 80%, rgba(162, 194, 152, 0.715), transparent 30%),
+                radial-gradient(circle at 70% 60%, rgba(213, 162, 213, 0.733), transparent 30%),
+                radial-gradient(circle at 40% 70%, rgba(162, 194, 152, 0.696), transparent 30%),
+                radial-gradient(circle at 20% 80%, rgba(135, 197, 192, 0.645), transparent 30%),
+                radial-gradient(circle at 60% 20%, rgba(255, 207, 192, 0.69), transparent 30%),
+                radial-gradient(circle at 80% 60%, rgba(135, 197, 192, 0.76), transparent 30%),
+                radial-gradient(circle at 30% 40%, rgba(162, 194, 152, 0.874), transparent 30%),
+                radial-gradient(circle at 60% 70%, rgba(194, 147, 194, 0.795), transparent 30%);
+  z-index: -1000;
+  backdrop-filter: blur(1px);
   border-radius: 20px;
   padding: 2rem;
-  max-width: 600px;
+  max-width: 620px;
   width: 90%;
   max-height: 80vh;
   overflow-y: auto;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  box-shadow: 0px 0px 10px rgba(255, 254, 254, 0.769);
   animation: modalSlideIn 0.3s ease;
   z-index: 1000002;
   position: relative;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 3px double rgba(199, 247, 252, 0.409);
+
 }
 
 @keyframes modalSlideIn {
@@ -46,22 +57,30 @@
   margin-bottom: 2rem;
   padding-bottom: 1rem;
   border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+  text-align: center;
+  align-items: center;
+   
 }
 
 .modalHeader h2 {
   margin: 0;
-  color: #4b2916cd;
+  color: #193e3dcd;
   font-size: 2rem;
-  font-weight: bold;
+  font-weight: 100;
+  text-align: center;
+  transform: translateX(210px);
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 3px;
 }
 
 .closeButton {
   background: none;
   border: none;
-  color: #4b2916cd;
+  color: #193e3dcd;
   font-size: 2rem;
   cursor: pointer;
-  padding: 0.5rem;
+  padding: 0.1rem 0.55rem;
   border-radius: 50%;
   transition: all 0.3s ease;
 }
@@ -69,17 +88,20 @@
 .closeButton:hover {
   background: rgba(75, 41, 22, 0.1);
   transform: scale(1.1);
+  
 }
 
 .levelInfo {
   text-align: center;
-  color: #4b2916cd;
+  color: #193e3de6;
   font-size: 1.1rem;
   margin-bottom: 1.5rem;
   padding: 0.5rem;
   background: rgba(255, 255, 255, 0.3);
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 3px groove rgba(255, 255, 255, 0.2);
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  font-weight: 600;
 }
 
 .gamesGrid {
@@ -87,18 +109,20 @@
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 1rem;
   margin-bottom: 1rem;
+  z-index: 100000000;
 }
 
 .gameCard {
-  background: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.317);
   backdrop-filter: blur(10px);
   border-radius: 15px;
   padding: 1.5rem;
   text-align: center;
   cursor: pointer;
   transition: all 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 3px ridge rgba(255, 255, 255, 0.3);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 100000000;
 }
 
 .gameCard:hover {
@@ -114,21 +138,23 @@
 }
 
 .gameCard h3 {
-  color: #4b2916cd;
+  color: #193e3de1;
   margin: 0 0 0.5rem 0;
-  font-size: 1.2rem;
-  font-weight: 600;
+  font-size: 1rem;
+  font-weight: 00;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  text-transform: uppercase;
 }
 
 .gameCard p {
-  color: #4b2916cd;
+  color: #193e3dbb;
   margin: 0 0 1rem 0;
   font-size: 0.9rem;
   opacity: 0.8;
 }
 
 .levelRequirement {
-  color: #4b2916cd;
+  color: #303739cd;
   font-size: 0.8rem;
   font-style: italic;
   opacity: 0.7;
@@ -346,6 +372,7 @@
 /* Speed Typing Game Styles */
 .typingGame {
   margin: 1rem 0;
+  padding-right: 23px;
 }
 
 .wordDisplay {
@@ -354,6 +381,8 @@
   margin-bottom: 1rem;
   color: white;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  transform: translateX(9px);
+  
 }
 
 .typingInput {
@@ -365,6 +394,9 @@
   background: rgba(255, 255, 255, 0.9);
   color: #333;
   text-align: center;
+  justify-content: center;
+  align-items: center;
+  
 }
 
 /* Math Game Styles */
@@ -519,3 +551,21 @@
   text-align: center;
   margin-bottom: 1rem;
 } 
+
+.retryButton {
+  
+  z-index: 100000;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: none;
+  border-radius: 1000px;
+  border: 1px solid rgba(232, 204, 185, 0.614);
+  font-size: 0.8rem;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  transform: translateX(18px);
+
+
+}
