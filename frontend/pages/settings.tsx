@@ -247,6 +247,7 @@ export default function ProfilePage() {
           display: flex;
           flex-direction: column;
           gap: 2rem;
+          height: 98vh;
         }
 
         .content-wrapper {
