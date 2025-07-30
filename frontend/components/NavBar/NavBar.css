@@ -36,15 +36,16 @@
   cursor: pointer;
   font-size: 1.2rem;
   font-weight: bold;
-  color: #4b2916cd;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  color: #164b3ccd;
+  box-shadow: 0 2px 8px rgba(62, 116, 94, 0.881);
   transition: all 0.3s ease;
 }
 
 .nav-toggle-button:hover {
-  background-color: #ffffff;
+  background-color: #e6e6e6;
   transform: scale(1.1);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
 }
 
 .nav-bar-container {
@@ -78,16 +79,25 @@
   padding-bottom: 40px;
   display:flex;
   flex-direction: column;
+  align-items: center;
+  margin-bottom: 5px;
+
 }
 
 .nav-bar-link-text {
-  font-size: 0.9rem;
-  font-variant: small-caps;
-  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  font-weight: lighter;
+  line-break: auto;
+  margin-top: 2px;
+  letter-spacing: 1.5px;
 }
 
 .nav-bar-link:hover {
   transform: scale(1.05);
+  text-shadow: 1px 1px 1px #2c4f4753;
+  transition: all 0.3s ease;
 }
 
 .nav-bar-profile {
@@ -101,6 +111,11 @@
  
 
  
+}
+
+.nav-bar-profile:hover {
+  transform: scale(1.05);
+  transition: all 0.3s ease;
 }
 
 .nav-bar-profile img {

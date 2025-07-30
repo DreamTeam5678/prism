@@ -27,7 +27,7 @@
   backdrop-filter: blur(1px);
   border-radius: 20px;
   padding: 2rem;
-  max-width: 620px;
+  max-width: 500px;
   width: 90%;
   max-height: 80vh;
   overflow-y: auto;
@@ -68,7 +68,7 @@
   font-size: 2rem;
   font-weight: 100;
   text-align: center;
-  transform: translateX(210px);
+  transform: translateX(142px);
   font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
   text-transform: uppercase;
   letter-spacing: 3px;
@@ -432,15 +432,18 @@
 }
 
 .submitButton {
-  background: linear-gradient(135deg, #00b894, #00a085);
+  background: linear-gradient(135deg, #9fa8a6, #ade2d0);
   color: white;
-  border: none;
+  border: ridge 2px #00b894;
   padding: 1rem 2rem;
   border-radius: 10px;
   font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  text-shadow: rgb(123, 120, 120) 1px 1px 1px;
+
 }
 
 .submitButton:hover {
@@ -541,13 +544,13 @@
   font-size: 2.5rem;
   font-weight: bold;
   margin-bottom: 1rem;
-  color: #4b2916cd;
+  color: #ffffffcd;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
   letter-spacing: 0.2em;
 }
 
 .puzzleInput {
-  width: 100%;
+  width: 95%;
   padding: 1rem;
   font-size: 1.2rem;
   border: none;
@@ -556,6 +559,7 @@
   color: #333;
   text-align: center;
   margin-bottom: 1rem;
+  
 } 
 
 .retryButton {
