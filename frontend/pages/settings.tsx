@@ -221,15 +221,16 @@ export default function ProfilePage() {
 
       <style jsx>{`
         :global(body) {
-          font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
           color: #333;
           -webkit-font-smoothing: antialiased;
           -moz-osx-font-smoothing: grayscale;
           overflow-x: hidden;
           background-color: #f8faff;
+          
         }
 
         :global(.profile-wrapper) {
+          font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif; 
           display: flex;
           flex-direction: column;
           animation: backgroundPan 20s linear infinite alternate;
@@ -247,6 +248,7 @@ export default function ProfilePage() {
           display: flex;
           flex-direction: column;
           gap: 2rem;
+          height: 98vh;
         }
 
         .content-wrapper {
@@ -333,7 +335,7 @@ export default function ProfilePage() {
           box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
           padding: 2rem 2rem;
           border-radius: 22px;
-          border: 1px solid rgba(220, 220, 220, 0.6);
+          border: 2px ridge rgba(234, 254, 255, 0.6);
           overflow: hidden;
           animation: popInOvershoot 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.2s forwards;
         }
@@ -425,7 +427,7 @@ export default function ProfilePage() {
           background-color:rgb(214, 162, 146);
           color: white;
           padding: 0.8rem 1.6rem;
-          border: none;
+          border: 2px ridge rgba(255, 246, 244, 0.78);
           border-radius: 12px;
           font-size: 1rem;
           cursor: pointer;
@@ -448,17 +450,19 @@ export default function ProfilePage() {
           background-color: #bd6044c8;
           color: white;
           padding: 0.8rem 1.6rem;
-          border: none;
+          border: 2px ridge rgba(255, 246, 244, 0.78);
           border-radius: 12px;
           font-size: 1rem;
           cursor: pointer;
           align-self: flex-start;
           font-weight: 600;
           letter-spacing: 0.5px;
-          box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.74);
           animation: pulse 2s infinite ease-in-out;
           transition: background-color 0.3s ease, transform 0.4s ease, box-shadow 0.3s ease;
           align-self: center;
+          font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+
         }
 
         .signout-btn:hover {
@@ -479,7 +483,7 @@ export default function ProfilePage() {
           border-radius: 22px;
           box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
           text-align: center;
-          border: 1px solid rgba(220, 220, 220, 0.6);
+          border: 2px ridge rgba(234, 254, 255, 0.6);
           position: relative;
           overflow: hidden;
           animation: popInOvershoot 1s ease 0.3s forwards;
@@ -567,6 +571,8 @@ export default function ProfilePage() {
           background: #F1E2C2;
           color: #8b6e3f;
           border-color: #F1E2C2;
+          border: 2px double rgb(255, 255, 255);
+          box-shadow: inset 0 0px 20px rgba(255, 246, 244, 0.78);
         }
 
         .tag.currentMode:hover {
@@ -577,6 +583,8 @@ export default function ProfilePage() {
           background: #9F89AC;
           color: white;
           border-color: #9F89AC;
+          border: 2px double rgb(255, 255, 255);
+          box-shadow: inset 0 0px 20px rgba(255, 246, 244, 0.78);
         }
 
         .tag.idealSelf:hover {
@@ -587,6 +595,8 @@ export default function ProfilePage() {
           background: #9AAB87;
           color: white;
           border-color: #9AAB87;
+          border: 2px double rgb(255, 255, 255);
+          box-shadow: inset 0 0px 20px rgba(255, 246, 244, 0.78);
         }
 
         .tag.blocker:hover {
@@ -597,6 +607,8 @@ export default function ProfilePage() {
           background: #CDE4ED;
           color: #3b6d80;
           border-color: #CDE4ED;
+          border: 2px double rgb(255, 255, 255);
+          box-shadow: inset 0 0px 20px rgba(255, 246, 244, 0.78);
         }
 
         .tag.dislike:hover {

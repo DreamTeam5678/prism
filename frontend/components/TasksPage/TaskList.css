@@ -11,7 +11,8 @@
   margin: auto;
   transform: translateY(50px);
   height: 80vh;
-  color:rgb(134, 107, 67);
+  color:rgb(43, 77, 73);
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
   
 
 }
@@ -19,7 +20,7 @@
 .task-list-title {
   font-size: 2rem;
   font-weight: bold;
-  color: #6b4c3b;
+  color: #164b3ccd;
   text-align: center;
   border-bottom: 1.5px solid #a9865a;
   padding-bottom: 10px;

@@ -1,6 +1,7 @@
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useState } from "react";
+import { HousePlus, ListTodo, AudioWaveform } from "lucide-react";
 
 export default function NavBar() {
   const { data: session } = useSession();
@@ -39,20 +40,20 @@ export default function NavBar() {
         )}
         <div className="nav-bar-links">
           <Link href="/calendar" className="nav-bar-link">
-            ⌂
+            <HousePlus />
             <div className ="nav-bar-link-text">
                 Home
             </div>
           </Link>
   
           <Link href="/tasks" className="nav-bar-link">
-            ☑
+            <ListTodo />
             <div className ="nav-bar-link-text">
                 Tasks
             </div>
           </Link>
           <Link href="/flowspace" className="nav-bar-link">
-            ༄
+            <AudioWaveform />
             <div className ="nav-bar-link-text">
                 Flow Space
             </div>
