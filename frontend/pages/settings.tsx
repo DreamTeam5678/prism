@@ -2,6 +2,7 @@
 
 import { useSession, signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import NavBar from "../components/NavBar/NavBar";
 
 export default function ProfilePage() {
@@ -800,6 +801,7 @@ export default function ProfilePage() {
         }
 
         /* Prism Logo Styles */
+
         .prism-logo {
           position: fixed;
           bottom: 30px;
@@ -835,7 +837,9 @@ export default function ProfilePage() {
 
       {/* Prism Logo - Bottom Right */}
       <div className="prism-logo">
-        <img src="/logo.png" alt="Prism" />
+        <Link href="/privacy">
+          <img src="/logo.png" alt="Prism" />
+        </Link>
       </div>
     </div>
   );
