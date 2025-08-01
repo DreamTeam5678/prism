@@ -874,43 +874,7 @@ export default function TaskList() {
           z-index: 2000;
         }
 
-        /* Prism Logo Styles */
-        .prism-logo {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            z-index: 1000;
-            opacity: 0.8;
-            transition: all 0.3s ease;
-
-          }
-
-        .prism-logo:hover {
-          opacity: 1;
-          transform: scale(1.1);
-        }
-
-        .prism-logo img {
-          width: 120px;
-          height: auto;
-          filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
-        }
-
-
-
-        /* Mobile responsive */
-        @media (max-width: 768px) {
-          .prism-logo {
-            bottom: 20px;
-            right: 20px;
-          }
-          
-          .prism-logo img {
-            width: 80px;
-          }
-
-
-        }
+        /* Prism Logo Styles - Now handled by global CSS */
 
         /* Responsive Design */
         @media (max-width: 768px) {
