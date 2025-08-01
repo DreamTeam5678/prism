@@ -24,7 +24,7 @@ model User {
   calendarEvents     CalendarEvent[]
 
   /// XP + STREAK
-  xp                 Int      @default(0)
+  xp                 Int      @default(1000)
   streak             Int      @default(0)
   lastCompletionDate DateTime?
 }
