@@ -60,6 +60,17 @@ export default function FlowSpace() {
           </h1>
           <p className="page-subtitle">Your productivity sanctuary</p>
 
+          <button
+            className="coworking-button"
+            onClick={() => setShowCoworking(!showCoworking)}
+          >
+            Virtual Coworking
+          </button>
+          <VirtualCoworking 
+            isVisible={showCoworking} 
+            onClose={() => setShowCoworking(false)} 
+          />
+
           <div className="productivity-grid">
             <div className="youtube-section">
               <h2>Flow Beats </h2>
@@ -98,9 +109,36 @@ export default function FlowSpace() {
           text-align: center;
           color: rgba(255, 255, 255, 0.9);
           font-size: 1.25rem;
-          margin-bottom: 1.5rem;
+          margin-bottom: 1rem;
           font-weight: 300;
           text-shadow: 0 1px 5px rgba(0, 0, 0, 0.6);
+        }
+
+        .coworking-button {
+          display: block;
+          margin: 0 auto 1.5rem;
+          padding: 0.75rem 1.5rem;
+          background: #dddddd70;
+          color: white;
+          border: none;
+          border-radius: 25px;
+          font-size: 1rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+          text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .coworking-button:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+          background: #dddddd70;
+        }
+
+        .coworking-button:active {
+          transform: translateY(0);
+          box-shadow: 0 2px 10px rgba(102, 126, 234, 0.3);
         }
 
         .productivity-grid {
@@ -162,6 +200,12 @@ export default function FlowSpace() {
 
           .page-subtitle {
             font-size: 1rem;
+          }
+
+          .coworking-button {
+            padding: 0.6rem 1.2rem;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
           }
 
           .productivity-grid {

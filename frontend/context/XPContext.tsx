@@ -127,13 +127,13 @@ export function XPProvider({ children }: { children: React.ReactNode }) {
       document.removeEventListener('optimizeComplete', handleOptimizationComplete);
       document.removeEventListener('pomodoroComplete', handlePomodoroComplete);
     };
-  }, []);
+  }, [addXP]);
 
   // Calculate total XP from tasks + user XP
   const xpPerTask = 10;
   const xpBonusHighPriority = 10;
-  const completed = tasks.filter((t) => t.completed);
-  const taskBonusXP = completed.filter((t) => t.priority === "high").length * xpBonusHighPriority;
+  const completed = tasks.filter((t: Task) => t.completed);
+  const taskBonusXP = completed.filter((t: Task) => t.priority === "high").length * xpBonusHighPriority;
   const totalXP = completed.length * xpPerTask + taskBonusXP + userXP;
 
   return (
