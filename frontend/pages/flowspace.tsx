@@ -85,24 +85,32 @@ export default function FlowSpace() {
         .flowspace-container {
           max-width: 1400px;
           margin: 0 auto;
+          font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
         }
 
         .page-title {
           text-align: center;
           color: white;
           font-size: 3rem;
-          font-weight: bold;
+          font-weight: 100;
           margin-bottom: 0.3rem;
           text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+          font-family: lucida sans, lucida sans unicode, lucida grande, lucida sans, tahoma, arial, sans-serif;
+          text-transform: uppercase;
+          letter-spacing: 4px;
         }
 
         .page-subtitle {
           text-align: center;
-          color: rgba(255, 255, 255, 0.9);
-          font-size: 1.25rem;
+          color: rgba(255, 255, 255, 0.74);
+          font-size: 1.1rem;
           margin-bottom: 1rem;
           font-weight: 300;
-          text-shadow: 0 1px 5px rgba(0, 0, 0, 0.6);
+          text-shadow: 1px 2px 3px rgba(255, 255, 255, 0.6);
+          font-family: lucida sans, lucida sans unicode, lucida grande, lucida sans, tahoma, arial, sans-serif;
+          text-transform: uppercase;
+          letter-spacing: 2px;
+          font-style: italic;
         }
 
         .coworking-button {
@@ -151,6 +159,11 @@ export default function FlowSpace() {
           transition: transform 0.3s ease;
           min-height: 400px;
         }
+          
+    
+
+
+    
 
         .youtube-section:hover,
         .pomodoro-section:hover {
@@ -163,12 +176,18 @@ export default function FlowSpace() {
           text-align: center;
           margin-bottom: 1rem;
           font-size: 1.75rem;
-          font-family: 'DM Sans', sans-serif;
-          font-weight: 600;
+          font-family: lucida sans, lucida sans unicode, lucida grande, lucida sans, tahoma, arial, sans-serif;
+          font-weight: 500;
           text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
-          letter-spacing: 1px;
+          letter-spacing: 3px;
           position: relative;
+          text-transform: uppercase;
+
         }
+
+        .pomodoro-section h2 {
+        transform: translateX(15px);
+      }
 
         .youtube-section h2::after,
         .pomodoro-section h2::after {
