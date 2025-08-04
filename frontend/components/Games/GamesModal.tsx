@@ -250,7 +250,8 @@ const SpeedTypingGame: React.FC<{ onScore: (score: number) => void }> = ({ onSco
   const [isActive, setIsActive] = useState(false);
 
   //bank of words to be typed
-  const words = ['productivity', 'focus', 'success', 'achieve', 'goals', 'motivation', 'discipline', 'progress'];
+  const words = ['productivity', 'focus', 'success', 'achieve', 
+    'goals', 'motivation', 'discipline', 'progress'];
 
   //hook to update time left and score when game is active
   useEffect(() => {
