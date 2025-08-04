@@ -60,16 +60,7 @@ export default function FlowSpace() {
           </h1>
           <p className="page-subtitle">Your productivity sanctuary</p>
 
-          <button
-            className="coworking-button"
-            onClick={() => setShowCoworking(!showCoworking)}
-          >
-            Virtual Coworking
-          </button>
-          <VirtualCoworking 
-            isVisible={showCoworking} 
-            onClose={() => setShowCoworking(false)} 
-          />
+          
 
           <div className="productivity-grid">
             <div className="youtube-section">
@@ -151,7 +142,7 @@ export default function FlowSpace() {
 
         .youtube-section,
         .pomodoro-section {
-          background: rgba(255, 255, 255, 0.07);
+          background: rgba(243, 238, 238, 0.12);
           backdrop-filter: blur(1px);
           border-radius: 20px;
           padding: 2rem 1.5rem;
